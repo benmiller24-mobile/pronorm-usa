@@ -26,8 +26,9 @@ const states = ["California", "Arizona", "Colorado", "Oregon", "Washington", "Ut
   schema={schema}
 >
 
-  <section class="page-hero">
-    <div class="container">
+  <section class="page-hero" style="position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:url('/images/hero/hero-bright-handleless-island.jpg');background-size:cover;background-position:center;opacity:0.1;"></div>
+    <div class="container" style="position:relative;z-index:1;">
       <span class="overline animate-in">Authorized Dealers</span>
       <h1 class="animate-in animate-in-delay-1">Find a Pronorm<br/>Dealer Near You</h1>
       <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
@@ -54,8 +55,14 @@ const states = ["California", "Arizona", "Colorado", "Oregon", "Washington", "Ut
   <!-- Map -->
   <section class="map-section">
     <div class="container-wide">
-      <div class="map-placeholder" style="aspect-ratio: 21/9; border-radius: 4px; background: var(--color-ivory); display:flex; align-items:center; justify-content:center; font-size:.9rem; color: var(--color-warm-gray);">
-        <span>Interactive Dealer Map — Pronorm USA Territory</span>
+      <div class="map-placeholder" style="aspect-ratio: 21/9; border-radius: 4px; background: linear-gradient(135deg, #f8f6f2 0%, #ede9e2 50%, #e8e3db 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 1rem; border: 1px solid var(--color-sand); position: relative; overflow:hidden;">
+        <div style="position:absolute;inset:0;opacity:0.06;background-image:url('/images/hero/hero-banner-kieselgrau.jpg');background-size:cover;background-position:center;"></div>
+        <div style="position:relative;z-index:1;text-align:center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-copper)" stroke-width="1.5" style="margin-bottom:0.5rem;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <p style="font-size:1rem; color: var(--color-graphite); font-weight: 500;">Pronorm USA Territory</p>
+          <p style="font-size:0.82rem; color: var(--color-warm-gray); margin-top: 0.3rem;">10 Western States · Nationwide Expansion Underway</p>
+          <p style="font-size:0.75rem; color: var(--color-copper); margin-top: 0.5rem;">Enter your zip code above to find your nearest dealer</p>
+        </div>
       </div>
     </div>
   </section>

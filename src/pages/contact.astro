@@ -4,14 +4,22 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
 <BaseLayout title="Contact" description="Contact Pronorm USA — questions about German fitted kitchens, dealer partnerships, or design consultations. Exclusive US distribution by Pinnacle Sales.">
 
+  <section class="page-hero" style="position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:url('/images/about/kitchen-studio-banner.jpg');background-size:cover;background-position:center;opacity:0.1;"></div>
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="overline animate-in">Contact</span>
+      <h1 class="animate-in animate-in-delay-1" style="font-size: clamp(2rem, 4vw, 3rem);">Get in Touch</h1>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">Whether you're a homeowner exploring German kitchen design, a designer, or a dealer — we'd love to hear from you.</p>
+    </div>
+  </section>
+
   <section class="section-lg">
     <div class="container">
       <div class="contact-grid">
         <div class="animate-in">
-          <span class="overline">Contact</span>
-          <h1 style="margin-top: 0.5rem; font-size: clamp(2rem, 4vw, 3rem);">Get in Touch</h1>
+          <span class="overline">Pronorm USA</span>
+          <h2 style="margin-top: 0.5rem; font-size: clamp(1.5rem, 3vw, 2rem);">Contact Information</h2>
           <hr class="divider" style="margin: 1.5rem 0;" />
-          <p>Whether you're a homeowner exploring German kitchen design, an interior designer seeking a premium partner, or a dealer interested in carrying Pronorm — we'd love to hear from you.</p>
 
           <div class="contact-info" style="margin-top: 2.5rem;">
             <div class="contact-item">
@@ -52,6 +60,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
   .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-4xl); align-items: start; }
   .contact-info { display: flex; flex-direction: column; gap: 2rem; }
   .contact-form { display: flex; flex-direction: column; gap: 1.2rem; background: var(--color-ivory); padding: 2.5rem; border: 1px solid var(--color-sand); }

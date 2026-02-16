@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import ConsultationCTA from '@/components/ConsultationCTA.astro';
 
 const galleryItems = [
-    { title: "Contemporary Handleless — Pacific Palisades", style: "Modern", collection: "Y‑line", image: "/images/gallery/japandi-kitchen-full.webp", ar: "3/4" },
+  { title: "Contemporary Handleless — Pacific Palisades", style: "Modern", collection: "Y‑line", image: "/images/gallery/japandi-kitchen-full.webp", ar: "3/4" },
   { title: "Warm Walnut Island — Scottsdale", style: "Organic Modern", collection: "Proline128", image: "/images/gallery/kitchen-stone-walnut-beitrag.webp", ar: "4/3" },
   { title: "Classic Elegance — Park City", style: "Transitional", collection: "X‑line", image: "/images/gallery/contemporary-traditional-twist.jpg", ar: "4/3" },
   { title: "Matte Black & Oak — Manhattan Beach", style: "Modern", collection: "Y‑line", image: "/images/gallery/dark-black-boho.webp", ar: "3/4" },
@@ -15,6 +15,22 @@ const galleryItems = [
   { title: "Mountain Modern — Aspen", style: "Modern", collection: "X‑line", image: "/images/gallery/dark-contemporary-statement.jpg", ar: "3/4" },
   { title: "Desert Contemporary — Paradise Valley", style: "Organic Modern", collection: "Proline128", image: "/images/gallery/boho-oak-handleless-white.webp", ar: "4/3" },
   { title: "Urban Penthouse — San Francisco", style: "Modern", collection: "Y‑line", image: "/images/gallery/striking-monochrome.jpg", ar: "4/3" },
+  { title: "Copper & Bronze Statement — Sedona", style: "Modern", collection: "Y‑line", image: "/images/style-gallery/ME_Effektlack-Kupfer_Y-VU_Alba-Eiche-schwarz-BEITRAG.jpg", ar: "4/3" },
+  { title: "Midnight Blue & Stone — Lake Tahoe", style: "Transitional", collection: "X‑line", image: "/images/gallery/midnight-blue-light-grey.jpg", ar: "3/4" },
+  { title: "Sherwood Dark Open Concept — Austin", style: "Organic Modern", collection: "Y‑line", image: "/images/gallery/dark-sherwood-super-white.jpg", ar: "4/3" },
+  { title: "Sand Tones & Oak — Santa Barbara", style: "Minimalist", collection: "Y‑line", image: "/images/style-gallery/Y_LM_Mattlack-sand_ER_Alteiche-natur-BEITRAG.jpg", ar: "4/3" },
+  { title: "Burgundy Handleless — Brooklyn", style: "Modern", collection: "Y‑line", image: "/images/gallery/modern-handleless-burgundy.webp", ar: "3/4" },
+  { title: "Organic Platinum & Oak — Malibu", style: "Organic Modern", collection: "X‑line", image: "/images/style-gallery/X_OS_organic-platin_EE_Asteiche-schwarz-BEITRAG.jpg", ar: "4/3" },
+  { title: "Deep Green Matte Lacquer — Portland", style: "Modern", collection: "Y‑line", image: "/images/style-gallery/Y_LM_Mattlack_dunkelgruen_LM_Mattlack_graugruen_featured.jpg", ar: "3/4" },
+  { title: "Gold Metal & Dark Steel — Miami", style: "Modern", collection: "Y‑line", image: "/images/style-gallery/MM_Metall-gold_MP_Stahl-dunkel-ultramatt-BEITRAG.jpg", ar: "4/3" },
+  { title: "Country House Frame Front — Sonoma", style: "Transitional", collection: "Proline128", image: "/images/style-gallery/pronorm-kitchen-country-house-frame-front-mediterranean-grey-Beitragsbild.jpg", ar: "4/3" },
+  { title: "Jade Green & Angora Oak — Savannah", style: "Organic Modern", collection: "Proline128", image: "/images/style-gallery/TU-Jadegruen-EI-Eiche-Angora-grau.-beitragsbild-1.jpg", ar: "4/3" },
+  { title: "Living Wall Showcase — Chicago", style: "Modern", collection: "Y‑line", image: "/images/gallery/living-wall-showcase.webp", ar: "3/4" },
+  { title: "Boho Oak Handleless — Laguna Beach", style: "Organic Modern", collection: "Y‑line", image: "/images/style-gallery/pronorm-boho-oak-kitchen-handleless-white-Beitrag.webp", ar: "4/3" },
+  { title: "Ice Blue Handleless — Vail", style: "Minimalist", collection: "X‑line", image: "/images/style-gallery/X_TU_eisblau_TU_eisblau-BEITRAG.jpg", ar: "4/3" },
+  { title: "Champagne Organic Glass — Carmel", style: "Modern", collection: "X‑line", image: "/images/style-gallery/X_OS_organic-champagner_OS_organic-champagner_GE_Messing-gebuerstet-BEITRAG.jpg", ar: "3/4" },
+  { title: "Dark Designer Kitchen — Tribeca", style: "Modern", collection: "Y‑line", image: "/images/style-gallery/pronorm-dark-designer-kitchen-beitrag.webp", ar: "4/3" },
+  { title: "Warm Kitchen Aesthetics — Newport Beach", style: "Organic Modern", collection: "Proline128", image: "/images/style-gallery/pronorm-warm-kitchen-aesthetics-modern-minimalistic-high-quality_BEITRAGsbild.jpg", ar: "4/3" },
 ];
 
 const styles = [...new Set(galleryItems.map(g => g.style))];
@@ -25,8 +41,9 @@ const styles = [...new Set(galleryItems.map(g => g.style))];
   description="Browse real Pronorm German kitchen installations across the United States — Y‑line, X‑line, and Proline128 designs in American homes from coast to coast."
 >
 
-  <section class="page-hero">
-    <div class="container">
+  <section class="page-hero" style="position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:url('/images/hero/hero-boho-handleless-bright.webp');background-size:cover;background-position:center;opacity:0.12;"></div>
+    <div class="container" style="position:relative;z-index:1;">
       <span class="overline animate-in">Gallery</span>
       <h1 class="animate-in animate-in-delay-1">Kitchen<br/>Inspiration</h1>
       <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">

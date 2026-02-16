@@ -8,7 +8,7 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
   description="Pronorm Y‑line: the unique handleless kitchen with integrated grip profile in stainless, bronze, or black anodized finishes. Contemporary living through handleless elegance and clean, linear design."
 >
   <section class="collection-hero">
-    <div class="hero-bg img-placeholder-dark" style="aspect-ratio: unset; position: absolute; inset: 0;"><span>Y‑line Handleless Kitchen</span></div>
+    <div class="hero-bg" style="position:absolute;inset:0;background-image:url('/images/product-lines/yline-handleless-modern.webp');background-size:cover;background-position:center;"></div>
     <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(26,26,26,0.8) 0%, rgba(26,26,26,0.2) 70%); z-index: 2;"></div>
     <div style="position: relative; z-index: 3;" class="container">
       <span class="overline animate-in" style="color: var(--color-copper);">Product Line</span>
@@ -29,7 +29,7 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
           <p style="margin-top: 1rem;">The rear handle rail behind the grip profile can be supplied in the front's colour or in a contrasting shade of your choice — allowing for fully personalized kitchen designs. Every detail is considered to transform your home into a unique expression of your personality.</p>
         </div>
         <div class="reveal">
-          <div class="img-placeholder" style="aspect-ratio: 3/4;"><span>Y‑line Grip Profile Detail</span></div>
+          <div style="aspect-ratio:3/4;overflow:hidden;border-radius:4px;"><img src="/images/product-lines/yline-handle-profile-bronze.webp" alt="Y-line Grip Profile Detail" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
         </div>
       </div>
     </div>
@@ -43,17 +43,17 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
       <p class="subtitle" style="margin: 1rem auto 2rem; max-width: 55ch;">The Y‑line grip profile is available in three premium anodized finishes — each transforming the kitchen's character while maintaining seamless handleless operation.</p>
       <div class="finish-grid">
         <div class="finish-card reveal">
-          <div class="img-placeholder-square img-placeholder"><span>Stainless Finish</span></div>
+          <img src="/images/gallery/japandi-fronts-closeup.webp" alt="Stainless Finish" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Stainless</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Clean, contemporary brightness</p>
         </div>
         <div class="finish-card reveal">
-          <div class="img-placeholder-square img-placeholder"><span>Bronze Finish</span></div>
+          <img src="/images/product-lines/yline-handle-profile-bronze.webp" alt="Bronze Finish" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Bronze</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Warm, organic elegance</p>
         </div>
         <div class="finish-card reveal">
-          <div class="img-placeholder-square img-placeholder"><span>Black Anodized Finish</span></div>
+          <img src="/images/gallery/dark-black-boho.webp" alt="Black Anodized Finish" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Black Anodized</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Bold, architectural contrast</p>
         </div>
@@ -66,7 +66,7 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
     <div class="container">
       <div class="detail-grid reverse">
         <div class="reveal">
-          <div class="img-placeholder" style="aspect-ratio: 4/3;"><span>Y‑line Plus — Customized Ergonomics</span></div>
+          <div style="aspect-ratio:4/3;overflow:hidden;border-radius:4px;"><img src="/images/equipment/ergonomics-cabinet-heights.jpg" alt="Y-line Plus Customized Ergonomics" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
         </div>
         <div class="reveal">
           <span class="overline">Enhanced Ergonomics</span>
@@ -86,7 +86,18 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
       <h2 style="margin-top: 0.5rem;">Rear Handle Rail</h2>
       <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">The rear handle rail behind the grip profile can match your front colour for a seamless look — or contrast it for a striking design statement. Your choice transforms the entire character of the kitchen.</p>
       <div class="rail-demo" style="margin-top: 2.5rem;">
-        <div class="img-placeholder" style="aspect-ratio: 21/9; max-width: 1000px; margin: 0 auto;"><span>Rear Handle Rail — Matching vs Contrasting Colour</span></div>
+        <div style="aspect-ratio:21/9;overflow:hidden;border-radius:4px;"><img src="/images/product-lines/handleless-cross-product.webp" alt="Rear Handle Rail" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video -->
+  <section class="section bg-ivory text-center">
+    <div class="container-narrow">
+      <span class="overline">See It in Motion</span>
+      <h2 style="margin-top: 0.5rem;">The Y‑line Experience</h2>
+      <div style="aspect-ratio: 16/9; margin-top: 2rem; border-radius: 4px; overflow: hidden;">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Vt1XiCDDhws" title="Pronorm Y-line" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:0;"></iframe>
       </div>
     </div>
   </section>
@@ -97,12 +108,12 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
       <span class="overline">Gallery</span>
       <h2 style="margin-top: 0.5rem;">Y‑line in American Homes</h2>
       <div class="project-grid" style="margin-top: var(--space-2xl);">
-        <div class="img-placeholder reveal" style="aspect-ratio: 16/10;"><span>Y‑line — Coastal Modern</span></div>
-        <div class="img-placeholder reveal" style="aspect-ratio: 1;"><span>Y‑line — Bronze Profile Detail</span></div>
-        <div class="img-placeholder reveal" style="aspect-ratio: 1;"><span>Y‑line — Island Design</span></div>
-        <div class="img-placeholder reveal" style="aspect-ratio: 1;"><span>Y‑line — Tall Units</span></div>
-        <div class="img-placeholder reveal" style="aspect-ratio: 1;"><span>Y‑line — Open Plan</span></div>
-        <div class="img-placeholder reveal" style="aspect-ratio: 16/10;"><span>Y‑line — Full Kitchen View</span></div>
+        <div style="aspect-ratio:16/10;overflow:hidden;border-radius:4px;"><img src="/images/gallery/modern-light-kitchen.webp" alt="Y-line Coastal Modern" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/japandi-kitchen-island.webp" alt="Y-line Bronze Profile" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/kitchen-island-lighting-natural.webp" alt="Y-line Island Design" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/dark-contemporary-statement.jpg" alt="Y-line Tall Units" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/dark-contemporary-open-plan.jpg" alt="Y-line Open Plan" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:16/10;overflow:hidden;border-radius:4px;"><img src="/images/gallery/boho-oak-handleless-white.webp" alt="Y-line Full Kitchen View" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
       </div>
     </div>
   </section>

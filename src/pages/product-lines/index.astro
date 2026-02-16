@@ -90,9 +90,7 @@ const productLines = [
             </a>
           </div>
           <div class="feature-image reveal">
-            <div class="img-placeholder" style="aspect-ratio: 3/4;">
-              <span>{line.name} Kitchen</span>
-            </div>
+            <div style="aspect-ratio: 3/4; overflow:hidden; border-radius: 4px;"><img src={line.slug === "y-line" ? "/images/product-lines/yline-handleless-modern.webp" : line.slug === "x-line" ? "/images/product-lines/xline-handleless-classic.webp" : "/images/product-lines/proline-classic-handles.webp"} alt={`${line.name} Kitchen`} loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
           </div>
         </div>
       </div>
@@ -128,8 +126,21 @@ const productLines = [
           </a>
         </div>
         <div class="reveal">
-          <div class="img-placeholder-dark img-placeholder" style="aspect-ratio: 4/5;"><span>proTech X Drawer System</span></div>
+          <img src="/images/equipment/proTechx-drawer-titan.webp" alt="proTech X Drawer System" loading="lazy" style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;" />
         </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- Carcase Video -->
+  <section class="section text-center">
+    <div class="container-narrow">
+      <span class="overline">Engineering</span>
+      <h2 style="margin-top: 0.5rem;">Inside the Carcase</h2>
+      <p class="subtitle" style="margin: 1rem auto 2rem; max-width: 50ch;">See how Pronorm's precision-engineered carcase system delivers superior rigidity and seamless assembly.</p>
+      <div style="aspect-ratio: 16/9; border-radius: 4px; overflow: hidden;">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/vzDFdD4WtkM" title="Pronorm Carcase Construction" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:0;"></iframe>
       </div>
     </div>
   </section>
@@ -144,22 +155,22 @@ const productLines = [
       </p>
       <div class="surface-grid" style="margin-top: var(--space-2xl);">
         <div class="surface-card reveal">
-          <div class="img-placeholder-square img-placeholder"><span>Boho Texture</span></div>
+          <img src="/images/surfaces/trends-2026-boho-natural.webp" alt="Boho Texture" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Boho Texture</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Finely textured relief surface</p>
         </div>
         <div class="surface-card reveal">
-          <div class="img-placeholder-square img-placeholder"><span>Linen Look</span></div>
+          <img src="/images/gallery/ankleide-leinenoptik.webp" alt="Linen Look" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Woven Linen</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Woven linen-look design front</p>
         </div>
         <div class="surface-card reveal">
-          <div class="img-placeholder-square img-placeholder"><span>Fan Veneer</span></div>
+          <img src="/images/surfaces/trends-2026-buffalo-mocha.webp" alt="Fan Veneer" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Fan Structure Veneer</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Intricate veneered fan pattern</p>
         </div>
         <div class="surface-card reveal">
-          <div class="img-placeholder-square img-placeholder"><span>Organic Glass</span></div>
+          <img src="/images/equipment/proTechx-glasscase.webp" alt="Organic Glass" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Organic Glass</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Soft matte architectural elegance</p>
         </div>

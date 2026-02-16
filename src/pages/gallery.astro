@@ -3,22 +3,21 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import ConsultationCTA from '@/components/ConsultationCTA.astro';
 
 const galleryItems = [
-  { title: "Contemporary Handleless — Pacific Palisades", style: "Modern", collection: "Y‑line" },
-  { title: "Warm Walnut Island — Scottsdale", style: "Organic Modern", collection: "Proline128" },
-  { title: "Classic Elegance — Park City", style: "Transitional", collection: "X‑line" },
-  { title: "Matte Black & Oak — Manhattan Beach", style: "Modern", collection: "Y‑line" },
-  { title: "All-White European — Napa Valley", style: "Minimalist", collection: "Y‑line" },
-  { title: "Textured Oak Open Plan — Denver", style: "Organic Modern", collection: "Proline128" },
-  { title: "High-Gloss Lacquer — Beverly Hills", style: "Modern", collection: "Y‑line" },
-  { title: "Soft Curve Handleless — La Jolla", style: "Transitional", collection: "X‑line" },
-  { title: "Japan-Inspired Minimalism — Portland", style: "Minimalist", collection: "Y‑line" },
-  { title: "Mountain Modern — Aspen", style: "Modern", collection: "X‑line" },
-  { title: "Desert Contemporary — Paradise Valley", style: "Organic Modern", collection: "Proline128" },
-  { title: "Urban Penthouse — San Francisco", style: "Modern", collection: "Y‑line" },
+    { title: "Contemporary Handleless — Pacific Palisades", style: "Modern", collection: "Y‑line", image: "/images/gallery/japandi-kitchen-full.webp", ar: "3/4" },
+  { title: "Warm Walnut Island — Scottsdale", style: "Organic Modern", collection: "Proline128", image: "/images/gallery/kitchen-stone-walnut-beitrag.webp", ar: "4/3" },
+  { title: "Classic Elegance — Park City", style: "Transitional", collection: "X‑line", image: "/images/gallery/contemporary-traditional-twist.jpg", ar: "4/3" },
+  { title: "Matte Black & Oak — Manhattan Beach", style: "Modern", collection: "Y‑line", image: "/images/gallery/dark-black-boho.webp", ar: "3/4" },
+  { title: "All-White European — Napa Valley", style: "Minimalist", collection: "Y‑line", image: "/images/gallery/modern-light-kitchen.webp", ar: "4/3" },
+  { title: "Textured Oak Open Plan — Denver", style: "Organic Modern", collection: "Proline128", image: "/images/gallery/dark-contemporary-open-plan.jpg", ar: "4/3" },
+  { title: "High-Gloss Lacquer — Beverly Hills", style: "Modern", collection: "Y‑line", image: "/images/style-gallery/Y_LH_Glanzweiss_01-BEITRAG.jpg", ar: "3/4" },
+  { title: "Soft Curve Handleless — La Jolla", style: "Transitional", collection: "X‑line", image: "/images/gallery/light-curved-kitchen-beitrag.webp", ar: "4/3" },
+  { title: "Japan-Inspired Minimalism — Portland", style: "Minimalist", collection: "Y‑line", image: "/images/gallery/japandi-kitchen-island.webp", ar: "4/3" },
+  { title: "Mountain Modern — Aspen", style: "Modern", collection: "X‑line", image: "/images/gallery/dark-contemporary-statement.jpg", ar: "3/4" },
+  { title: "Desert Contemporary — Paradise Valley", style: "Organic Modern", collection: "Proline128", image: "/images/gallery/boho-oak-handleless-white.webp", ar: "4/3" },
+  { title: "Urban Penthouse — San Francisco", style: "Modern", collection: "Y‑line", image: "/images/gallery/striking-monochrome.jpg", ar: "4/3" },
 ];
 
 const styles = [...new Set(galleryItems.map(g => g.style))];
-const productLines = [...new Set(galleryItems.map(g => g.collection))];
 ---
 
 <BaseLayout
@@ -36,7 +35,6 @@ const productLines = [...new Set(galleryItems.map(g => g.collection))];
     </div>
   </section>
 
-  <!-- Filter Bar -->
   <section class="filter-bar">
     <div class="container">
       <div class="filters">
@@ -46,14 +44,13 @@ const productLines = [...new Set(galleryItems.map(g => g.collection))];
     </div>
   </section>
 
-  <!-- Gallery Grid -->
   <section class="section">
     <div class="container-wide">
       <div class="gallery-grid">
         {galleryItems.map((item, i) => (
           <div class="gallery-card reveal" data-style={item.style} data-collection={item.collection}>
-            <div class:list={["img-placeholder", i % 3 === 0 ? "img-placeholder-tall" : ""]} style={i % 3 === 0 ? "aspect-ratio: 3/4;" : "aspect-ratio: 4/3;"}>
-              <span>{item.title}</span>
+            <div style={`aspect-ratio: ${item.ar}; overflow:hidden; border-radius: 4px;`}>
+              <img src={item.image} alt={item.title} loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform .6s;" />
             </div>
             <div class="gallery-card-info">
               <h4>{item.title}</h4>
@@ -65,7 +62,6 @@ const productLines = [...new Set(galleryItems.map(g => g.collection))];
     </div>
   </section>
 
-  <!-- Share CTA -->
   <section class="section bg-ivory text-center">
     <div class="container-narrow">
       <span class="overline">Share Your Pronorm</span>
@@ -82,79 +78,16 @@ const productLines = [...new Set(galleryItems.map(g => g.collection))];
 
 <style>
   .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
-
-  .filter-bar {
-    padding: var(--space-lg) 0;
-    border-bottom: var(--border-light);
-    position: sticky;
-    top: 72px;
-    background: rgba(253, 252, 250, 0.95);
-    backdrop-filter: blur(10px);
-    z-index: 100;
-  }
-
-  .filters {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 0.5rem 1.2rem;
-    border: 1.5px solid var(--color-sand);
-    background: transparent;
-    color: var(--color-graphite);
-    cursor: pointer;
-    transition: all var(--duration-fast) ease;
-  }
-
-  .filter-btn:hover, .filter-btn.active {
-    background: var(--color-black);
-    border-color: var(--color-black);
-    color: var(--color-white);
-  }
-
-  .gallery-grid {
-    columns: 3;
-    column-gap: var(--space-lg);
-  }
-
-  .gallery-card {
-    break-inside: avoid;
-    margin-bottom: var(--space-lg);
-    overflow: hidden;
-    cursor: pointer;
-  }
-
-  .gallery-card .img-placeholder {
-    transition: transform var(--duration-slow) var(--ease-out);
-  }
-
-  .gallery-card:hover .img-placeholder {
-    transform: scale(1.03);
-  }
-
-  .gallery-card-info {
-    padding: 1rem 0;
-  }
-
-  .gallery-card-info h4 {
-    font-size: 1rem;
-    line-height: 1.3;
-  }
-
-  .gallery-meta {
-    font-size: 0.78rem;
-    color: var(--color-warm-gray);
-    margin-top: 0.2rem;
-    display: block;
-  }
-
+  .filter-bar { padding: var(--space-lg) 0; border-bottom: var(--border-light); position: sticky; top: 64px; background: rgba(253,252,250,.95); backdrop-filter: blur(10px); z-index: 100; }
+  .filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .filter-btn { font-family: var(--font-body); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.5rem 1.2rem; border: 1.5px solid var(--color-sand); background: transparent; color: var(--color-graphite); cursor: pointer; transition: all var(--duration-fast) ease; }
+  .filter-btn:hover, .filter-btn.active { background: var(--color-black); border-color: var(--color-black); color: var(--color-white); }
+  .gallery-grid { columns: 3; column-gap: var(--space-lg); }
+  .gallery-card { break-inside: avoid; margin-bottom: var(--space-lg); overflow: hidden; cursor: pointer; }
+  .gallery-card:hover img { transform: scale(1.03); }
+  .gallery-card-info { padding: 1rem 0; }
+  .gallery-card-info h4 { font-size: 1rem; line-height: 1.3; }
+  .gallery-meta { font-size: 0.78rem; color: var(--color-warm-gray); margin-top: 0.2rem; display: block; }
   @media (max-width: 1024px) { .gallery-grid { columns: 2; } }
   @media (max-width: 768px) { .gallery-grid { columns: 1; } }
 </style>

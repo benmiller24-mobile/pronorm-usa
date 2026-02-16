@@ -43,7 +43,7 @@ const schema = {
     <!-- Hero Image -->
     <div class="article-hero">
       <div class="container">
-        <div class="img-placeholder" style="aspect-ratio: 21/9;"><span>German vs American Kitchen Comparison</span></div>
+        <img src="/images/gallery/japandi-kitchen-full.webp" alt="German vs American Kitchen Comparison" loading="lazy" style="width:100%;aspect-ratio:21/9;object-fit:cover;border-radius:4px;" />
       </div>
     </div>
 
@@ -91,15 +91,15 @@ const schema = {
       <h3 style="margin-bottom: var(--space-xl);">Continue Reading</h3>
       <div class="related-grid">
         <a href="/magazine/handleless-kitchen-design" class="article-card">
-          <div class="img-placeholder" style="aspect-ratio: 16/10;"><span>Handleless Kitchens</span></div>
+          <img src="/images/gallery/modern-handleless-burgundy.webp" alt="Handleless Kitchens" loading="lazy" style="width:100%;aspect-ratio:16/10;object-fit:cover;" />
           <div style="padding: 1rem 0;"><span class="overline">Trends</span><h4 style="margin-top: 0.3rem;">The Rise of Handleless Kitchen Design</h4></div>
         </a>
         <a href="/magazine/kitchen-island-design-guide" class="article-card">
-          <div class="img-placeholder" style="aspect-ratio: 16/10;"><span>Island Design</span></div>
+          <img src="/images/gallery/kitchen-island-lighting-natural.webp" alt="Island Design" loading="lazy" style="width:100%;aspect-ratio:16/10;object-fit:cover;" />
           <div style="padding: 1rem 0;"><span class="overline">Design</span><h4 style="margin-top: 0.3rem;">Designing the Perfect Kitchen Island</h4></div>
         </a>
         <a href="/magazine/choosing-kitchen-finishes" class="article-card">
-          <div class="img-placeholder" style="aspect-ratio: 16/10;"><span>Finishes Guide</span></div>
+          <img src="/images/surfaces/trends-2026-boho-natural.webp" alt="Finishes Guide" loading="lazy" style="width:100%;aspect-ratio:16/10;object-fit:cover;" />
           <div style="padding: 1rem 0;"><span class="overline">Guide</span><h4 style="margin-top: 0.3rem;">Matte vs. Gloss vs. Textured Finishes</h4></div>
         </a>
       </div>
@@ -138,8 +138,8 @@ const schema = {
 
   .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
   .article-card { display: block; text-decoration: none; }
-  .article-card .img-placeholder { transition: transform var(--duration-slow) var(--ease-out); }
-  .article-card:hover .img-placeholder { transform: scale(1.03); }
+  .article-card img { transition: transform var(--duration-slow) var(--ease-out); }
+  .article-card:hover img { transform: scale(1.03); }
   .article-card h4 { font-size: 1rem; line-height: 1.3; }
 
   @media (max-width: 768px) { .related-grid { grid-template-columns: 1fr; } }

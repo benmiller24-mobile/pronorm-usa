@@ -1,0 +1,166 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const articles = [
+  {
+    slug: "german-vs-american-kitchens",
+    title: "German Fitted Kitchens vs. American Cabinetry: What's the Difference?",
+    excerpt: "Why the system-engineered approach changes everything about how a kitchen looks, works, and lasts. A comprehensive comparison for homeowners considering their options.",
+    category: "Guide",
+    date: "2026-02-08",
+    readTime: "8 min",
+  },
+  {
+    slug: "handleless-kitchen-design",
+    title: "The Rise of Handleless Kitchen Design in American Homes",
+    excerpt: "How clean-line, grip-channel cabinetry is reshaping luxury kitchen aesthetics from coast to coast. Plus: the engineering behind truly handleless operation.",
+    category: "Trends",
+    date: "2026-02-01",
+    readTime: "6 min",
+  },
+  {
+    slug: "kitchen-island-design-guide",
+    title: "Designing the Perfect Kitchen Island with Pronorm",
+    excerpt: "Proportions, materials, waterfall edges, and integrated storage — everything you need to know about creating a stunning island centerpiece.",
+    category: "Design",
+    date: "2026-01-25",
+    readTime: "7 min",
+  },
+  {
+    slug: "japan-inspired-kitchens",
+    title: "Japan-Inspired Kitchen Design: Wabi-Sabi Meets German Precision",
+    excerpt: "How the Japanese aesthetic of finding beauty in imperfection pairs unexpectedly well with Pronorm's precision engineering.",
+    category: "Inspiration",
+    date: "2026-01-18",
+    readTime: "5 min",
+  },
+  {
+    slug: "choosing-kitchen-finishes",
+    title: "Matte vs. Gloss vs. Textured: Choosing Your Kitchen Finish",
+    excerpt: "A practical guide to selecting the right surface finish for your lifestyle — from super-matte anti-fingerprint to high-gloss lacquer.",
+    category: "Guide",
+    date: "2026-01-12",
+    readTime: "6 min",
+  },
+  {
+    slug: "european-kitchen-trends-2026",
+    title: "European Kitchen Design Trends to Watch in 2026",
+    excerpt: "From warm natural materials to integrated smart technology — the design directions shaping Europe's finest kitchens this year.",
+    category: "Trends",
+    date: "2026-01-05",
+    readTime: "7 min",
+  },
+];
+---
+
+<BaseLayout
+  title="Magazine"
+  description="The Pronorm Magazine — expert guides, design trends, and kitchen inspiration from the world of German fitted kitchens."
+>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="overline animate-in">The Magazine</span>
+      <h1 class="animate-in animate-in-delay-1">Design<br/>Intelligence</h1>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
+        Expert guides, trend reports, and design inspiration from the world of German fitted kitchens.
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured Article -->
+  <section class="featured-article">
+    <div class="container">
+      <a href={`/magazine/${articles[0].slug}`} class="featured-card reveal">
+        <div class="featured-image img-placeholder" style="aspect-ratio: 21/9;"><span>Featured: {articles[0].title}</span></div>
+        <div class="featured-content">
+          <span class="overline">{articles[0].category} · {articles[0].readTime} read</span>
+          <h2 style="margin-top: 0.5rem;">{articles[0].title}</h2>
+          <p class="subtitle" style="margin-top: 0.5rem; max-width: 60ch;">{articles[0].excerpt}</p>
+          <span class="card-link" style="margin-top: 1rem;">
+            Read Article
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Article Grid -->
+  <section class="section">
+    <div class="container">
+      <div class="articles-grid">
+        {articles.slice(1).map(article => (
+          <a href={`/magazine/${article.slug}`} class="article-card reveal">
+            <div class="img-placeholder" style="aspect-ratio: 16/10;"><span>{article.title}</span></div>
+            <div class="article-card-content">
+              <span class="overline">{article.category} · {article.readTime}</span>
+              <h4 style="margin-top: 0.4rem;">{article.title}</h4>
+              <p style="margin-top: 0.3rem; font-size: 0.85rem; color: var(--color-warm-gray);">{article.excerpt}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="section bg-cream text-center">
+    <div class="container-narrow">
+      <span class="overline">Subscribe</span>
+      <h2 style="margin-top: 0.5rem;">Never Miss an Article</h2>
+      <p class="subtitle" style="margin: 0.5rem auto 1.5rem;">Monthly design inspiration and Pronorm news delivered to your inbox.</p>
+      <form class="inline-form" name="magazine-subscribe" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="magazine-subscribe" />
+        <input type="email" name="email" placeholder="Your email" required style="max-width: 350px;" />
+        <button type="submit" class="btn btn-primary">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
+
+  .featured-article { padding-bottom: var(--space-3xl); }
+
+  .featured-card {
+    display: block;
+    text-decoration: none;
+  }
+
+  .featured-card .featured-image {
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .featured-card:hover .featured-image { transform: scale(1.02); }
+
+  .featured-content { padding: 1.5rem 0; }
+
+  .card-link {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--color-copper); display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+
+  .articles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
+
+  .article-card {
+    display: block; text-decoration: none;
+  }
+
+  .article-card .img-placeholder { transition: transform var(--duration-slow) var(--ease-out); overflow: hidden; }
+  .article-card:hover .img-placeholder { transform: scale(1.03); }
+
+  .article-card-content { padding: 1rem 0; }
+  .article-card-content h4 { font-size: 1.05rem; line-height: 1.3; }
+
+  .inline-form { display: flex; gap: 0; justify-content: center; }
+  .inline-form input { border-right: none; }
+
+  @media (max-width: 768px) {
+    .articles-grid { grid-template-columns: 1fr; }
+    .inline-form { flex-direction: column; align-items: stretch; }
+    .inline-form input { max-width: 100% !important; border-right: 1.5px solid var(--color-sand); }
+  }
+</style>

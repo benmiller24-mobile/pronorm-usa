@@ -1,0 +1,18 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page Not Found" description="The page you're looking for doesn't exist." noindex={true}>
+  <section class="section-lg text-center">
+    <div class="container-narrow">
+      <span style="font-family: var(--font-display); font-size: 6rem; font-weight: 300; color: var(--color-sand); line-height: 1;">404</span>
+      <h1 style="font-size: 2rem; margin-top: 1rem;">Page Not Found</h1>
+      <p class="subtitle" style="margin: 1rem auto 2rem; max-width: 40ch;">The page you're looking for may have been moved or no longer exists.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="/" class="btn btn-primary">Return Home</a>
+        <a href="/product-lines" class="btn btn-outline">View Product Lines</a>
+        <a href="/find-a-dealer" class="btn btn-outline">Find a Dealer</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

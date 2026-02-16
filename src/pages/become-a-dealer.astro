@@ -1,0 +1,159 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Become a Pronorm Dealer",
+  "description": "Partner with Pronorm USA. Protected territories, German engineering, dedicated US support from Pinnacle Sales."
+};
+---
+
+<BaseLayout
+  title="Become a Dealer"
+  description="Become an authorized Pronorm German kitchen dealer. Protected territories, strong margins, design exclusivity, and dedicated US support from Pinnacle Sales."
+  schema={schema}
+>
+
+  <!-- Hero -->
+  <section class="dealer-hero">
+    <div class="hero-bg img-placeholder-dark" style="aspect-ratio: unset; position: absolute; inset: 0;"><span>Pronorm Showroom Display</span></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(26,26,26,0.8), rgba(26,26,26,0.4)); z-index: 2;"></div>
+    <div class="dealer-hero-content" style="position: relative; z-index: 3;">
+      <div class="container">
+        <span class="overline animate-in" style="color: var(--color-copper);">Dealer Partnerships</span>
+        <h1 class="animate-in animate-in-delay-1" style="color: var(--color-white);">Elevate Your<br/>Showroom</h1>
+        <p class="animate-in animate-in-delay-2" style="color: var(--color-sand); font-family: var(--font-display); font-size: 1.2rem; font-style: italic; max-width: 50ch; margin-top: 1rem;">
+          Offer your clients authentic German kitchen design with protected territories and dedicated US support. Partnerships available nationwide.
+        </p>
+        <a href="#apply" class="btn btn-white animate-in animate-in-delay-3" style="margin-top: 2rem;">
+          Apply Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Proposition -->
+  <section class="section-lg">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">Why Partner with Pronorm</span>
+        <h2 style="margin-top: 0.5rem;">A Partnership Built for Growth</h2>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-card reveal">
+          <span class="benefit-icon">🔒</span>
+          <h4>Protected Territories</h4>
+          <p>Exclusive geographic territories eliminate same-brand competition in your market. Your investment in Pronorm is protected.</p>
+        </div>
+        <div class="benefit-card reveal">
+          <span class="benefit-icon">📈</span>
+          <h4>Strong Margins</h4>
+          <p>Premium pricing with healthy dealer margins. Design exclusivity means far less price competition than widely distributed American brands.</p>
+        </div>
+        <div class="benefit-card reveal">
+          <span class="benefit-icon">🇩🇪</span>
+          <h4>German Differentiation</h4>
+          <p>Stand apart from every competitor selling the same domestic lines. Pronorm gives your showroom a genuine European story to tell.</p>
+        </div>
+        <div class="benefit-card reveal">
+          <span class="benefit-icon">🤝</span>
+          <h4>Dedicated US Support</h4>
+          <p>Pinnacle Sales manages product specification, order management, logistics from Germany, and after-sale service. You focus on selling.</p>
+        </div>
+        <div class="benefit-card reveal">
+          <span class="benefit-icon">🎓</span>
+          <h4>Training & Certification</h4>
+          <p>Comprehensive product training, design software access, and ongoing education to ensure your team sells with confidence.</p>
+        </div>
+        <div class="benefit-card reveal">
+          <span class="benefit-icon">📣</span>
+          <h4>Marketing Support</h4>
+          <p>Co-branded marketing materials, digital assets, social media content, and inclusion on pronormusa.com dealer locator.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ideal Partner -->
+  <section class="section bg-ivory">
+    <div class="container">
+      <div class="content-split">
+        <div class="reveal">
+          <span class="overline">Ideal Partners</span>
+          <h2 style="margin-top: 0.5rem;">Who We Work With</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>We partner with kitchen dealers who share our commitment to design excellence and customer experience. The ideal Pronorm dealer operates a professional showroom, employs trained kitchen designers, and serves a clientele that values quality over price.</p>
+          <p style="margin-top: 1rem;">Whether you're an established multi-line dealer looking to add a European brand, or a design-focused studio seeking a premium anchor line — we'd love to talk.</p>
+        </div>
+        <div class="reveal">
+          <div class="ideal-list">
+            <div class="ideal-item"><strong>Showroom presence</strong><span>Professional retail or design studio</span></div>
+            <div class="ideal-item"><strong>Design capability</strong><span>Trained kitchen designers on staff</span></div>
+            <div class="ideal-item"><strong>Premium clientele</strong><span>Serving mid-to-high-end homeowners and builders</span></div>
+            <div class="ideal-item"><strong>Growth mindset</strong><span>Interested in brand building, not just order-taking</span></div>
+            <div class="ideal-item"><strong>Service orientation</strong><span>Committed to white-glove customer experience</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Application Form -->
+  <section class="section-lg" id="apply">
+    <div class="container">
+      <div class="apply-grid">
+        <div class="reveal">
+          <span class="overline">Apply</span>
+          <h2 style="margin-top: 0.5rem;">Start the Conversation</h2>
+          <p style="margin-top: 1rem;">Submit your application and a Pinnacle Sales representative will contact you within 2 business days to discuss partnership opportunities.</p>
+        </div>
+        <form class="apply-form" name="dealer-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you">
+          <input type="hidden" name="form-name" value="dealer-application" />
+          <p style="display:none;"><input name="bot-field" /></p>
+
+          <div class="form-row"><div class="form-group"><label>Contact Name *</label><input type="text" name="contact-name" required /></div><div class="form-group"><label>Title</label><input type="text" name="title" /></div></div>
+          <div class="form-group"><label>Company Name *</label><input type="text" name="company" required /></div>
+          <div class="form-row"><div class="form-group"><label>Email *</label><input type="email" name="email" required /></div><div class="form-group"><label>Phone *</label><input type="tel" name="phone" required /></div></div>
+          <div class="form-row"><div class="form-group"><label>City *</label><input type="text" name="city" required /></div><div class="form-group"><label>State *</label><input type="text" name="state" required /></div></div>
+          <div class="form-group"><label>Website</label><input type="url" name="website" placeholder="https://" /></div>
+          <div class="form-group"><label>Current Cabinet Lines Carried</label><textarea name="current-lines" rows="3" placeholder="List the brands you currently represent..."></textarea></div>
+          <div class="form-group"><label>Why Pronorm?</label><textarea name="why-pronorm" rows="3" placeholder="Tell us why you're interested in adding Pronorm to your showroom..."></textarea></div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Submit Application</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .dealer-hero { position: relative; min-height: 65vh; display: flex; align-items: center; overflow: hidden; }
+
+  .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
+  .benefit-card { padding: 2rem; background: var(--color-ivory); }
+  .benefit-icon { font-size: 1.5rem; display: block; margin-bottom: 0.75rem; }
+  .benefit-card h4 { margin-bottom: 0.5rem; }
+  .benefit-card p { font-size: 0.88rem; color: var(--color-graphite); }
+
+  .content-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4xl); align-items: start; }
+
+  .ideal-list { display: flex; flex-direction: column; gap: 1rem; }
+  .ideal-item { display: flex; flex-direction: column; padding: 1rem 1.2rem; background: var(--color-white); }
+  .ideal-item strong { font-size: 0.9rem; }
+  .ideal-item span { font-size: 0.82rem; color: var(--color-warm-gray); }
+
+  .apply-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: var(--space-4xl); align-items: start; }
+  .apply-form { display: flex; flex-direction: column; gap: 1.2rem; background: var(--color-ivory); padding: 2.5rem; border: 1px solid var(--color-sand); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; }
+
+  @media (max-width: 1024px) { .benefits-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) {
+    .benefits-grid, .content-split, .apply-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .apply-form { padding: 1.5rem; }
+  }
+</style>

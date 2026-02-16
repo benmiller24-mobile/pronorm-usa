@@ -1,0 +1,40 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Privacy Policy" description="Pronorm USA privacy policy — how we collect, use, and protect your personal information." noindex={true}>
+  <section class="section-lg">
+    <div class="container-narrow">
+      <span class="overline">Legal</span>
+      <h1 style="font-size: clamp(2rem, 3vw, 2.5rem); margin-top: 0.5rem;">Privacy Policy</h1>
+      <p style="color: var(--color-warm-gray); margin-top: 0.5rem;"><em>Last updated: February 2026</em></p>
+      <hr class="divider-long" style="margin: 2rem 0;" />
+
+      <div class="legal-content">
+        <h2>Information We Collect</h2>
+        <p>When you submit a form on pronormusa.com — such as a consultation request, dealer application, newsletter signup, or contact form — we collect the information you provide, including your name, email address, phone number, location, and any additional details you include.</p>
+        <p>We also collect standard analytics data through cookies and similar technologies, including pages visited, time on site, referring source, and browser/device information.</p>
+
+        <h2>How We Use Your Information</h2>
+        <p>Consultation and contact form submissions are shared with the nearest authorized Pronorm dealer to facilitate your design consultation. Dealer application information is reviewed by Pinnacle Sales to evaluate partnership opportunities. Newsletter subscriptions are used solely to send you periodic design inspiration and Pronorm news. Analytics data is used to improve our website and understand how visitors engage with our content.</p>
+
+        <h2>Third-Party Services</h2>
+        <p>This website is hosted on Netlify. Forms are processed through Netlify Forms. We may use Google Analytics for website analytics. We do not sell, rent, or trade your personal information to third parties for marketing purposes.</p>
+
+        <h2>Data Retention</h2>
+        <p>We retain form submission data for as long as necessary to fulfill the purpose for which it was collected. You may request deletion of your data at any time by contacting us.</p>
+
+        <h2>Your Rights</h2>
+        <p>You have the right to access, correct, or delete your personal information. California residents have additional rights under the CCPA. To exercise any of these rights, contact us at the information below.</p>
+
+        <h2>Contact</h2>
+        <p>For privacy-related inquiries, please contact us through our <a href="/contact" style="color: var(--color-copper);">contact page</a>.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal-content h2 { margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.4rem; }
+  .legal-content p { margin-bottom: 1rem; line-height: 1.8; color: var(--color-graphite); }
+</style>

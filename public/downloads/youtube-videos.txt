@@ -1,0 +1,25 @@
+PRONORM YouTube Video Embeds (found on pronorm.de pages)
+=========================================================
+
+Y-line product video:
+https://www.youtube.com/embed/Vt1XiCDDhws
+https://www.youtube.com/watch?v=Vt1XiCDDhws
+
+Carcase video:
+https://www.youtube.com/embed/vzDFdD4WtkM
+https://www.youtube.com/watch?v=vzDFdD4WtkM
+
+Additional videos:
+https://www.youtube.com/embed/LPddsxj-XOs
+https://www.youtube.com/watch?v=LPddsxj-XOs
+
+https://www.youtube.com/embed/mwNTB9HBH-w
+https://www.youtube.com/watch?v=mwNTB9HBH-w
+
+https://www.youtube.com/embed/xkEMXfBeDN0
+https://www.youtube.com/watch?v=xkEMXfBeDN0
+
+Channel: https://www.youtube.com/channel/UCPjcxits-FADjY_z_m23dbw
+
+NOTE: Videos cannot be downloaded programmatically from YouTube.
+Download manually using yt-dlp or similar tool if needed.

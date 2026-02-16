@@ -1,0 +1,257 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const productLines = [
+  {
+    slug: 'y-line',
+    name: 'Y‑line',
+    tagline: 'The Unique Handleless Kitchen',
+    description: 'Contemporary living through a unique fusion of handleless elegance and clean, linear design — combined with planning that prioritizes ergonomics and diverse design options. Y‑line brings a captivating identity to modern living. A concept for design-forward interiors that masterfully balance form, function, and ergonomics.',
+    detail: 'The integrated grip profile in stainless, bronze, or black anodized finishes is not only visually striking but also provides an exceptionally comfortable user experience. The rear handle rail can be supplied in the front\'s colour or in a contrasting shade — allowing for fully personalized kitchen designs. Y‑line plus goes beyond the standard, offering maximum, tailored ergonomics.',
+    features: ['Integrated grip profile in stainless, bronze, or black anodized', 'Rear handle rail in front colour or contrasting shade', 'Y‑line plus for customized ergonomics and lower plinth', 'Seamless, linear handleless operation'],
+  },
+  {
+    slug: 'x-line',
+    name: 'X‑line',
+    tagline: 'The Classic Handleless Kitchen',
+    description: 'A masterpiece of timeless, classic elegance. At the heart of this product line is a gently curved C-shaped handle profile that not only delivers visual appeal but also allows for comfortable access across the entire cabinet length.',
+    detail: 'Available in a selection of 10 colour options, the C-profile can be customized to suit individual style preferences. With this classic handleless kitchen, it\'s possible to create seamless and expansive interior designs with a truly unified look. X‑line plus goes beyond the standard to offer maximum, personalized ergonomics.',
+    features: ['Gently curved C-shaped handle profile', '10 colour options for the C-profile', 'Seamless, expansive interior designs', 'X‑line plus for customized ergonomics and lower plinth'],
+  },
+  {
+    slug: 'proline128',
+    name: 'Proline128',
+    tagline: 'The Ergonomic Grid Kitchen',
+    description: 'An innovative 128mm grid planning system with convincing answers to all your furnishing questions and wishes. Using the 128mm grid steps and in combination with various plinth heights, any desired height becomes a reality. Perfectly thought out and personalised to you.',
+    detail: 'The grid allows product lines to be combined effortlessly, enabling maximum individuality. Cabinets with handles in Proline128 can be easily combined with handleless cabinets — X‑line, Y‑line, or even Proline128 with push-to-open. Proline128 plus enables maximum customised ergonomics above and beyond the standard.',
+    features: ['128mm grid planning for any desired height', 'Combine freely with Y‑line and X‑line', 'Push-to-open option for handleless look', 'Proline128 plus for customized ergonomics'],
+  },
+];
+---
+
+<BaseLayout
+  title="Kitchen Product Lines"
+  description="Explore Pronorm German kitchen product lines — Y‑line handleless, X‑line classic handleless, and Proline128 ergonomic grid kitchens. Precision-engineered in Vlotho, Germany."
+>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="overline animate-in">Product Lines</span>
+      <h1 class="animate-in animate-in-delay-1">Designed to<br/>Move You</h1>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
+        Choose between handleless elegance and ergonomic versatility. Each Pronorm product line delivers German engineering excellence with a distinct design philosophy.
+      </p>
+    </div>
+  </section>
+
+  <!-- Product Line Selector -->
+  <section class="line-selector section-sm bg-ivory">
+    <div class="container text-center">
+      <div class="selector-bar">
+        <div class="selector-group">
+          <span class="selector-label">Handleless</span>
+          <div class="selector-items">
+            <a href="#y-line" class="selector-item">Y‑line</a>
+            <a href="#x-line" class="selector-item">X‑line</a>
+          </div>
+        </div>
+        <div class="selector-divider"></div>
+        <div class="selector-group">
+          <span class="selector-label">With Handle</span>
+          <div class="selector-items">
+            <a href="#proline128" class="selector-item">Proline128</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Lines -->
+  {productLines.map((line, i) => (
+    <section class:list={["product-line-feature", "section-lg", { "bg-cream": i % 2 === 1 }]} id={line.slug}>
+      <div class="container">
+        <div class:list={["feature-grid", { "feature-grid-reverse": i % 2 === 1 }]}>
+          <div class="feature-content reveal">
+            <span class="overline">{line.tagline}</span>
+            <h2 style="margin-top: 0.5rem;">{line.name}</h2>
+            <hr class="divider" style="margin: 1.5rem 0;" />
+            <p>{line.description}</p>
+            <p style="margin-top: 1rem;">{line.detail}</p>
+            <ul class="feature-list">
+              {line.features.map(f => (
+                <li>{f}</li>
+              ))}
+            </ul>
+            <a href={`/product-lines/${line.slug}`} class="btn btn-primary" style="margin-top: 2rem;">
+              Explore {line.name}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+          <div class="feature-image reveal">
+            <div class="img-placeholder" style="aspect-ratio: 3/4;">
+              <span>{line.name} Kitchen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- proTech X Innovation -->
+  <section class="section bg-dark">
+    <div class="container">
+      <div class="protech-grid">
+        <div class="reveal">
+          <span class="overline" style="color: var(--color-copper);">Innovation — 2026 Collection</span>
+          <h2 style="margin-top: 0.5rem; color: var(--color-white);">proTech X<br/>Drawer System</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p style="color: var(--color-sand);">A further developed concept that reimagines the interior of the kitchen from the ground up. proTech X combines a modern, minimalist side profile with technical precision, setting new standards in both function and aesthetics.</p>
+          <div class="protech-variants" style="margin-top: 2rem;">
+            <div class="protech-variant">
+              <strong style="color: var(--color-copper);">proTech X pure</strong>
+              <span style="color: var(--color-stone);">Purist design with elegant, narrow side profiles. Also available as pureMaxi with higher sides.</span>
+            </div>
+            <div class="protech-variant">
+              <strong style="color: var(--color-copper);">proTech X woodBox</strong>
+              <span style="color: var(--color-stone);">Wood-effect drawer sides in Urban Oak or Dark Sherwood. Also available as woodBoxMaxi.</span>
+            </div>
+            <div class="protech-variant">
+              <strong style="color: var(--color-copper);">proTech X glassCase</strong>
+              <span style="color: var(--color-stone);">Transparent glass elements in the drawer sides create elegant, refined highlights.</span>
+            </div>
+          </div>
+          <a href="/equipment" class="btn btn-white" style="margin-top: 2rem;">
+            Explore Equipment
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="reveal">
+          <div class="img-placeholder-dark img-placeholder" style="aspect-ratio: 4/5;"><span>proTech X Drawer System</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Design Range -->
+  <section class="section">
+    <div class="container text-center">
+      <span class="overline">2026 Collection</span>
+      <h2 style="margin-top: 0.5rem;">New Surfaces, Textures & Colours</h2>
+      <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">
+        From finely textured Boho-style surfaces and woven linen-look designs to veneered fronts with intricate fan structures — the 2026 collection brings unprecedented tactile and visual depth.
+      </p>
+      <div class="surface-grid" style="margin-top: var(--space-2xl);">
+        <div class="surface-card reveal">
+          <div class="img-placeholder-square img-placeholder"><span>Boho Texture</span></div>
+          <h4 style="margin-top: 0.75rem;">Boho Texture</h4>
+          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Finely textured relief surface</p>
+        </div>
+        <div class="surface-card reveal">
+          <div class="img-placeholder-square img-placeholder"><span>Linen Look</span></div>
+          <h4 style="margin-top: 0.75rem;">Woven Linen</h4>
+          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Woven linen-look design front</p>
+        </div>
+        <div class="surface-card reveal">
+          <div class="img-placeholder-square img-placeholder"><span>Fan Veneer</span></div>
+          <h4 style="margin-top: 0.75rem;">Fan Structure Veneer</h4>
+          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Intricate veneered fan pattern</p>
+        </div>
+        <div class="surface-card reveal">
+          <div class="img-placeholder-square img-placeholder"><span>Organic Glass</span></div>
+          <h4 style="margin-top: 0.75rem;">Organic Glass</h4>
+          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Soft matte architectural elegance</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2.5rem; flex-wrap: wrap;">
+        <a href="/request-consultation" class="btn btn-primary">Request Material Samples</a>
+        <a href="/find-a-dealer" class="btn btn-outline">Visit a Showroom</a>
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA dark={false} />
+</BaseLayout>
+
+<style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-3xl); }
+
+  .selector-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .selector-group { display: flex; align-items: center; gap: 0.75rem; }
+
+  .selector-label {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--color-warm-gray);
+  }
+
+  .selector-items { display: flex; gap: 0.5rem; }
+
+  .selector-item {
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.06em;
+    padding: 0.5rem 1.2rem; border: 1.5px solid var(--color-sand);
+    color: var(--color-graphite); transition: all 200ms ease;
+  }
+
+  .selector-item:hover {
+    background: var(--color-black); border-color: var(--color-black);
+    color: var(--color-white);
+  }
+
+  .selector-divider { width: 1px; height: 30px; background: var(--color-sand); }
+
+  .feature-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: var(--space-4xl); align-items: center;
+  }
+
+  .feature-grid-reverse .feature-content { order: 2; }
+  .feature-grid-reverse .feature-image { order: 1; }
+
+  .feature-list {
+    margin-top: 1.5rem; list-style: none;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+
+  .feature-list li {
+    font-size: 0.9rem; color: var(--color-graphite);
+    padding-left: 1.2rem; position: relative;
+  }
+
+  .feature-list li::before {
+    content: ''; position: absolute; left: 0; top: 0.55em;
+    width: 6px; height: 1px; background: var(--color-copper);
+  }
+
+  .protech-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: var(--space-4xl); align-items: center;
+  }
+
+  .protech-variants { display: flex; flex-direction: column; gap: 1.2rem; }
+
+  .protech-variant { display: flex; flex-direction: column; gap: 0.2rem; }
+  .protech-variant strong { font-size: 0.9rem; }
+  .protech-variant span { font-size: 0.82rem; }
+
+  .surface-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl); }
+
+  @media (max-width: 1024px) {
+    .surface-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .feature-grid, .protech-grid { grid-template-columns: 1fr; }
+    .feature-grid-reverse .feature-content { order: 1; }
+    .feature-grid-reverse .feature-image { order: 2; }
+    .surface-grid { grid-template-columns: 1fr 1fr; }
+    .selector-divider { display: none; }
+  }
+</style>

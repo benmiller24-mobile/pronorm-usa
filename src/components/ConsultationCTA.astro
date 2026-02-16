@@ -1,0 +1,60 @@
+---
+interface Props {
+  heading?: string;
+  text?: string;
+  dark?: boolean;
+}
+
+const {
+  heading = "Begin Your Kitchen Journey",
+  text = "Connect with an authorized Pronorm dealer in your area for a complimentary design consultation.",
+  dark = true,
+} = Astro.props;
+---
+
+<section class:list={["cta-section", { "cta-dark": dark, "cta-light": !dark }]}>
+  <div class="container text-center">
+    <span class="overline" style={dark ? "color: var(--color-copper);" : ""}>Ready to Start?</span>
+    <h2 style="margin-top: 0.75rem;">{heading}</h2>
+    <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">{text}</p>
+    <div class="cta-buttons" style="margin-top: 2rem;">
+      <a href="/request-consultation" class:list={["btn", dark ? "btn-white" : "btn-primary"]}>
+        Request a Consultation
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="/find-a-dealer" class:list={["btn", dark ? "btn-outline" : "btn-outline"]} style={dark ? "color: var(--color-cream); border-color: var(--color-cream);" : ""}>
+        Find a Dealer Near You
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-section {
+    padding: var(--space-5xl) 0;
+  }
+
+  .cta-dark {
+    background: var(--color-black);
+    color: var(--color-cream);
+  }
+
+  .cta-dark h2 {
+    color: var(--color-white);
+  }
+
+  .cta-dark .subtitle {
+    color: var(--color-stone);
+  }
+
+  .cta-light {
+    background: var(--color-cream);
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

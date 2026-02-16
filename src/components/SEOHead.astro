@@ -1,0 +1,82 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: string;
+  schema?: object;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical = Astro.url.href,
+  ogImage = '/images/pronorm-og-default.jpg',
+  ogType = 'website',
+  schema,
+  noindex = false,
+} = Astro.props;
+
+const siteName = 'Pronorm USA';
+const fullTitle = title === 'Home' ? `${siteName} — German Fitted Kitchens` : `${title} | ${siteName}`;
+const fullOgImage = new URL(ogImage, Astro.site).href;
+
+const defaultSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Pronorm USA",
+  "url": "https://www.pronormusa.com",
+  "logo": "https://www.pronormusa.com/images/pronorm-logo.svg",
+  "description": "Pronorm German fitted kitchens — precision-engineered in Vlotho, Germany. Available through authorized dealers across the United States.",
+  "sameAs": [
+    "https://www.instagram.com/pronormusa",
+    "https://www.pinterest.com/pronormusa",
+    "https://www.houzz.com/pro/pronormusa"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "sales",
+    "availableLanguage": "English"
+  }
+};
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+
+  <!-- Primary Meta -->
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
+  <link rel="canonical" href={canonical} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content={ogType} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={fullOgImage} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:site_name" content={siteName} />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={fullOgImage} />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Schema.org -->
+  <script type="application/ld+json" set:html={JSON.stringify(schema || defaultSchema)} />
+</head>

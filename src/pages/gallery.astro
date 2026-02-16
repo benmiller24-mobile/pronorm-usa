@@ -1,0 +1,160 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const galleryItems = [
+  { title: "Contemporary Handleless — Pacific Palisades", style: "Modern", collection: "Y‑line" },
+  { title: "Warm Walnut Island — Scottsdale", style: "Organic Modern", collection: "Proline128" },
+  { title: "Classic Elegance — Park City", style: "Transitional", collection: "X‑line" },
+  { title: "Matte Black & Oak — Manhattan Beach", style: "Modern", collection: "Y‑line" },
+  { title: "All-White European — Napa Valley", style: "Minimalist", collection: "Y‑line" },
+  { title: "Textured Oak Open Plan — Denver", style: "Organic Modern", collection: "Proline128" },
+  { title: "High-Gloss Lacquer — Beverly Hills", style: "Modern", collection: "Y‑line" },
+  { title: "Soft Curve Handleless — La Jolla", style: "Transitional", collection: "X‑line" },
+  { title: "Japan-Inspired Minimalism — Portland", style: "Minimalist", collection: "Y‑line" },
+  { title: "Mountain Modern — Aspen", style: "Modern", collection: "X‑line" },
+  { title: "Desert Contemporary — Paradise Valley", style: "Organic Modern", collection: "Proline128" },
+  { title: "Urban Penthouse — San Francisco", style: "Modern", collection: "Y‑line" },
+];
+
+const styles = [...new Set(galleryItems.map(g => g.style))];
+const productLines = [...new Set(galleryItems.map(g => g.collection))];
+---
+
+<BaseLayout
+  title="Design Gallery"
+  description="Browse real Pronorm German kitchen installations across the United States — Y‑line, X‑line, and Proline128 designs in American homes from coast to coast."
+>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="overline animate-in">Gallery</span>
+      <h1 class="animate-in animate-in-delay-1">Kitchen<br/>Inspiration</h1>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
+        Real Pronorm kitchens in American homes — each one a collaboration between homeowner, dealer, and German craftsmanship.
+      </p>
+    </div>
+  </section>
+
+  <!-- Filter Bar -->
+  <section class="filter-bar">
+    <div class="container">
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All Projects</button>
+        {styles.map(s => <button class="filter-btn" data-filter={s}>{s}</button>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Grid -->
+  <section class="section">
+    <div class="container-wide">
+      <div class="gallery-grid">
+        {galleryItems.map((item, i) => (
+          <div class="gallery-card reveal" data-style={item.style} data-collection={item.collection}>
+            <div class:list={["img-placeholder", i % 3 === 0 ? "img-placeholder-tall" : ""]} style={i % 3 === 0 ? "aspect-ratio: 3/4;" : "aspect-ratio: 4/3;"}>
+              <span>{item.title}</span>
+            </div>
+            <div class="gallery-card-info">
+              <h4>{item.title}</h4>
+              <span class="gallery-meta">{item.collection} · {item.style}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Share CTA -->
+  <section class="section bg-ivory text-center">
+    <div class="container-narrow">
+      <span class="overline">Share Your Pronorm</span>
+      <h2 style="margin-top: 0.5rem;">Tag @pronormusa on Instagram</h2>
+      <p class="subtitle" style="margin: 1rem auto 0; max-width: 50ch;">
+        Love your Pronorm kitchen? Share your project with our community. Tag us for a chance to be featured in our gallery.
+      </p>
+      <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top: 1.5rem;">Follow @pronormusa</a>
+    </div>
+  </section>
+
+  <ConsultationCTA />
+</BaseLayout>
+
+<style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
+
+  .filter-bar {
+    padding: var(--space-lg) 0;
+    border-bottom: var(--border-light);
+    position: sticky;
+    top: 72px;
+    background: rgba(253, 252, 250, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+  }
+
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.2rem;
+    border: 1.5px solid var(--color-sand);
+    background: transparent;
+    color: var(--color-graphite);
+    cursor: pointer;
+    transition: all var(--duration-fast) ease;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--color-black);
+    border-color: var(--color-black);
+    color: var(--color-white);
+  }
+
+  .gallery-grid {
+    columns: 3;
+    column-gap: var(--space-lg);
+  }
+
+  .gallery-card {
+    break-inside: avoid;
+    margin-bottom: var(--space-lg);
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .gallery-card .img-placeholder {
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .gallery-card:hover .img-placeholder {
+    transform: scale(1.03);
+  }
+
+  .gallery-card-info {
+    padding: 1rem 0;
+  }
+
+  .gallery-card-info h4 {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .gallery-meta {
+    font-size: 0.78rem;
+    color: var(--color-warm-gray);
+    margin-top: 0.2rem;
+    display: block;
+  }
+
+  @media (max-width: 1024px) { .gallery-grid { columns: 2; } }
+  @media (max-width: 768px) { .gallery-grid { columns: 1; } }
+</style>

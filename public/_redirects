@@ -1,0 +1,5 @@
+# Redirects
+/blog/*  /magazine/:splat  301
+/dealers  /find-a-dealer  301
+/consultation  /request-consultation  301
+/partner  /become-a-dealer  301

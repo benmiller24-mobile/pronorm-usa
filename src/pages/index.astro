@@ -1,0 +1,644 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Pronorm USA",
+  "url": "https://www.pronormusa.com",
+  "description": "Pronorm German fitted kitchens — precision-engineered in Vlotho, Germany. Available through authorized dealers across the United States.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.pronormusa.com/find-a-dealer?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+---
+
+<BaseLayout
+  title="Home"
+  description="Pronorm German fitted kitchens — precision-engineered in Vlotho, Germany. Y‑line handleless, X‑line classic handleless, and Proline128 ergonomic grid kitchens available through authorized US dealers."
+  schema={schema}
+>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-bg img-placeholder-dark img-placeholder-hero">
+      <span>Hero Image — Pronorm Kitchen</span>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="overline animate-in" style="color: var(--color-copper);">German Fitted Kitchens</span>
+      <h1 class="animate-in animate-in-delay-1">Engineered<br/>for Life</h1>
+      <p class="hero-subtitle animate-in animate-in-delay-2">Precision-crafted in Vlotho, Germany. Designed for the way Americans live, cook, and gather.</p>
+      <div class="hero-actions animate-in animate-in-delay-3">
+        <a href="/product-lines" class="btn btn-white">
+          Explore Product Lines
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="/find-a-dealer" class="btn btn-outline" style="color: var(--color-cream); border-color: rgba(255,255,255,0.4);">
+          Find a Dealer
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BRAND STATEMENT ============ -->
+  <section class="brand-statement section">
+    <div class="container-narrow text-center">
+      <hr class="divider" style="margin: 0 auto 2rem;" />
+      <h2 class="reveal">The kitchen is the heart of the home.<br/>It deserves a heartbeat of its own.</h2>
+      <p class="subtitle reveal" style="margin: 1.5rem auto 0; max-width: 60ch;">
+        For over 50 years, Pronorm has built kitchens that unite German engineering precision with designs that breathe warmth, texture, and personality into every home.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ COLLECTIONS PREVIEW ============ -->
+  <section class="product-lines-section section-lg bg-ivory">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="overline">Collections</span>
+        <h2 style="margin-top: 0.5rem;">Three Philosophies.<br/>One Standard of Excellence.</h2>
+      </div>
+
+      <div class="product-lines-grid">
+        <!-- Y-line -->
+        <a href="/product-lines/y-line" class="collection-card reveal">
+          <div class="collection-image img-placeholder" style="aspect-ratio: 4/5;">
+            <span>Y-line Handleless Kitchen</span>
+          </div>
+          <div class="collection-info">
+            <h3>Y‑line</h3>
+            <p>The unique handleless kitchen. An integrated grip profile in stainless, bronze, or black anodized finishes creates seamless surfaces and captivating identity.</p>
+            <span class="card-link">
+              Explore Y‑line
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- X-line -->
+        <a href="/product-lines/x-line" class="collection-card reveal" style="animation-delay: 0.15s;">
+          <div class="collection-image img-placeholder" style="aspect-ratio: 4/5;">
+            <span>X-line Classic Handleless Kitchen</span>
+          </div>
+          <div class="collection-info">
+            <h3>X‑line</h3>
+            <p>The classic handleless kitchen. A gently curved C-shaped handle profile delivers timeless elegance and comfortable access across the full cabinet length.</p>
+            <span class="card-link">
+              Explore X‑line
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Proline128 -->
+        <a href="/product-lines/proline128" class="collection-card reveal" style="animation-delay: 0.3s;">
+          <div class="collection-image img-placeholder" style="aspect-ratio: 4/5;">
+            <span>Proline128 Ergonomic Kitchen</span>
+          </div>
+          <div class="collection-info">
+            <h3>Proline128</h3>
+            <p>The ergonomic grid kitchen. An innovative 128mm planning grid enables any desired height — combining handles, functionality, and aesthetic freedom.</p>
+            <span class="card-link">
+              Explore Proline128
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </div>
+        </a>
+      </div>
+
+      <div class="text-center" style="margin-top: 3rem;">
+        <a href="/product-lines" class="btn btn-outline">View All Product Lines</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHY PRONORM STRIP ============ -->
+  <section class="why-strip section">
+    <div class="container">
+      <div class="why-strip-grid">
+        <div class="why-strip-content reveal">
+          <span class="overline">Why Pronorm</span>
+          <h2 style="margin-top: 0.5rem;">German Engineering.<br/>American Living.</h2>
+          <p style="margin-top: 1rem;">
+            Unlike American cabinetry — individual boxes installed side by side — Pronorm kitchens are engineered as complete systems. Every element is designed to work together as a single, seamless installation with tolerances measured in fractions of a millimeter.
+          </p>
+          <div class="why-features">
+            <div class="why-feature">
+              <strong>19mm Panels</strong>
+              <span>Thicker than the industry-standard 16mm for superior rigidity</span>
+            </div>
+            <div class="why-feature">
+              <strong>Blum & Hettich Hardware</strong>
+              <span>Soft-close standard on every door and drawer</span>
+            </div>
+            <div class="why-feature">
+              <strong>CNC Precision</strong>
+              <span>Robotic assembly with sub-millimeter tolerances</span>
+            </div>
+            <div class="why-feature">
+              <strong>Sustainable Manufacturing</strong>
+              <span>Low-VOC adhesives, renewable energy, certified materials</span>
+            </div>
+          </div>
+          <a href="/why-pronorm" class="btn btn-primary" style="margin-top: 2rem;">
+            Discover Our Craft
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="why-strip-image reveal">
+          <div class="img-placeholder-tall img-placeholder">
+            <span>Pronorm Factory Detail</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS BAR ============ -->
+  <section class="stats-bar bg-dark">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat reveal">
+          <span class="stat-number">50+</span>
+          <span class="stat-label">Years of German Kitchen Making</span>
+        </div>
+        <div class="stat reveal">
+          <span class="stat-number">100+</span>
+          <span class="stat-label">Door Front Options</span>
+        </div>
+        <div class="stat reveal">
+          <span class="stat-number">0.1mm</span>
+          <span class="stat-label">Manufacturing Tolerance</span>
+        </div>
+        <div class="stat reveal">
+          <span class="stat-number">19mm</span>
+          <span class="stat-label">Panel Thickness Standard</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY PREVIEW ============ -->
+  <section class="gallery-preview section-lg">
+    <div class="container">
+      <div class="section-header text-center reveal">
+        <span class="overline">Inspiration</span>
+        <h2 style="margin-top: 0.5rem;">Kitchens That Tell a Story</h2>
+        <p class="subtitle" style="margin: 1rem auto 0; max-width: 50ch;">Real Pronorm kitchens in American homes — from coastal California to urban New York.</p>
+      </div>
+
+      <div class="gallery-mosaic reveal">
+        <div class="gallery-item gallery-item-wide">
+          <div class="img-placeholder" style="aspect-ratio: 16/9;"><span>Kitchen — Modern Handleless</span></div>
+        </div>
+        <div class="gallery-item">
+          <div class="img-placeholder" style="aspect-ratio: 1;"><span>Kitchen Detail — Walnut Island</span></div>
+        </div>
+        <div class="gallery-item">
+          <div class="img-placeholder" style="aspect-ratio: 1;"><span>Kitchen — Open Plan Living</span></div>
+        </div>
+        <div class="gallery-item">
+          <div class="img-placeholder" style="aspect-ratio: 1;"><span>Kitchen — Textured Surface Detail</span></div>
+        </div>
+        <div class="gallery-item gallery-item-wide">
+          <div class="img-placeholder" style="aspect-ratio: 16/9;"><span>Kitchen — Shaker Transitional</span></div>
+        </div>
+      </div>
+
+      <div class="text-center" style="margin-top: 2.5rem;">
+        <a href="/gallery" class="btn btn-outline">View Full Gallery</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INSTAGRAM FEED ============ -->
+  <section class="instagram-section section bg-cream">
+    <div class="container text-center">
+      <span class="overline">Follow @pronormusa</span>
+      <h2 style="margin-top: 0.5rem;">Design Moments</h2>
+      <p class="subtitle" style="margin: 0.5rem auto 2rem;">Join our community for daily inspiration, behind-the-scenes looks, and finished project reveals.</p>
+
+      <div class="instagram-grid">
+        <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" class="insta-item">
+          <div class="img-placeholder-square img-placeholder"><span>IG Post</span></div>
+        </a>
+        <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" class="insta-item">
+          <div class="img-placeholder-square img-placeholder"><span>IG Post</span></div>
+        </a>
+        <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" class="insta-item">
+          <div class="img-placeholder-square img-placeholder"><span>IG Post</span></div>
+        </a>
+        <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" class="insta-item">
+          <div class="img-placeholder-square img-placeholder"><span>IG Post</span></div>
+        </a>
+        <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" class="insta-item">
+          <div class="img-placeholder-square img-placeholder"><span>IG Post</span></div>
+        </a>
+        <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" class="insta-item">
+          <div class="img-placeholder-square img-placeholder"><span>IG Post</span></div>
+        </a>
+      </div>
+
+      <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" class="btn btn-outline" style="margin-top: 2rem;">
+        Follow on Instagram
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ DEALER LOCATOR PREVIEW ============ -->
+  <section class="dealer-preview section-lg">
+    <div class="container">
+      <div class="dealer-preview-grid">
+        <div class="dealer-preview-content reveal">
+          <span class="overline">Authorized Dealers</span>
+          <h2 style="margin-top: 0.5rem;">Experience Pronorm In Person</h2>
+          <p style="margin-top: 1rem;">
+            Every Pronorm kitchen begins with a conversation. Our authorized dealers provide expert design consultation, 3D kitchen planning, and white-glove project management from concept through installation.
+          </p>
+          <p style="margin-top: 1rem;">
+            Find a dealer near you to schedule a complimentary design consultation and see Pronorm materials, finishes, and hardware in person.
+          </p>
+
+          <form class="zip-search" action="/find-a-dealer" method="GET">
+            <input type="text" name="zip" placeholder="Enter your zip code" maxlength="10" />
+            <button type="submit" class="btn btn-primary">Find Dealers</button>
+          </form>
+
+          <p style="margin-top: 2rem; font-size: 0.85rem; color: var(--color-warm-gray);">
+            Are you a kitchen dealer interested in offering Pronorm?
+            <a href="/become-a-dealer" style="color: var(--color-copper); text-decoration: underline;">Learn about partnership opportunities →</a>
+          </p>
+        </div>
+        <div class="dealer-preview-map reveal">
+          <div class="img-placeholder" style="aspect-ratio: 4/3; border-radius: 4px;">
+            <span>Dealer Map — Western US</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MAGAZINE PREVIEW ============ -->
+  <section class="magazine-preview section bg-ivory">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="overline">The Pronorm Magazine</span>
+        <h2 style="margin-top: 0.5rem;">Design Intelligence</h2>
+      </div>
+
+      <div class="magazine-grid">
+        <a href="/magazine/german-vs-american-kitchens" class="magazine-card reveal">
+          <div class="img-placeholder" style="aspect-ratio: 16/10;"><span>Article Image</span></div>
+          <div class="magazine-card-content">
+            <span class="overline">Guide</span>
+            <h4>German Fitted Kitchens vs. American Cabinetry: What's the Difference?</h4>
+            <p>Why the system-engineered approach changes everything about how a kitchen looks, works, and lasts.</p>
+          </div>
+        </a>
+        <a href="/magazine/handleless-kitchen-design" class="magazine-card reveal">
+          <div class="img-placeholder" style="aspect-ratio: 16/10;"><span>Article Image</span></div>
+          <div class="magazine-card-content">
+            <span class="overline">Trends</span>
+            <h4>The Rise of Handleless Kitchen Design in American Homes</h4>
+            <p>How clean-line, grip-channel cabinetry is reshaping luxury kitchen aesthetics from coast to coast.</p>
+          </div>
+        </a>
+        <a href="/magazine/kitchen-island-design-guide" class="magazine-card reveal">
+          <div class="img-placeholder" style="aspect-ratio: 16/10;"><span>Article Image</span></div>
+          <div class="magazine-card-content">
+            <span class="overline">Design</span>
+            <h4>Designing the Perfect Kitchen Island with Pronorm</h4>
+            <p>Proportions, materials, waterfall edges, and integrated storage — the ultimate island guide.</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="text-center" style="margin-top: 2.5rem;">
+        <a href="/magazine" class="btn btn-outline">Read the Magazine</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONSULTATION CTA ============ -->
+  <ConsultationCTA />
+
+</BaseLayout>
+
+<style>
+  /* --- Hero --- */
+  .hero {
+    position: relative;
+    min-height: 95vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      135deg,
+      rgba(26, 26, 26, 0.7) 0%,
+      rgba(26, 26, 26, 0.3) 50%,
+      rgba(26, 26, 26, 0.1) 100%
+    );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    color: var(--color-white);
+  }
+
+  .hero h1 {
+    color: var(--color-white);
+    margin-top: 0.75rem;
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--color-sand);
+    margin-top: 1rem;
+    max-width: 45ch;
+    line-height: 1.5;
+  }
+
+  .hero-actions {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* --- Collections --- */
+  .section-header {
+    margin-bottom: var(--space-3xl);
+  }
+
+  .product-lines-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .collection-card {
+    display: block;
+    text-decoration: none;
+    overflow: hidden;
+  }
+
+  .collection-card .collection-image {
+    transition: transform var(--duration-slow) var(--ease-out);
+    overflow: hidden;
+  }
+
+  .collection-card:hover .collection-image {
+    transform: scale(1.03);
+  }
+
+  .collection-info {
+    padding: 1.5rem 0;
+  }
+
+  .collection-info h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .collection-info p {
+    font-size: 0.9rem;
+    color: var(--color-graphite);
+    margin-bottom: 1rem;
+  }
+
+  .card-link {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-copper);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .card-link svg {
+    transition: transform var(--duration-normal) var(--ease-out);
+  }
+
+  .collection-card:hover .card-link svg {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 768px) {
+    .product-lines-grid { grid-template-columns: 1fr; }
+  }
+
+  /* --- Why Strip --- */
+  .why-strip-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-4xl);
+    align-items: center;
+  }
+
+  .why-features {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+
+  .why-feature {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .why-feature strong {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-black);
+  }
+
+  .why-feature span {
+    font-size: 0.82rem;
+    color: var(--color-warm-gray);
+  }
+
+  @media (max-width: 768px) {
+    .why-strip-grid { grid-template-columns: 1fr; }
+    .why-features { grid-template-columns: 1fr; }
+  }
+
+  /* --- Stats Bar --- */
+  .stats-bar {
+    padding: var(--space-3xl) 0;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 300;
+    color: var(--color-copper);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--color-stone);
+    letter-spacing: 0.04em;
+    margin-top: 0.3rem;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* --- Gallery Mosaic --- */
+  .gallery-mosaic {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+  }
+
+  .gallery-item {
+    overflow: hidden;
+  }
+
+  .gallery-item-wide {
+    grid-column: span 2;
+  }
+
+  .gallery-item .img-placeholder {
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .gallery-item:hover .img-placeholder {
+    transform: scale(1.04);
+  }
+
+  @media (max-width: 768px) {
+    .gallery-mosaic { grid-template-columns: 1fr; }
+    .gallery-item-wide { grid-column: span 1; }
+  }
+
+  /* --- Instagram --- */
+  .instagram-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .insta-item {
+    overflow: hidden;
+  }
+
+  .insta-item .img-placeholder {
+    transition: transform var(--duration-normal) var(--ease-out), filter var(--duration-normal) ease;
+  }
+
+  .insta-item:hover .img-placeholder {
+    transform: scale(1.05);
+    filter: brightness(1.05);
+  }
+
+  @media (max-width: 768px) {
+    .instagram-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* --- Dealer Preview --- */
+  .dealer-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4xl);
+    align-items: center;
+  }
+
+  .zip-search {
+    display: flex;
+    gap: 0;
+    margin-top: 2rem;
+    max-width: 400px;
+  }
+
+  .zip-search input {
+    flex: 1;
+    border-right: none;
+  }
+
+  @media (max-width: 768px) {
+    .dealer-preview-grid { grid-template-columns: 1fr; }
+  }
+
+  /* --- Magazine --- */
+  .magazine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .magazine-card {
+    display: block;
+    text-decoration: none;
+  }
+
+  .magazine-card .img-placeholder {
+    transition: transform var(--duration-slow) var(--ease-out);
+    overflow: hidden;
+  }
+
+  .magazine-card:hover .img-placeholder {
+    transform: scale(1.03);
+  }
+
+  .magazine-card-content {
+    padding: 1.2rem 0;
+  }
+
+  .magazine-card-content .overline {
+    font-size: 0.6rem;
+  }
+
+  .magazine-card-content h4 {
+    margin-top: 0.4rem;
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+
+  .magazine-card-content p {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--color-warm-gray);
+  }
+
+  @media (max-width: 768px) {
+    .magazine-grid { grid-template-columns: 1fr; }
+  }
+</style>

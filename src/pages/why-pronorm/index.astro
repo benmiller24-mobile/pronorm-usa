@@ -1,0 +1,281 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Why Pronorm — German Kitchen Engineering Excellence",
+  "description": "Discover what makes Pronorm German fitted kitchens different from American cabinetry — 19mm panels, Blum hardware, CNC precision, and sustainable manufacturing.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Pronorm USA"
+  }
+};
+---
+
+<BaseLayout
+  title="Why Pronorm"
+  description="Discover what makes Pronorm German fitted kitchens different — 19mm panels, Blum hardware, CNC precision, and sustainable manufacturing. The complete guide to German kitchen excellence."
+  schema={schema}
+>
+
+  <!-- Hero -->
+  <section class="page-hero-full">
+    <div class="hero-bg img-placeholder-dark img-placeholder-hero"><span>Pronorm Factory — Vlotho, Germany</span></div>
+    <div class="hero-overlay-gradient"></div>
+    <div class="hero-text">
+      <div class="container">
+        <span class="overline animate-in" style="color: var(--color-copper);">Why Pronorm</span>
+        <h1 class="animate-in animate-in-delay-1" style="color: var(--color-white);">The Difference<br/>is in the Details</h1>
+        <p class="hero-sub animate-in animate-in-delay-2">Over 50 years of German kitchen-making excellence. Every panel, every hinge, every millimeter — considered.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- German vs American -->
+  <section class="section-lg">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">Fundamental Difference</span>
+          <h2 style="margin-top: 0.5rem;">Fitted Kitchens vs. Cabinet Boxes</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>American cabinetry is typically sold as individual cabinet boxes — separate units installed side by side with filler strips to cover gaps. Each box is an independent piece that happens to sit next to another.</p>
+          <p style="margin-top: 1rem;">German fitted kitchens are fundamentally different. Every element — base units, wall cabinets, countertops, appliance housings, lighting, and interior organizers — is engineered as a single, complete system. Components are designed to work together with tolerances measured in fractions of a millimeter. The result is a kitchen that feels monolithic, seamless, and architecturally integrated rather than assembled from parts.</p>
+        </div>
+        <div class="content-image reveal">
+          <div class="img-placeholder" style="aspect-ratio: 4/3;"><span>Comparison — Fitted vs Box</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Construction Details -->
+  <section class="section bg-ivory">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">Construction</span>
+        <h2 style="margin-top: 0.5rem;">Built to a Higher Standard</h2>
+      </div>
+
+      <div class="specs-grid">
+        <div class="spec-card reveal">
+          <span class="spec-number">19mm</span>
+          <h4>Panel Thickness</h4>
+          <p>Pronorm uses 19mm thick panels throughout — compared to 16mm used by many competitors. This provides greater structural rigidity, improved screw-holding strength, and better sound dampening.</p>
+        </div>
+        <div class="spec-card reveal">
+          <span class="spec-number">Blum</span>
+          <h4>Premium Hardware</h4>
+          <p>Hardware is sourced exclusively from Blum, Hettich, and Grass — the world's finest furniture fittings manufacturers. Soft-close is standard on every single door and drawer, not an upgrade.</p>
+        </div>
+        <div class="spec-card reveal">
+          <span class="spec-number">CNC</span>
+          <h4>Robotic Precision</h4>
+          <p>Advanced CNC machining and robotic assembly ensure sub-millimeter tolerances. Every bore, every edge, every joint is positioned with mathematical precision that handcraft simply cannot match.</p>
+        </div>
+        <div class="spec-card reveal">
+          <span class="spec-number">100%</span>
+          <h4>Finished Interiors</h4>
+          <p>All carcasses feature fully finished interiors, integrated cable management, and pre-drilled adjustment points. No raw particle board. No exposed edges. Every surface you see — and don't see — is finished.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Design Range -->
+  <section class="section-lg">
+    <div class="container">
+      <div class="content-split reverse">
+        <div class="content-text reveal">
+          <span class="overline">Design Range</span>
+          <h2 style="margin-top: 0.5rem;">Hundreds of Possibilities,<br/>One Standard of Quality</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Pronorm offers hundreds of door front options spanning high-gloss lacquer, super-matte anti-fingerprint surfaces, real wood veneers in oak, walnut, and specialty species, and ultra-thin ceramic and stone-look fronts. From sleek handleless designs with integrated grip channels to warm transitional shaker styles — all manufactured to identical quality standards.</p>
+          <p style="margin-top: 1rem;">A full palette of matte lacquers and textured laminates means your kitchen can be as bold or as subdued as your vision demands. Every finish is rigorously tested for UV resistance, scratch hardness, and daily-use durability.</p>
+        </div>
+        <div class="content-image reveal">
+          <div class="img-placeholder" style="aspect-ratio: 3/4;"><span>Material Samples Array</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sustainability -->
+  <section class="section bg-cream">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">Sustainability</span>
+          <h2 style="margin-top: 0.5rem;">Responsible by Design</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Pronorm's factory in Vlotho uses sustainably sourced wood materials, water-based adhesives with low VOC emissions, and energy-efficient manufacturing processes powered in part by renewable energy. All products carry relevant European environmental certifications.</p>
+          <p style="margin-top: 1rem;">Durability is the ultimate sustainability. A Pronorm kitchen is built to last decades — not the 10-15 year lifecycle typical of mass-market cabinetry. When a kitchen lasts twice as long, its environmental footprint is cut in half.</p>
+        </div>
+        <div class="content-image reveal">
+          <div class="img-placeholder" style="aspect-ratio: 4/3;"><span>Pronorm Factory — Sustainable Mfg</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section-lg">
+    <div class="container text-center">
+      <span class="overline reveal">The Process</span>
+      <h2 class="reveal" style="margin-top: 0.5rem;">From Vision to Reality</h2>
+      <p class="subtitle reveal" style="margin: 1rem auto 2rem; max-width: 55ch;">Every Pronorm kitchen journey follows a proven path — from initial consultation to final installation.</p>
+
+      <div class="process-steps">
+        <div class="process-step reveal">
+          <span class="step-number">01</span>
+          <h4>Design Consultation</h4>
+          <p>Meet with an authorized Pronorm dealer for a complimentary design consultation. Share your vision, lifestyle needs, and design preferences.</p>
+        </div>
+        <div class="process-step reveal">
+          <span class="step-number">02</span>
+          <h4>3D Kitchen Planning</h4>
+          <p>Your dealer creates a detailed 3D plan using Pronorm's proprietary software, showing every cabinet, appliance, and finish in photorealistic detail.</p>
+        </div>
+        <div class="process-step reveal">
+          <span class="step-number">03</span>
+          <h4>German Manufacturing</h4>
+          <p>Once finalized, your kitchen is manufactured to exact specifications in Vlotho, Germany. Production lead times are typically 10-14 weeks.</p>
+        </div>
+        <div class="process-step reveal">
+          <span class="step-number">04</span>
+          <h4>White-Glove Installation</h4>
+          <p>Pinnacle Sales coordinates the entire supply chain from the German factory to your home. Professional installation ensures every detail is perfect.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Market Position -->
+  <section class="section bg-dark">
+    <div class="container text-center">
+      <span class="overline" style="color: var(--color-copper);">Market Position</span>
+      <h2 style="margin-top: 0.5rem; color: var(--color-white);">Premium Without the Ultra-Premium Price</h2>
+      <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch; color: var(--color-stone);">
+        Pronorm fills the critical gap between entry-level German brands and ultra-premium names. Authentic German engineering and design without the 6-figure entry point.
+      </p>
+      <div class="price-range" style="margin-top: 2rem;">
+        <span class="price-tag">Typical installations: $40,000 — $150,000+</span>
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA />
+</BaseLayout>
+
+<style>
+  .page-hero-full {
+    position: relative;
+    min-height: 70vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .page-hero-full .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .hero-overlay-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(to top, rgba(26,26,26,0.85) 0%, rgba(26,26,26,0.2) 60%, rgba(26,26,26,0.1) 100%);
+  }
+
+  .hero-text {
+    position: relative;
+    z-index: 3;
+    padding-bottom: var(--space-4xl);
+  }
+
+  .hero-sub {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--color-sand);
+    margin-top: 1rem;
+    max-width: 45ch;
+  }
+
+  .content-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4xl);
+    align-items: center;
+  }
+
+  .content-split.reverse .content-text { order: 2; }
+  .content-split.reverse .content-image { order: 1; }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .spec-card {
+    padding: 2rem;
+    background: var(--color-white);
+  }
+
+  .spec-number {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--color-copper);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .spec-card h4 { margin-bottom: 0.5rem; }
+  .spec-card p { font-size: 0.85rem; color: var(--color-graphite); }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+    text-align: left;
+    margin-top: var(--space-2xl);
+  }
+
+  .step-number {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--color-copper);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .process-step h4 { margin-bottom: 0.5rem; }
+  .process-step p { font-size: 0.85rem; color: var(--color-graphite); }
+
+  .price-tag {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--color-copper);
+  }
+
+  @media (max-width: 1024px) {
+    .specs-grid { grid-template-columns: repeat(2, 1fr); }
+    .process-steps { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .content-split { grid-template-columns: 1fr; }
+    .content-split.reverse .content-text { order: 1; }
+    .content-split.reverse .content-image { order: 2; }
+    .specs-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr; }
+  }
+</style>

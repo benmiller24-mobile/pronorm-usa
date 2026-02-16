@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Thank You" description="Thank you for your interest in Pronorm German kitchens." noindex={true}>
+  <section class="section-lg text-center">
+    <div class="container-narrow">
+      <span class="overline animate-in" style="color: var(--color-copper);">Received</span>
+      <h1 class="animate-in animate-in-delay-1" style="font-size: clamp(2rem, 4vw, 3.5rem);">Thank You</h1>
+      <hr class="divider animate-in animate-in-delay-2" style="margin: 1.5rem auto;" />
+      <p class="subtitle animate-in animate-in-delay-3" style="margin: 0 auto; max-width: 50ch;">
+        Your message has been received. A member of the Pronorm USA team will be in touch within 48 hours.
+      </p>
+      <div style="margin-top: 2rem;" class="animate-in animate-in-delay-4">
+        <a href="/" class="btn btn-primary">Return Home</a>
+        <a href="/gallery" class="btn btn-outline" style="margin-left: 1rem;">Browse Gallery</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

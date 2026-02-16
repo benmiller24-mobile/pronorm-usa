@@ -1,0 +1,351 @@
+---
+const currentPath = Astro.url.pathname;
+
+const productLines = [
+  { href: '/product-lines/y-line', label: 'Y\u2011line', sub: 'Handleless Modern' },
+  { href: '/product-lines/x-line', label: 'X\u2011line', sub: 'Handleless Classic' },
+  { href: '/product-lines/proline128', label: 'Proline128', sub: 'Classic with Handles' },
+  { href: '/product-lines/classicline', label: 'Classicline', sub: 'Traditional' },
+];
+
+const equipmentLinks = [
+  { href: '/product-lines/equipment#protech', label: 'proTech X Drawer System' },
+  { href: '/product-lines/equipment#fittings', label: 'Interior Fittings' },
+  { href: '/product-lines/equipment#storage', label: 'Storage Solutions' },
+  { href: '/product-lines/equipment#lighting', label: 'Lighting' },
+  { href: '/product-lines/equipment#utility', label: 'Utility Room' },
+];
+
+const livingLinks = [
+  { href: '/product-lines/living#highboards', label: 'Highboards' },
+  { href: '/product-lines/living#sideboards', label: 'Sideboards & Lowboards' },
+  { href: '/product-lines/living#dressing', label: 'Dressing Room' },
+  { href: '/product-lines/living#hallway', label: 'Hallway' },
+];
+
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<div class="mobile-shade" id="mobileShade"></div>
+
+<header class="site-header" id="siteHeader">
+  <nav class="nav-bar" aria-label="Main navigation">
+
+    <a href="/" class="nav-logo" aria-label="Pronorm USA Home">
+      <img src="/images/pronorm-logo-white.png" alt="Pronorm" width="120" height="20" />
+    </a>
+
+    <div class="nav-menu-wrap" id="navMenu">
+      <ul class="nav-links">
+
+        <li class="has-mega">
+          <a href="/product-lines" class:list={[{ active: isActive('/product-lines') }]}>
+            Products
+            <svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg>
+          </a>
+          <div class="nav-mega mega-wide">
+            <div class="mega-col">
+              <div class="mega-section-title">Product Lines</div>
+              {productLines.map(p => (
+                <a href={p.href}>{p.label} <span class="mega-sub">{p.sub}</span></a>
+              ))}
+            </div>
+            <div class="mega-col">
+              <div class="mega-section-title">Explore</div>
+              <a href="/product-lines#platform">Platform Concept</a>
+              <a href="/product-lines/surfaces">Surfaces & Materials</a>
+              <div class="mega-divider"></div>
+              <a href="/downloads/pronorm-brochure-2025-26.pdf" class="mega-accent">Download 2026 Brochure &nearr;</a>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <a href="/gallery" class:list={[{ active: isActive('/gallery') }]}>Gallery</a>
+        </li>
+
+        <li class="has-mega">
+          <a href="/product-lines/equipment" class:list={[{ active: isActive('/product-lines/equipment') }]}>
+            Equipment
+            <svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg>
+          </a>
+          <div class="nav-mega">
+            {equipmentLinks.map(e => (
+              <a href={e.href}>{e.label}</a>
+            ))}
+          </div>
+        </li>
+
+        <li class="has-mega">
+          <a href="/product-lines/living" class:list={[{ active: isActive('/product-lines/living') }]}>
+            Living
+            <svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg>
+          </a>
+          <div class="nav-mega">
+            {livingLinks.map(l => (
+              <a href={l.href}>{l.label}</a>
+            ))}
+          </div>
+        </li>
+
+        <li>
+          <a href="/magazine" class:list={[{ active: isActive('/magazine') }]}>Magazine</a>
+        </li>
+
+        <li class="has-mega">
+          <a href="/why-pronorm" class:list={[{ active: isActive('/why-pronorm') }]}>
+            About
+            <svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg>
+          </a>
+          <div class="nav-mega">
+            <a href="/why-pronorm">Why Pronorm</a>
+            <a href="/why-pronorm#sustainability">Sustainability</a>
+            <a href="/become-a-dealer">For Dealers</a>
+            <div class="mega-divider"></div>
+            <a href="/why-pronorm#downloads">Downloads & Resources</a>
+          </div>
+        </li>
+      </ul>
+
+      <a href="/find-a-dealer" class="nav-cta nav-cta-mobile">Find a Dealer</a>
+      <a href="/request-consultation" class="nav-cta-secondary-mobile">Request Consultation</a>
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-search-btn" aria-label="Search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </button>
+      <a href="/find-a-dealer" class="nav-cta nav-cta-desktop">Find a Dealer</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </nav>
+</header>
+
+<div class="nav-spacer"></div>
+
+<style>
+  .site-header {
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    height:64px; background:var(--color-black);
+    border-bottom:1px solid rgba(255,255,255,.06);
+    transition:background .5s, box-shadow .5s;
+  }
+  .site-header.scrolled {
+    background:rgba(26,26,26,.98);
+    backdrop-filter:blur(20px) saturate(1.2);
+    -webkit-backdrop-filter:blur(20px) saturate(1.2);
+    box-shadow:0 2px 30px rgba(0,0,0,.2);
+  }
+  .nav-spacer { height:64px; }
+
+  .nav-bar {
+    max-width:1320px; margin:0 auto; height:100%;
+    display:grid; grid-template-columns:auto 1fr auto;
+    align-items:center; padding:0 2.5rem; gap:2rem;
+  }
+
+  .nav-logo { display:flex; align-items:center; text-decoration:none; }
+  .nav-logo img { height:20px; width:auto; opacity:.95; }
+
+  .nav-links {
+    display:flex; align-items:center; justify-content:center;
+    gap:0; list-style:none; height:100%; margin:0; padding:0;
+  }
+  .nav-links > li { position:relative; height:100%; display:flex; align-items:center; }
+  .nav-links > li > a {
+    display:flex; align-items:center; gap:.3rem; padding:0 1rem; height:100%;
+    color:rgba(255,255,255,.55); text-decoration:none;
+    font-family:var(--font-body); font-size:.78rem; font-weight:400;
+    letter-spacing:.04em; transition:color .3s; position:relative;
+  }
+  .nav-links > li > a::after {
+    content:''; position:absolute; bottom:0; left:1rem; right:1rem;
+    height:1.5px; background:var(--color-copper);
+    transform:scaleX(0); transform-origin:center;
+    transition:transform .3s cubic-bezier(.4,0,.2,1);
+  }
+  .nav-links > li:hover > a,
+  .nav-links > li > a.active { color:rgba(255,255,255,.95); }
+  .nav-links > li:hover > a::after,
+  .nav-links > li > a.active::after { transform:scaleX(1); }
+
+  .chev {
+    width:8px; height:8px; margin-left:2px; margin-top:1px;
+    stroke:currentColor; fill:none; stroke-width:2; transition:transform .3s;
+  }
+  .nav-links > li:hover .chev { transform:rotate(180deg); }
+
+  .nav-mega {
+    position:absolute; top:100%; left:50%;
+    transform:translateX(-50%) translateY(6px);
+    min-width:260px; background:rgba(24,24,24,.98);
+    backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,.06);
+    border-top:1.5px solid var(--color-copper);
+    border-radius:0 0 6px 6px; padding:.6rem 0;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s, transform .25s, visibility .25s;
+    box-shadow:0 16px 48px rgba(0,0,0,.35);
+  }
+  .nav-links > li:hover > .nav-mega {
+    opacity:1; visibility:visible; pointer-events:auto;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  .mega-section-title {
+    padding:.55rem 1.4rem .3rem; font-size:.58rem; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--color-copper); font-weight:500;
+    font-family:var(--font-body);
+  }
+  .mega-divider { height:1px; margin:.3rem 1.2rem; background:rgba(255,255,255,.06); }
+  .nav-mega a {
+    display:flex; align-items:center; gap:.65rem; padding:.5rem 1.4rem;
+    color:rgba(255,255,255,.5); text-decoration:none;
+    font-size:.78rem; font-family:var(--font-body);
+    transition:color .2s, background .2s, padding-left .2s;
+  }
+  .nav-mega a:hover { color:#fff; background:rgba(255,255,255,.04); padding-left:1.6rem; }
+  .nav-mega a .mega-sub { font-size:.68rem; color:rgba(255,255,255,.28); margin-left:auto; }
+  .nav-mega a.mega-accent { color:var(--color-copper); }
+  .nav-mega a.mega-accent:hover { color:#fff; }
+
+  .nav-mega.mega-wide { min-width:520px; display:grid; grid-template-columns:1fr 1fr; padding:0; }
+  .mega-col { padding:.6rem 0; }
+  .mega-col + .mega-col { border-left:1px solid rgba(255,255,255,.06); }
+
+  .nav-actions { display:flex; align-items:center; gap:1rem; }
+  .nav-cta {
+    display:inline-flex; align-items:center; gap:.4rem;
+    padding:.45rem 1.1rem; font-family:var(--font-body);
+    font-size:.72rem; font-weight:500; letter-spacing:.06em;
+    text-transform:uppercase; text-decoration:none;
+    color:var(--color-black); background:#fff; border-radius:2px;
+    transition:all .3s;
+  }
+  .nav-cta:hover { background:var(--color-copper); color:#fff; }
+  .nav-cta-mobile { display:none; }
+  .nav-cta-secondary-mobile { display:none; }
+
+  .nav-search-btn {
+    background:none; border:none; cursor:pointer;
+    color:rgba(255,255,255,.45); display:flex; align-items:center;
+    padding:.3rem; transition:color .3s;
+  }
+  .nav-search-btn:hover { color:#fff; }
+
+  .nav-toggle {
+    display:none; background:none; border:none; cursor:pointer;
+    padding:6px; z-index:10; flex-direction:column; gap:5px;
+  }
+  .nav-toggle span { display:block; width:20px; height:1.5px; background:#fff; transition:all .3s; }
+  .nav-toggle.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity:0; }
+  .nav-toggle.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+  .mobile-shade {
+    position:fixed; inset:0; z-index:998; background:rgba(0,0,0,.55);
+    backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    opacity:0; visibility:hidden; transition:opacity .35s, visibility .35s;
+  }
+  .mobile-shade.open { opacity:1; visibility:visible; }
+
+  @media(max-width:960px) {
+    .nav-bar { grid-template-columns:auto 1fr; gap:1rem; padding:0 1.5rem; }
+    .nav-toggle { display:flex; }
+    .nav-actions { margin-left:auto; }
+    .nav-search-btn { display:none; }
+    .nav-cta-desktop { display:none; }
+
+    .nav-menu-wrap {
+      position:fixed; top:0; right:0; z-index:999;
+      width:min(360px,88vw); height:100vh; background:var(--color-black);
+      transform:translateX(100%); transition:transform .4s cubic-bezier(.4,0,.2,1);
+      overflow-y:auto; padding:calc(64px + 1.5rem) 2rem 2rem;
+      border-left:1px solid rgba(255,255,255,.06);
+      box-shadow:-10px 0 40px rgba(0,0,0,.3);
+    }
+    .nav-menu-wrap.open { transform:translateX(0); }
+
+    .nav-links { flex-direction:column; align-items:stretch; height:auto; gap:0; }
+    .nav-links > li { height:auto; flex-direction:column; }
+    .nav-links > li > a {
+      padding:.85rem 0; font-size:.92rem; height:auto;
+      justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.05);
+    }
+    .nav-links > li > a::after { display:none; }
+
+    .nav-mega, .nav-mega.mega-wide {
+      position:static; transform:none; opacity:1; visibility:visible; pointer-events:auto;
+      background:transparent; border:none; border-radius:0;
+      box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none;
+      min-width:0; display:none; padding:0 0 .5rem .8rem; grid-template-columns:1fr;
+    }
+    .mega-col + .mega-col { border:none; }
+    .nav-links > li.mob-open > .nav-mega { display:block; }
+    .nav-mega a { padding:.4rem 0; font-size:.85rem; }
+    .nav-mega a:hover { padding-left:0; background:transparent; }
+
+    .nav-cta-mobile {
+      display:block; text-align:center; margin-top:2rem; padding:.85rem; font-size:.82rem;
+    }
+    .nav-cta-secondary-mobile {
+      display:block; text-align:center; margin-top:.75rem; padding:.75rem;
+      font-size:.78rem; font-family:var(--font-body); color:rgba(255,255,255,.5);
+      text-decoration:none; border:1px solid rgba(255,255,255,.15); border-radius:2px;
+      letter-spacing:.06em; text-transform:uppercase; transition:all .3s;
+    }
+    .nav-cta-secondary-mobile:hover { color:#fff; border-color:rgba(255,255,255,.4); }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header?.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  const toggle = document.getElementById('navToggle');
+  const menu = document.getElementById('navMenu');
+  const shade = document.getElementById('mobileShade');
+
+  function toggleMobile() {
+    const open = menu?.classList.toggle('open');
+    toggle?.classList.toggle('open');
+    shade?.classList.toggle('open');
+    toggle?.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  toggle?.addEventListener('click', toggleMobile);
+  shade?.addEventListener('click', toggleMobile);
+
+  document.querySelectorAll('.nav-links > li > a').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const li = this.parentElement;
+      const dd = li?.querySelector('.nav-mega');
+      if (dd && window.innerWidth <= 960) {
+        if (!li.classList.contains('mob-open')) {
+          e.preventDefault();
+          document.querySelectorAll('.nav-links > li').forEach(l => l.classList.remove('mob-open'));
+          li.classList.add('mob-open');
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll('.nav-mega a, .nav-cta-mobile').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 960 && menu?.classList.contains('open')) {
+        toggleMobile();
+      }
+    });
+  });
+</script>

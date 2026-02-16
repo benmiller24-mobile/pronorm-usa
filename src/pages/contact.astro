@@ -1,0 +1,66 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact" description="Contact Pronorm USA — questions about German fitted kitchens, dealer partnerships, or design consultations. Exclusive US distribution by Pinnacle Sales.">
+
+  <section class="section-lg">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="animate-in">
+          <span class="overline">Contact</span>
+          <h1 style="margin-top: 0.5rem; font-size: clamp(2rem, 4vw, 3rem);">Get in Touch</h1>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Whether you're a homeowner exploring German kitchen design, an interior designer seeking a premium partner, or a dealer interested in carrying Pronorm — we'd love to hear from you.</p>
+
+          <div class="contact-info" style="margin-top: 2.5rem;">
+            <div class="contact-item">
+              <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Pronorm USA</h4>
+              <p style="margin-top: 0.3rem;">Exclusive US distribution by<br/><a href="https://pinnaclesales.biz" target="_blank" rel="noopener" style="color: var(--color-copper);">Pinnacle Sales</a></p>
+            </div>
+            <div class="contact-item">
+              <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Territory</h4>
+              <p style="margin-top: 0.3rem;">Western United States<br/>Nationwide expansion in progress</p>
+            </div>
+            <div class="contact-item">
+              <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Follow</h4>
+              <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                <a href="https://www.instagram.com/pronormusa" style="color: var(--color-copper);">Instagram</a>
+                <a href="https://www.pinterest.com/pronormusa" style="color: var(--color-copper);">Pinterest</a>
+                <a href="https://www.houzz.com/pro/pronormusa" style="color: var(--color-copper);">Houzz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form animate-in animate-in-delay-2" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="contact" />
+          <p style="display:none;"><input name="bot-field" /></p>
+          <div class="form-row"><div class="form-group"><label>Name *</label><input type="text" name="name" required /></div><div class="form-group"><label>Email *</label><input type="email" name="email" required /></div></div>
+          <div class="form-group"><label>Subject</label>
+            <select name="subject">
+              <option>General Inquiry</option><option>Design Consultation</option><option>Dealer Partnership</option><option>Interior Designer Inquiry</option><option>Press / Media</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Message *</label><textarea name="message" rows="6" required placeholder="How can we help?"></textarea></div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-4xl); align-items: start; }
+  .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+  .contact-form { display: flex; flex-direction: column; gap: 1.2rem; background: var(--color-ivory); padding: 2.5rem; border: 1px solid var(--color-sand); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; }
+
+  @media (max-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .contact-form { padding: 1.5rem; }
+  }
+</style>

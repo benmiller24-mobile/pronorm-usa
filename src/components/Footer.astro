@@ -1,0 +1,264 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="container">
+      <!-- Newsletter Section -->
+      <div class="footer-newsletter">
+        <div class="newsletter-content">
+          <span class="overline">Stay Inspired</span>
+          <h3>Receive design ideas and Pronorm news</h3>
+          <p class="subtitle">Curated kitchen design inspiration, new collection previews, and dealer events — delivered monthly.</p>
+        </div>
+        <form class="newsletter-form" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="newsletter" />
+          <p style="display:none;"><input name="bot-field" /></p>
+          <div class="newsletter-input-group">
+            <input type="email" name="email" placeholder="Your email address" required aria-label="Email address" />
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span class="logo-mark">PRONORM</span>
+            <span class="logo-sub">USA</span>
+          </div>
+          <p>Precision-engineered German fitted kitchens, available through authorized dealers across the United States.</p>
+          <div class="footer-social">
+            <a href="https://www.instagram.com/pronormusa" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.pinterest.com/pronormusa" target="_blank" rel="noopener" aria-label="Pinterest">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.5 2 2 6.5 2 12c0 4.1 2.5 7.6 6 9.2-.1-.7-.1-1.9 0-2.7l.8-3.5s-.2-.4-.2-1c0-1 .6-1.7 1.3-1.7.6 0 .9.5.9 1 0 .6-.4 1.5-.6 2.4-.2.7.3 1.3 1 1.3 1.3 0 2.2-1.3 2.2-3.3 0-1.7-1.2-2.9-3-2.9-2 0-3.2 1.5-3.2 3.1 0 .6.2 1.3.5 1.6.1.1.1.1 0 .3l-.2.7c0 .1-.1.2-.3.1-.9-.4-1.5-1.8-1.5-2.9 0-2.3 1.7-4.5 4.9-4.5 2.6 0 4.6 1.8 4.6 4.3 0 2.6-1.6 4.6-3.9 4.6-.8 0-1.5-.4-1.7-.9l-.5 1.8c-.2.7-.6 1.4-1 2 .8.2 1.6.4 2.4.4 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+            </a>
+            <a href="https://www.houzz.com/pro/pronormusa" target="_blank" rel="noopener" aria-label="Houzz">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 3v5.5H7v4h5.5V18H7v3h10.5V8.5H12.5V3z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="/product-lines">Product Lines</a>
+          <a href="/product-lines/y-line">Y-line Handleless</a>
+          <a href="/product-lines/x-line">X-line Handleless</a>
+          <a href="/product-lines/proline128">Proline128</a>
+          <a href="/gallery">Design Gallery</a>
+        </div>
+
+        <div class="footer-col">
+          <h5>Learn</h5>
+          <a href="/why-pronorm">Why Pronorm</a>
+          <a href="/why-pronorm/german-vs-american">German vs. American Kitchens</a>
+          <a href="/equipment">Equipment & Innovation</a>
+          <a href="/magazine">Magazine</a>
+          <a href="/faq">FAQ</a>
+        </div>
+
+        <div class="footer-col">
+          <h5>Connect</h5>
+          <a href="/find-a-dealer">Find a Dealer</a>
+          <a href="/become-a-dealer">Become a Dealer</a>
+          <a href="/request-consultation">Request Consultation</a>
+          <a href="/contact">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-bottom-inner">
+        <p>&copy; {year} Pronorm USA. German kitchens, engineered for American living.</p>
+        <div class="footer-legal">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms</a>
+          <span class="footer-badge">Exclusive US distribution by <a href="https://pinnaclesales.biz" target="_blank" rel="noopener">Pinnacle Sales</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-ivory);
+  }
+
+  .footer-top {
+    padding: var(--space-4xl) 0;
+    background: var(--color-cream);
+  }
+
+  .footer-newsletter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3xl);
+    align-items: center;
+  }
+
+  .newsletter-content h3 {
+    margin-top: 0.5rem;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+  }
+
+  .newsletter-content .subtitle {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .newsletter-input-group {
+    display: flex;
+    gap: 0;
+  }
+
+  .newsletter-input-group input {
+    flex: 1;
+    border-right: none;
+  }
+
+  .newsletter-input-group .btn {
+    white-space: nowrap;
+  }
+
+  .footer-main {
+    padding: var(--space-4xl) 0;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: var(--space-3xl);
+  }
+
+  .footer-brand p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--color-graphite);
+    max-width: 30ch;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .footer-logo .logo-mark {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--color-black);
+  }
+
+  .footer-logo .logo-sub {
+    font-family: var(--font-body);
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: var(--color-copper);
+  }
+
+  .footer-social {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .footer-social a {
+    color: var(--color-graphite);
+    transition: color var(--duration-fast) ease;
+  }
+
+  .footer-social a:hover {
+    color: var(--color-copper);
+  }
+
+  .footer-col h5 {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-black);
+    margin-bottom: 1rem;
+  }
+
+  .footer-col a {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--color-graphite);
+    padding: 0.3rem 0;
+    transition: color var(--duration-fast) ease;
+  }
+
+  .footer-col a:hover {
+    color: var(--color-copper);
+  }
+
+  .footer-bottom {
+    border-top: var(--border-light);
+    padding: 1.5rem 0;
+  }
+
+  .footer-bottom-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-bottom p {
+    font-size: 0.8rem;
+    color: var(--color-warm-gray);
+  }
+
+  .footer-legal {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    font-size: 0.8rem;
+  }
+
+  .footer-legal a {
+    color: var(--color-warm-gray);
+    transition: color var(--duration-fast) ease;
+  }
+
+  .footer-legal a:hover {
+    color: var(--color-copper);
+  }
+
+  .footer-badge {
+    color: var(--color-stone);
+    font-size: 0.75rem;
+  }
+
+  .footer-badge a {
+    color: var(--color-copper);
+  }
+
+  @media (max-width: 1024px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; row-gap: var(--space-2xl); }
+    .footer-newsletter { grid-template-columns: 1fr; gap: var(--space-xl); }
+  }
+
+  @media (max-width: 768px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .newsletter-input-group { flex-direction: column; }
+    .newsletter-input-group input { border-right: 1.5px solid var(--color-sand); }
+    .footer-bottom-inner { flex-direction: column; text-align: center; }
+    .footer-legal { flex-direction: column; gap: 0.5rem; }
+  }
+</style>

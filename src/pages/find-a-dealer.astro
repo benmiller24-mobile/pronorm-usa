@@ -5,24 +5,13 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "Find a Pronorm Dealer",
-  "description": "Locate an authorized Pronorm German kitchen dealer near you. Complimentary design consultations available across the Western United States.",
+  "description": "Connect with an authorized Pronorm German kitchen dealer near you. Submit your information and our team will match you with a local design expert.",
 };
-
-const dealers = [
-  { name: "Example Kitchen Studio", city: "Los Angeles", state: "CA", region: "Southern California" },
-  { name: "Example Design Center", city: "Scottsdale", state: "AZ", region: "Arizona" },
-  { name: "Example Kitchen Gallery", city: "San Francisco", state: "CA", region: "Northern California" },
-  { name: "Example Home Design", city: "Denver", state: "CO", region: "Colorado" },
-  { name: "Example Interiors", city: "Portland", state: "OR", region: "Pacific Northwest" },
-  { name: "Example Kitchen & Bath", city: "Seattle", state: "WA", region: "Pacific Northwest" },
-];
-
-const states = ["California", "Arizona", "Colorado", "Oregon", "Washington", "Utah", "Nevada", "Idaho", "Montana", "Wyoming"];
 ---
 
 <BaseLayout
   title="Find a Dealer"
-  description="Find an authorized Pronorm German kitchen dealer near you. Complimentary design consultations available. Showrooms across the Western United States."
+  description="Connect with an authorized Pronorm German kitchen dealer near you. Submit your information and our team will match you with a local design expert."
   schema={schema}
 >
 
@@ -32,94 +21,143 @@ const states = ["California", "Arizona", "Colorado", "Oregon", "Washington", "Ut
       <span class="overline animate-in">Authorized Dealers</span>
       <h1 class="animate-in animate-in-delay-1">Find a Pronorm<br/>Dealer Near You</h1>
       <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
-        Every Pronorm kitchen begins with a conversation. Our authorized dealers provide expert design consultation, 3D planning, and white-glove project management.
+        Every Pronorm kitchen begins with a conversation. Tell us a little about yourself and your project, and we'll connect you with an authorized dealer in your area.
       </p>
     </div>
   </section>
 
-  <!-- Search -->
-  <section class="dealer-search-section">
-    <div class="container">
-      <div class="search-box">
-        <form class="dealer-search-form" action="/find-a-dealer" method="GET">
-          <div class="search-input-wrap">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" name="zip" placeholder="Enter your city, state, or zip code" />
-          </div>
-          <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- Map -->
-  <section class="map-section">
-    <div class="container-wide">
-      <div class="map-placeholder" style="aspect-ratio: 21/9; border-radius: 4px; background: linear-gradient(135deg, #f8f6f2 0%, #ede9e2 50%, #e8e3db 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 1rem; border: 1px solid var(--color-sand); position: relative; overflow:hidden;">
-        <div style="position:absolute;inset:0;opacity:0.06;background-image:url('/images/hero/hero-banner-kieselgrau.jpg');background-size:cover;background-position:center;"></div>
-        <div style="position:relative;z-index:1;text-align:center;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-copper)" stroke-width="1.5" style="margin-bottom:0.5rem;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <p style="font-size:1rem; color: var(--color-graphite); font-weight: 500;">Pronorm USA Territory</p>
-          <p style="font-size:0.82rem; color: var(--color-warm-gray); margin-top: 0.3rem;">10 Western States · Nationwide Expansion Underway</p>
-          <p style="font-size:0.75rem; color: var(--color-copper); margin-top: 0.5rem;">Enter your zip code above to find your nearest dealer</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Dealer List -->
+  <!-- Inquiry Form -->
   <section class="section">
     <div class="container">
-      <h2 class="reveal">Authorized Pronorm Dealers</h2>
-      <p style="margin-top: 0.5rem; color: var(--color-warm-gray);">Currently serving the Western United States with nationwide expansion in progress.</p>
+      <div class="inquiry-grid">
 
-      <div class="dealer-list">
-        {dealers.map(dealer => (
-          <div class="dealer-card reveal">
-            <div class="dealer-card-info">
-              <h4>{dealer.name}</h4>
-              <p>{dealer.city}, {dealer.state}</p>
-              <span class="dealer-region">{dealer.region}</span>
+        <div class="inquiry-info reveal">
+          <h2>How It Works</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+
+          <div class="step-list">
+            <div class="step-item">
+              <span class="step-num">1</span>
+              <div>
+                <strong>Tell Us About Your Project</strong>
+                <p>Share your location, timeline, and what you're looking for in a kitchen.</p>
+              </div>
             </div>
-            <div class="dealer-card-actions">
-              <a href="/request-consultation" class="btn btn-outline btn-sm-card">Schedule Visit</a>
+            <div class="step-item">
+              <span class="step-num">2</span>
+              <div>
+                <strong>We Match You With a Dealer</strong>
+                <p>Our team will identify the best authorized Pronorm dealer for your area and project needs.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">3</span>
+              <div>
+                <strong>Your Dealer Reaches Out</strong>
+                <p>Your matched dealer will contact you to schedule a complimentary design consultation.</p>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
 
-      <div class="coverage-section reveal" style="margin-top: var(--space-3xl);">
-        <h3>Current Coverage Area</h3>
-        <p style="margin-top: 0.5rem;">Pronorm USA currently serves dealers across ten Western states, with national expansion underway.</p>
-        <div class="states-grid" style="margin-top: 1rem;">
-          {states.map(s => <span class="state-tag">{s}</span>)}
+          <div class="info-note" style="margin-top: var(--space-2xl);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-copper)" stroke-width="1.5" style="flex-shrink:0;margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <p>Pronorm dealers are located across the United States, with our network growing every month. No matter where you are, we'll work to connect you with the right design professional.</p>
+          </div>
         </div>
+
+        <form class="inquiry-form reveal" name="dealer-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you">
+          <input type="hidden" name="form-name" value="dealer-inquiry" />
+          <p style="display:none;"><input name="bot-field" /></p>
+
+          <h3>Request a Dealer Connection</h3>
+          <p class="form-subtitle">We'll respond within 1–2 business days.</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" name="first-name" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" name="last-name" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" name="phone" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" name="city" required />
+            </div>
+            <div class="form-group">
+              <label>State *</label>
+              <input type="text" name="state" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Zip Code *</label>
+            <input type="text" name="zip" required />
+          </div>
+
+          <div class="form-group">
+            <label>Project Type</label>
+            <select name="project-type">
+              <option value="">Select one...</option>
+              <option value="new-construction">New Construction</option>
+              <option value="full-renovation">Full Kitchen Renovation</option>
+              <option value="partial-renovation">Partial Kitchen Update</option>
+              <option value="living-spaces">Living Spaces Furniture</option>
+              <option value="just-exploring">Just Exploring Options</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Estimated Timeline</label>
+            <select name="timeline">
+              <option value="">Select one...</option>
+              <option value="0-3">Within 3 months</option>
+              <option value="3-6">3–6 months</option>
+              <option value="6-12">6–12 months</option>
+              <option value="12+">12+ months</option>
+              <option value="not-sure">Not sure yet</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Tell Us About Your Project</label>
+            <textarea name="message" rows="4" placeholder="Anything you'd like us to know — style preferences, kitchen size, must-haves..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            Submit Request
+          </button>
+        </form>
+
       </div>
     </div>
   </section>
 
-  <!-- No Dealer Nearby? -->
+  <!-- Become a Dealer CTA -->
   <section class="section bg-ivory">
     <div class="container">
-      <div class="no-dealer-grid">
-        <div class="reveal">
-          <span class="overline">No Dealer Nearby?</span>
-          <h2 style="margin-top: 0.5rem;">We're Growing Fast</h2>
-          <p style="margin-top: 1rem;">If there isn't an authorized Pronorm dealer in your area yet, we can still help. Submit a consultation request and our team will work with you directly or connect you with the nearest qualified dealer.</p>
-          <a href="/request-consultation" class="btn btn-primary" style="margin-top: 1.5rem;">
-            Request a Consultation
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-        </div>
-        <div class="reveal">
-          <span class="overline">Dealer Opportunities</span>
-          <h2 style="margin-top: 0.5rem;">Become a Pronorm Dealer</h2>
-          <p style="margin-top: 1rem;">Are you a kitchen dealer interested in offering authentic German kitchen design? Protected territories available nationwide with dedicated US support from Pinnacle Sales.</p>
-          <a href="/become-a-dealer" class="btn btn-outline" style="margin-top: 1.5rem;">
-            Dealer Partnership Info
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-        </div>
+      <div class="dealer-cta-box reveal" style="text-align:center; max-width: 40rem; margin: 0 auto;">
+        <span class="overline">Dealer Opportunities</span>
+        <h2 style="margin-top: 0.5rem;">Become a Pronorm Dealer</h2>
+        <p style="margin-top: 1rem;">Are you a kitchen dealer interested in offering authentic German kitchen design? Protected territories available nationwide with dedicated US support from Pinnacle Sales.</p>
+        <a href="/become-a-dealer" class="btn btn-outline" style="margin-top: 1.5rem;">
+          Dealer Partnership Info
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </div>
   </section>
@@ -129,87 +167,73 @@ const states = ["California", "Arizona", "Colorado", "Oregon", "Washington", "Ut
 <style>
   .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
 
-  .dealer-search-section { padding-bottom: var(--space-2xl); }
-
-  .search-box {
-    background: var(--color-ivory);
-    padding: 1.5rem;
-    border-radius: 4px;
+  .inquiry-grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: var(--space-4xl);
+    align-items: start;
   }
 
-  .dealer-search-form {
-    display: flex;
-    gap: 0;
-  }
+  .inquiry-info h2 { font-size: 1.6rem; }
 
-  .search-input-wrap {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--color-white);
-    border: 1.5px solid var(--color-sand);
-    padding: 0 1.2rem;
-    border-right: none;
-  }
-
-  .search-input-wrap svg { color: var(--color-stone); flex-shrink: 0; }
-
-  .search-input-wrap input {
-    border: none;
-    padding: 0.9rem 0;
-    flex: 1;
-  }
-
-  .search-input-wrap input:focus { border: none; }
-
-  .map-section { padding-bottom: var(--space-2xl); }
-
-  .dealer-list {
-    margin-top: var(--space-xl);
+  .step-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
   }
 
-  .dealer-card {
+  .step-item {
     display: flex;
-    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
     align-items: center;
-    padding: 1.5rem 0;
-    border-bottom: var(--border-light);
+    justify-content: center;
+    background: var(--color-copper);
+    color: var(--color-white);
+    font-size: 0.82rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
   }
 
-  .dealer-card h4 { font-size: 1.1rem; }
-  .dealer-card p { font-size: 0.9rem; color: var(--color-graphite); margin-top: 0.2rem; }
-  .dealer-region { font-size: 0.75rem; color: var(--color-warm-gray); }
+  .step-item strong { display: block; font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .step-item p { font-size: 0.85rem; color: var(--color-graphite); }
 
-  .btn-sm-card { padding: 0.5rem 1.2rem; font-size: 0.65rem; }
-
-  .states-grid {
+  .info-note {
     display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .state-tag {
-    font-size: 0.78rem;
-    padding: 0.35rem 1rem;
+    gap: 0.75rem;
+    padding: 1.2rem;
     background: var(--color-ivory);
-    border: 1px solid var(--color-sand);
-    color: var(--color-graphite);
+    border-left: 3px solid var(--color-copper);
   }
 
-  .no-dealer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4xl);
+  .info-note p { font-size: 0.85rem; color: var(--color-graphite); }
+
+  .inquiry-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    background: var(--color-ivory);
+    padding: 2.5rem;
+    border: 1px solid var(--color-sand);
   }
+
+  .inquiry-form h3 { font-size: 1.2rem; margin-bottom: 0; }
+  .form-subtitle { font-size: 0.85rem; color: var(--color-warm-gray); margin-top: -0.5rem; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; }
 
   @media (max-width: 768px) {
-    .dealer-search-form { flex-direction: column; }
-    .search-input-wrap { border-right: 1.5px solid var(--color-sand); }
-    .dealer-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
-    .no-dealer-grid { grid-template-columns: 1fr; }
+    .inquiry-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .inquiry-form { padding: 1.5rem; }
   }
 </style>

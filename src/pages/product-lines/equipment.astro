@@ -1,0 +1,242 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Kitchen Equipment — Pronorm USA",
+  "description": "Explore Pronorm's kitchen equipment: proTech X drawer systems, interior fittings, storage solutions, integrated lighting, and utility room configurations.",
+};
+---
+
+<BaseLayout
+  title="Equipment"
+  description="Explore Pronorm's kitchen equipment — proTech X drawer systems, Blum interior fittings, storage solutions, integrated lighting, and utility room configurations."
+  schema={schema}
+>
+
+  <!-- Hero -->
+  <section class="page-hero" style="position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:url('/images/equipment/proTechx-drawer-grey-cutlery.webp');background-size:cover;background-position:center;opacity:0.12;"></div>
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="overline animate-in">Equipment</span>
+      <h1 class="animate-in animate-in-delay-1">Engineered<br/>for Every Detail</h1>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
+        From the drawer system to the lighting, every element inside a Pronorm kitchen is designed to work together — silently, beautifully, and for decades.
+      </p>
+    </div>
+  </section>
+
+  <!-- proTech X -->
+  <section class="section-lg" id="protech">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">Drawer System</span>
+          <h2 style="margin-top: 0.5rem;">proTech X</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>The proTech X drawer system is Pronorm's proprietary platform — a modular, full-extension runner system engineered for silent operation and maximum internal capacity. Every drawer glides open effortlessly, closes with integrated soft-close dampening, and supports heavy loads without flex.</p>
+          <p style="margin-top: 1rem;">Available with internal drawers, internal pull-outs, and oven drawers — all running on the same precision-engineered runner platform. Front panels are individually adjustable in three dimensions for perfect alignment.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/equipment/proTechx-drawer-titan.webp" alt="proTech X drawer system" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+
+      <!-- Drawer Variants -->
+      <div class="variant-grid" style="margin-top: var(--space-3xl);">
+        <div class="variant-card reveal">
+          <img src="/images/equipment/proTechx-pure-logo.png" alt="proTech X pure" loading="lazy" style="height:28px;margin-bottom:1rem;" />
+          <img src="/images/equipment/proTechx-drawer-grey-cutlery.webp" alt="proTech X pure drawer" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4 style="margin-top: 1rem;">pure &amp; pureMaxi</h4>
+          <p>Purist design with elegant, narrow side profiles in titan grey. pureMaxi offers higher drawer sides for increased capacity.</p>
+        </div>
+        <div class="variant-card reveal">
+          <img src="/images/equipment/proTechx-wood-logo.png" alt="proTech X woodBox" loading="lazy" style="height:28px;margin-bottom:1rem;" />
+          <img src="/images/equipment/proTechx-wood-urban-oak.webp" alt="proTech X woodBox" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4 style="margin-top: 1rem;">woodBox &amp; woodBoxMaxi</h4>
+          <p>Real wood-effect drawer sides in Urban Oak or Dark Sherwood. Brings warmth and natural texture inside every cabinet.</p>
+        </div>
+        <div class="variant-card reveal">
+          <img src="/images/equipment/proTechx-glasscase-logo.png" alt="proTech X glassCase" loading="lazy" style="height:28px;margin-bottom:1rem;" />
+          <img src="/images/equipment/proTechx-glasscase.webp" alt="proTech X glassCase" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4 style="margin-top: 1rem;">glassCase</h4>
+          <p>Transparent glass elements in the drawer sides create refined highlights — a subtle design statement every time you open a drawer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interior Fittings -->
+  <section class="section bg-ivory" id="fittings">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">Interior Fittings</span>
+        <h2 style="margin-top: 0.5rem;">A Place for Everything</h2>
+        <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">Pronorm's drawer division and interior fitting systems transform every cubic centimeter of storage into organized, accessible space.</p>
+      </div>
+
+      <div class="fittings-grid">
+        <div class="fitting-card reveal">
+          <img src="/images/equipment/drawer-cutlery-insert-premium.webp" alt="Cutlery insert" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4>Cutlery Inserts</h4>
+          <p>Precision-fit inserts in anthracite or walnut for knives, utensils, and flatware.</p>
+        </div>
+        <div class="fitting-card reveal">
+          <img src="/images/equipment/drawer-spice-organizer.webp" alt="Spice organizer" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4>Spice &amp; Herb Storage</h4>
+          <p>Dedicated spice compartments, diagonal dividers, and herb box inserts keep everything within reach.</p>
+        </div>
+        <div class="fitting-card reveal">
+          <img src="/images/equipment/drawer-storage-box-wood.webp" alt="Wood storage boxes" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4>Storage Boxes</h4>
+          <p>Modular wood and metal storage boxes for customizable interior organization.</p>
+        </div>
+        <div class="fitting-card reveal">
+          <img src="/images/equipment/drawer-wood-glass-luxury.webp" alt="Premium drawer interior" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4>Premium Interiors</h4>
+          <p>Non-slip mats, glass dividers, and diagonal storage — elevating the everyday experience of opening a drawer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Storage -->
+  <section class="section-lg" id="storage">
+    <div class="container">
+      <div class="content-split reverse">
+        <div class="content-text reveal">
+          <span class="overline">Storage Solutions</span>
+          <h2 style="margin-top: 0.5rem;">Maximized Space,<br/>Minimized Effort</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Pronorm offers a comprehensive range of pull-out systems, corner solutions, and larder fittings — all engineered to maximize storage capacity while keeping everything easily accessible.</p>
+          <p style="margin-top: 1rem;">From LeMans corner carousels and apothecary pull-outs to full-extension larder systems and bottle pull-outs — every solution is mounted on precision runners with soft-close as standard.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/equipment/planero-larder-anthracite.png" alt="Larder pull-out storage" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+
+      <div class="storage-grid" style="margin-top: var(--space-3xl);">
+        <div class="storage-card reveal">
+          <img src="/images/equipment/planero-corner-carousel.jpg" alt="Corner carousel" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Corner Solutions</h4>
+          <p>LeMans carousel shelves, semi-circular fittings, and ArenaPure corner units.</p>
+        </div>
+        <div class="storage-card reveal">
+          <img src="/images/equipment/planero-apothecary.jpg" alt="Apothecary pull-out" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Pull-Out Systems</h4>
+          <p>Apothecary shelves, bottle pull-outs, and tandem larder fittings.</p>
+        </div>
+        <div class="storage-card reveal">
+          <img src="/images/equipment/planero-tandem.jpg" alt="Tandem storage" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Larder Systems</h4>
+          <p>Full-extension tall unit pull-outs with adjustable shelving and heavy-load capacity.</p>
+        </div>
+        <div class="storage-card reveal">
+          <img src="/images/equipment/convoy.jpg" alt="Convoy storage" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Waste &amp; Recycling</h4>
+          <p>Fitted waste collectors with soft-close, integrated into base units for a seamless look.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lighting -->
+  <section class="section bg-cream" id="lighting">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">Integrated Lighting</span>
+          <h2 style="margin-top: 0.5rem;">Light Where<br/>You Need It</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Pronorm's integrated LED lighting system is designed into the kitchen from the start — not added as an afterthought. Under-cabinet task lighting, interior unit illumination, recess channel lights, and pendant luminaires all connect to a single, unified system.</p>
+          <p style="margin-top: 1rem;">Available with wireless switching, door-contact activation, and dimming. All LED modules use energy-efficient, long-life components with warm color temperatures designed for kitchen environments.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/equipment/lighting-crystal-grey.jpg" alt="Integrated kitchen lighting" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Utility -->
+  <section class="section-lg" id="utility">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">Beyond the Kitchen</span>
+        <h2 style="margin-top: 0.5rem;">Utility &amp; Laundry Room</h2>
+        <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">The same German engineering applied to your utility space — laundry sorting, ironing, storage, and more, all built to Pronorm standards.</p>
+      </div>
+
+      <div class="utility-grid">
+        <div class="utility-card reveal">
+          <img src="/images/equipment/utility-laundry-sorting.jpg" alt="Laundry sorting" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Laundry Sorting</h4>
+        </div>
+        <div class="utility-card reveal">
+          <img src="/images/equipment/utility-tall-pullout.jpg" alt="Tall pull-out" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Tall Pull-Outs</h4>
+        </div>
+        <div class="utility-card reveal">
+          <img src="/images/equipment/utility-ironing-board.jpg" alt="Built-in ironing board" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Ironing Solutions</h4>
+        </div>
+        <div class="utility-card reveal">
+          <img src="/images/equipment/utility-pocket-doors.jpg" alt="Pocket doors" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Pocket Doors</h4>
+        </div>
+        <div class="utility-card reveal">
+          <img src="/images/equipment/utility-metal-shelf.jpg" alt="Metal shelving" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Shelving &amp; Storage</h4>
+        </div>
+        <div class="utility-card reveal">
+          <img src="/images/equipment/utility-base-shoes.jpg" alt="Shoe storage" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Shoe Storage</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA />
+</BaseLayout>
+
+<style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
+
+  .content-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4xl); align-items: center; }
+  .content-split.reverse .content-text { order: 2; }
+  .content-split.reverse .content-image { order: 1; }
+
+  .variant-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
+  .variant-card p { font-size: 0.85rem; color: var(--color-graphite); margin-top: 0.3rem; }
+
+  .fittings-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl); }
+  .fitting-card h4 { margin-top: 0.75rem; font-size: 0.95rem; }
+  .fitting-card p { font-size: 0.82rem; color: var(--color-graphite); margin-top: 0.25rem; }
+
+  .storage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl); }
+  .storage-card h4 { margin-top: 0.75rem; font-size: 0.95rem; }
+  .storage-card p { font-size: 0.82rem; color: var(--color-graphite); margin-top: 0.25rem; }
+
+  .utility-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-lg); }
+  .utility-card h4 { margin-top: 0.5rem; font-size: 0.88rem; text-align: center; }
+
+  @media (max-width: 1024px) {
+    .variant-grid { grid-template-columns: repeat(3, 1fr); }
+    .fittings-grid { grid-template-columns: repeat(2, 1fr); }
+    .storage-grid { grid-template-columns: repeat(2, 1fr); }
+    .utility-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .content-split { grid-template-columns: 1fr; }
+    .content-split.reverse .content-text { order: 1; }
+    .content-split.reverse .content-image { order: 2; }
+    .variant-grid { grid-template-columns: 1fr; }
+    .fittings-grid { grid-template-columns: 1fr; }
+    .storage-grid { grid-template-columns: 1fr 1fr; }
+    .utility-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

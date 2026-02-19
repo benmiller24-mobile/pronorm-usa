@@ -1,0 +1,187 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Living Spaces — Pronorm USA",
+  "description": "Pronorm Living Spaces: highboards, sideboards, lowboards, dressing rooms, and hallway furniture — all built with the same German precision as Pronorm kitchens.",
+};
+---
+
+<BaseLayout
+  title="Living Spaces"
+  description="Pronorm Living Spaces — highboards, sideboards, lowboards, dressing rooms, and hallway furniture. German-engineered furniture built to kitchen-grade standards."
+  schema={schema}
+>
+
+  <!-- Hero -->
+  <section class="page-hero" style="position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:url('/images/living/highboard-rose-matte.webp');background-size:cover;background-position:center;opacity:0.12;"></div>
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="overline animate-in">Living Spaces</span>
+      <h1 class="animate-in animate-in-delay-1">Fitting Spaces,<br/>Not Just Kitchens</h1>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
+        The same German engineering, the same CNC precision, the same premium materials — applied to the rooms where you live, dress, and welcome guests.
+      </p>
+    </div>
+  </section>
+
+  <!-- Highboards -->
+  <section class="section-lg" id="highboards">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">Highboards</span>
+          <h2 style="margin-top: 0.5rem;">Statement Pieces,<br/>Built to Last</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Pronorm highboards bring architectural presence to living rooms, dining areas, and open-plan spaces. Available with integrated LED illumination, glass shelving, and the same soft-close hardware found in every Pronorm kitchen.</p>
+          <p style="margin-top: 1rem;">Choose from the full range of Pronorm front finishes — matte lacquers, real wood veneers, high-gloss surfaces, and organic glass — to match or complement your kitchen design.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/living/highboard-lighting.jpg" alt="Pronorm highboard with integrated lighting" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+
+      <div class="product-grid" style="margin-top: var(--space-3xl);">
+        <div class="product-card reveal">
+          <img src="/images/living/highboard-mahogany.jpg" alt="Highboard in dark wood" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Display Highboard</h4>
+          <p>Glass doors with interior lighting for showcasing collections and tableware.</p>
+        </div>
+        <div class="product-card reveal">
+          <img src="/images/living/highboard-drawers.jpg" alt="Highboard with drawers" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Storage Highboard</h4>
+          <p>Drawer and door combinations with adjustable shelving for flexible living room storage.</p>
+        </div>
+        <div class="product-card reveal">
+          <img src="/images/living/scandinavian-showcase.jpg" alt="Scandinavian showcase unit" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+          <h4>Showcase Unit</h4>
+          <p>Open and closed storage with glass elements — refined display meets practical function.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sideboards & Lowboards -->
+  <section class="section bg-ivory" id="sideboards">
+    <div class="container">
+      <div class="content-split reverse">
+        <div class="content-text reveal">
+          <span class="overline">Sideboards &amp; Lowboards</span>
+          <h2 style="margin-top: 0.5rem;">Low Profile,<br/>High Impact</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Sideboards and lowboards provide sleek horizontal storage for living and dining spaces. Wall-mounted or floor-standing, with push-to-open or handle options to match your design language.</p>
+          <p style="margin-top: 1rem;">All units are manufactured with the same 16mm three-layer chipboard carcases, PUR-bonded edging, and Blum hardware as Pronorm kitchen furniture — no compromise on construction quality.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/living/sideboard-velvet-matte.webp" alt="Matte velvet sideboard" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+
+      <div class="product-grid" style="margin-top: var(--space-3xl);">
+        <div class="product-card reveal">
+          <img src="/images/living/lowboard-walnut.webp" alt="Walnut lowboard" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+          <h4>Media Lowboard</h4>
+          <p>Clean-line designs for entertainment areas with integrated cable management.</p>
+        </div>
+        <div class="product-card reveal">
+          <img src="/images/living/sideboard-light.jpg" alt="Light sideboard" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+          <h4>Dining Sideboard</h4>
+          <p>Elegant storage for tableware, linens, and barware in dining room settings.</p>
+        </div>
+        <div class="product-card reveal">
+          <img src="/images/living/lowboard-minimalist.jpg" alt="Minimalist lowboard" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+          <h4>Floating Sideboard</h4>
+          <p>Wall-mounted units that create visual lightness while maximizing floor space.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dressing Room -->
+  <section class="section-lg" id="dressing">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">Dressing Room</span>
+          <h2 style="margin-top: 0.5rem;">Organized<br/>Elegance</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Transform a walk-in closet or spare room into a fully fitted dressing suite. Pronorm's dressing room systems include wardrobe units with soft-close doors, open shelving, pull-out trouser racks, tie storage, jewelry drawer inserts, and clothes lifts for high-access hanging.</p>
+          <p style="margin-top: 1rem;">Every element is available in the full range of Pronorm finishes and can be configured to exact room dimensions — no filler strips, no wasted space.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/living/dressing-room-luxury-vanity.webp" alt="Pronorm dressing room" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+
+      <div class="detail-grid" style="margin-top: var(--space-3xl);">
+        <div class="detail-card reveal">
+          <img src="/images/living/drawer-jewelry.jpg" alt="Jewelry drawer insert" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4>Jewelry &amp; Accessories</h4>
+        </div>
+        <div class="detail-card reveal">
+          <img src="/images/living/tie-rack-trouser-pullout.png" alt="Trouser pull-out and tie rack" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4>Pull-Out Racks</h4>
+        </div>
+        <div class="detail-card reveal">
+          <img src="/images/living/clothes-lift.png" alt="Clothes lift mechanism" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4>Clothes Lift</h4>
+        </div>
+        <div class="detail-card reveal">
+          <img src="/images/living/wardrobe-organization.png" alt="Wardrobe interior organization" loading="lazy" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;" />
+          <h4>Interior Organization</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hallway -->
+  <section class="section bg-cream" id="hallway">
+    <div class="container">
+      <div class="content-split reverse">
+        <div class="content-text reveal">
+          <span class="overline">Hallway &amp; Entryway</span>
+          <h2 style="margin-top: 0.5rem;">First Impressions,<br/>Engineered</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Set the tone from the moment someone enters your home. Pronorm's hallway furniture includes shoe cabinets, wardrobe systems, console-style sideboards, and mirror-backed units — all built to the same exacting standards.</p>
+          <p style="margin-top: 1rem;">Combine open and closed storage for coats, shoes, bags, and accessories in a configuration that fits your entryway exactly.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/living/hallway-wardrobe.jpg" alt="Hallway wardrobe system" loading="lazy" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA />
+</BaseLayout>
+
+<style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
+
+  .content-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4xl); align-items: center; }
+  .content-split.reverse .content-text { order: 2; }
+  .content-split.reverse .content-image { order: 1; }
+
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
+  .product-card h4 { margin-top: 0.75rem; font-size: 0.95rem; }
+  .product-card p { font-size: 0.82rem; color: var(--color-graphite); margin-top: 0.25rem; }
+
+  .detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl); }
+  .detail-card h4 { margin-top: 0.5rem; font-size: 0.88rem; text-align: center; }
+
+  @media (max-width: 1024px) {
+    .product-grid { grid-template-columns: repeat(3, 1fr); }
+    .detail-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .content-split { grid-template-columns: 1fr; }
+    .content-split.reverse .content-text { order: 1; }
+    .content-split.reverse .content-image { order: 2; }
+    .product-grid { grid-template-columns: 1fr; }
+    .detail-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>

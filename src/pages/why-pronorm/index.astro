@@ -120,6 +120,52 @@ const schema = {
     </div>
   </section>
 
+  <!-- Certifications -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">Certifications & Standards</span>
+        <h2 style="margin-top: 0.5rem;">Verified Quality, Not Just Claims</h2>
+        <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">Pronorm's quality isn't self-declared — it's independently tested and continuously audited to some of the strictest standards in the global furniture industry.</p>
+      </div>
+
+      <div class="cert-grid">
+        <div class="cert-card reveal">
+          <h4>Furniture Made in Germany</h4>
+          <p>Guarantees that all products are exclusively manufactured in Germany — production, construction, and quality testing carried out entirely on German soil.</p>
+        </div>
+        <div class="cert-card reveal">
+          <h4>Golden M Quality Mark</h4>
+          <p>Awarded by the Deutsche Gutegemeinschaft Mobel (DGM) for furniture meeting strict criteria in quality, safety, and health/environmental protection.</p>
+        </div>
+        <div class="cert-card reveal">
+          <h4>GS Tested Safety</h4>
+          <p>All products certified with the GS symbol for tested safety from an accredited independent test institute.</p>
+        </div>
+        <div class="cert-card reveal">
+          <h4>ISO 9001 / 14001 / 50001</h4>
+          <p>Triple-certified for quality management, environmental management, and energy management — documented and audited systems ensuring consistent standards.</p>
+        </div>
+        <div class="cert-card reveal">
+          <h4>Climate-Neutral Manufacturer</h4>
+          <p>A member of the Climate Pact of the Furniture Industry since 2021. CO2 emissions calculated across Scopes 1, 2, and 3 with verified long-term reduction targets.</p>
+        </div>
+        <div class="cert-card reveal">
+          <h4>E05 Emission Class</h4>
+          <p>Formaldehyde emissions held to 0.05 ppm — well below regulatory limits. PUR-bonded adhesive edges on all formed edging provide superior moisture and heat resistance.</p>
+        </div>
+        <div class="cert-card reveal">
+          <h4>PEFC Certified Wood</h4>
+          <p>Timber and paper products sourced from sustainably managed forests, verified by the Programme for the Endorsement of Forest Certification.</p>
+        </div>
+        <div class="cert-card reveal">
+          <h4>5-Year Guarantee</h4>
+          <p>All trading partners receive a 5-year guarantee covering defects in design, manufacturing, material, or workmanship — with free replacement part delivery included.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Process -->
   <section class="section-lg">
     <div class="container text-center">
@@ -279,9 +325,25 @@ const schema = {
     color: var(--color-copper);
   }
 
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .cert-card {
+    padding: 1.5rem;
+    background: var(--color-ivory);
+    border-top: 3px solid var(--color-copper);
+  }
+
+  .cert-card h4 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .cert-card p { font-size: 0.82rem; color: var(--color-graphite); }
+
   @media (max-width: 1024px) {
     .specs-grid { grid-template-columns: repeat(2, 1fr); }
     .process-steps { grid-template-columns: repeat(2, 1fr); }
+    .cert-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 768px) {
@@ -290,5 +352,6 @@ const schema = {
     .content-split.reverse .content-image { order: 2; }
     .specs-grid { grid-template-columns: 1fr; }
     .process-steps { grid-template-columns: 1fr; }
+    .cert-grid { grid-template-columns: 1fr; }
   }
 </style>

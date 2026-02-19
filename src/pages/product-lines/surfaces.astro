@@ -1,0 +1,247 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Surfaces & Materials — Pronorm USA",
+  "description": "Explore Pronorm's extensive range of front surfaces and materials: ultra-matte lacquer, high-gloss, real wood veneer, organic glass, textured laminates, and the 2026 collection.",
+};
+---
+
+<BaseLayout
+  title="Surfaces & Materials"
+  description="Pronorm surfaces and materials — ultra-matte lacquer, high-gloss, real wood veneer, organic glass, textured laminates, and the 2026 collection. Over 100 door options."
+  schema={schema}
+>
+
+  <!-- Hero -->
+  <section class="page-hero" style="position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:url('/images/product-lines/category-material.jpg');background-size:cover;background-position:center;opacity:0.12;"></div>
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="overline animate-in">Surfaces &amp; Materials</span>
+      <h1 class="animate-in animate-in-delay-1">Touch, See,<br/>Feel the Difference</h1>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
+        Over 100 door front options spanning lacquers, veneers, laminates, and organic glass — all manufactured to identical quality standards and rigorously tested for daily use.
+      </p>
+    </div>
+  </section>
+
+  <!-- Surface Categories -->
+  <section class="section-lg">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">Front Types</span>
+        <h2 style="margin-top: 0.5rem;">Every Surface, One Standard</h2>
+      </div>
+
+      <div class="surface-types">
+
+        <div class="surface-type reveal">
+          <div class="surface-type-header">
+            <h3>Ultra-Matte Lacquer</h3>
+            <span class="surface-badge">Anti-Fingerprint</span>
+          </div>
+          <p>A special UV lacquer applied to a melamine resin layer creates outstanding surface smoothness and an impression of depth. Anti-fingerprint properties reduce cleaning frequency and provide a warm, soft feel. PP thick edging applied all-round in the front colour.</p>
+          <div class="surface-features">
+            <span>Soft tactile feel</span>
+            <span>Anti-fingerprint</span>
+            <span>UV-stable</span>
+            <span>Scratch-resistant</span>
+          </div>
+        </div>
+
+        <div class="surface-type reveal">
+          <div class="surface-type-header">
+            <h3>High-Gloss Lacquer</h3>
+            <span class="surface-badge">Seamless Edges</span>
+          </div>
+          <p>MDF substrate guarantees a perfectly smooth surface. Edges are lacquered in-process for a seamless transition — no visible edge banding. The multilayer lacquer structure is particularly characterized by exceptional durability.</p>
+          <div class="surface-features">
+            <span>Mirror-like finish</span>
+            <span>Lacquered edges</span>
+            <span>MDF substrate</span>
+            <span>Multilayer durability</span>
+          </div>
+        </div>
+
+        <div class="surface-type reveal">
+          <div class="surface-type-header">
+            <h3>UV-Lacquer</h3>
+            <span class="surface-badge">Colour-Matched Edging</span>
+          </div>
+          <p>MDF base with melamine coating on both sides, the front side multilayered with UV lacquer and finished with all-round colour-matching thick edging. UV-lacquered fronts attain their final colour once the protective foil is removed and after exposure to natural light.</p>
+          <div class="surface-features">
+            <span>Rich colour depth</span>
+            <span>Light-reactive</span>
+            <span>Colour-matched</span>
+            <span>Durable finish</span>
+          </div>
+        </div>
+
+        <div class="surface-type reveal">
+          <div class="surface-type-header">
+            <h3>Real Wood Veneer</h3>
+            <span class="surface-badge">Natural Character</span>
+          </div>
+          <p>Only specially chosen wood is used for veneered fronts, sealed internally and externally with a special surface treatment. Available in oak, walnut, and specialty species. Each front has unique natural grain variation — lending individual character to every kitchen.</p>
+          <div class="surface-features">
+            <span>Natural grain</span>
+            <span>Sealed both sides</span>
+            <span>Easy to clean</span>
+            <span>Hard-wearing</span>
+          </div>
+        </div>
+
+        <div class="surface-type reveal">
+          <div class="surface-type-header">
+            <h3>Organic Glass</h3>
+            <span class="surface-badge">Scratch-Resistant</span>
+          </div>
+          <p>High-quality wooden panels coated on both sides with 2mm thick PMMA panels (Rauvisio Crystal). Completely seamless fronts with high scratch resistance and an anti-fingerprint lacquer surface. UV-stable and non-warping due to symmetrical construction.</p>
+          <div class="surface-features">
+            <span>2mm PMMA</span>
+            <span>Seamless</span>
+            <span>Non-warping</span>
+            <span>UV-stable</span>
+          </div>
+        </div>
+
+        <div class="surface-type reveal">
+          <div class="surface-type-header">
+            <h3>Synthetic Layered</h3>
+            <span class="surface-badge">Value Range</span>
+          </div>
+          <p>High-quality three-layer chipboard or MDF substrate with premium synthetic layer surfaces. Extensive colour and texture range from smooth solids to wood-effect decors. An excellent balance of design choice, durability, and value.</p>
+          <div class="surface-features">
+            <span>Wide colour range</span>
+            <span>Texture options</span>
+            <span>Three-layer board</span>
+            <span>Cost-effective</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 2026 Collection -->
+  <section class="section bg-ivory">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">2026 Collection</span>
+        <h2 style="margin-top: 0.5rem;">New Surfaces, Textures &amp; Colours</h2>
+        <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">From finely textured Boho-style surfaces and woven linen-look designs to veneered fronts with intricate fan structures — the 2026 collection brings unprecedented tactile and visual depth.</p>
+      </div>
+
+      <div class="trend-grid">
+        <div class="trend-card reveal">
+          <img src="/images/surfaces/trends-2026-boho-natural.webp" alt="Boho Texture surface" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Boho Texture</h4>
+          <p>Finely textured relief surface with natural, organic character.</p>
+        </div>
+        <div class="trend-card reveal">
+          <img src="/images/surfaces/trends-2026-ribbed-surface.webp" alt="Woven Linen surface" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Woven Linen</h4>
+          <p>Tactile textile-inspired pattern that catches and plays with light.</p>
+        </div>
+        <div class="trend-card reveal">
+          <img src="/images/surfaces/trends-2026-buffalo-mocha.webp" alt="Fan Veneer surface" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Fan Veneer</h4>
+          <p>Intricate veneer fan pattern creating a striking visual focal point.</p>
+        </div>
+      </div>
+
+      <div class="text-center" style="margin-top: var(--space-2xl);">
+        <a href="/request-consultation" class="btn btn-primary">Request Material Samples</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Construction Quality -->
+  <section class="section-lg">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">Construction</span>
+          <h2 style="margin-top: 0.5rem;">What's Behind<br/>Every Surface</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Regardless of the front finish you choose, every Pronorm surface shares the same construction principles: PUR-bonded adhesive edges for superior moisture and heat resistance, fully finished interiors on all carcasses, and E05-class formaldehyde emissions (0.05 ppm — well below regulatory limits).</p>
+          <p style="margin-top: 1rem;">Every finish is rigorously tested for UV resistance, scratch hardness, impact resistance, and daily-use durability before it enters the collection. Pronorm doesn't ship a surface that can't handle a real kitchen.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/equipment/carcase-interior-metal.jpg" alt="Carcase interior quality" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA />
+</BaseLayout>
+
+<style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
+
+  .content-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4xl); align-items: center; }
+
+  .surface-types {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .surface-type {
+    padding: 2rem;
+    background: var(--color-ivory);
+    border-left: 3px solid var(--color-copper);
+  }
+
+  .surface-type-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .surface-type-header h3 { font-size: 1.15rem; margin: 0; }
+
+  .surface-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    background: var(--color-copper);
+    color: var(--color-white);
+  }
+
+  .surface-type p { font-size: 0.9rem; color: var(--color-graphite); }
+
+  .surface-features {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .surface-features span {
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.3rem 0.75rem;
+    background: var(--color-white);
+    border: 1px solid var(--color-sand);
+    color: var(--color-graphite);
+  }
+
+  .trend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
+  .trend-card h4 { margin-top: 0.75rem; }
+  .trend-card p { font-size: 0.85rem; color: var(--color-graphite); margin-top: 0.25rem; }
+
+  @media (max-width: 768px) {
+    .content-split { grid-template-columns: 1fr; }
+    .trend-grid { grid-template-columns: 1fr; }
+    .surface-type { padding: 1.5rem; }
+  }
+</style>

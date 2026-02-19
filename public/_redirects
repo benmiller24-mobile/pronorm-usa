@@ -3,3 +3,7 @@
 /dealers  /find-a-dealer  301
 /consultation  /request-consultation  301
 /partner  /become-a-dealer  301
+
+# Dealer Portal SPA — serve portal index for dynamic routes (project/order IDs)
+/dealer-portal/projects/:id  /dealer-portal/index.html  200
+/dealer-portal/orders/:id  /dealer-portal/index.html  200

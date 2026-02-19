@@ -1,9 +1,62 @@
 /* ── Supabase Database Types ── */
 
-export type ProjectStatus = 'submitted' | 'in_review' | 'quoted' | 'revision_requested' | 'approved';
-export type OrderStatus = 'pending_payment' | 'paid' | 'in_production' | 'shipped' | 'delivered';
+/*
+  FULL WORKFLOW:
+  ─────────────────────────────────────────
+  PROJECT PHASE (Design)
+  1. submitted              – Dealer submitted design packet
+  2. in_design              – Pronorm USA is designing
+  3. design_delivered        – Design output package uploaded for dealer review
+  4. changes_requested       – Dealer marked up changes
+  5. design_revised          – Pronorm revised design (can loop to 4)
+  6. approved                – Dealer approved design → ready for order
+
+  ORDER PHASE (Production & Delivery)
+  1. pending_order_payment   – Awaiting order payment (QuickBooks)
+  2. order_paid              – Order payment received
+  3. sent_to_factory         – Sent to pronorm factory
+  4. acknowledgement_review  – Factory order confirmation uploaded for dealer review
+  5. acknowledgement_changes – Dealer marked up changes on confirmation
+  6. acknowledgement_approved – Dealer approved factory confirmation
+  7. in_production           – Manufacturing in progress
+  8. shipped                 – Order shipped from factory
+  9. pending_shipping_payment – Awaiting shipping/balance payment
+  10. shipping_paid           – Shipping payment received
+  11. delivered               – Order delivered to dealer/client
+*/
+
+export type ProjectStatus =
+  | 'submitted'
+  | 'in_design'
+  | 'design_delivered'
+  | 'changes_requested'
+  | 'design_revised'
+  | 'approved';
+
+export type OrderStatus =
+  | 'pending_order_payment'
+  | 'order_paid'
+  | 'sent_to_factory'
+  | 'acknowledgement_review'
+  | 'acknowledgement_changes'
+  | 'acknowledgement_approved'
+  | 'in_production'
+  | 'shipped'
+  | 'pending_shipping_payment'
+  | 'shipping_paid'
+  | 'delivered';
+
 export type PaymentStatus = 'unpaid' | 'partial' | 'paid';
 export type WarrantyStatus = 'submitted' | 'under_review' | 'approved' | 'shipped' | 'resolved' | 'denied';
+
+/* File categories distinguish design-packet uploads from design-output deliveries from markup responses */
+export type FileCategory =
+  | 'submission'            // Dealer's original design packet files
+  | 'design_output'         // Pronorm's design output package (perspectives, plans, element lists)
+  | 'dealer_markup'         // Dealer's marked-up changes
+  | 'design_revision'       // Pronorm's revised design files
+  | 'acknowledgement'       // Factory order confirmation PDF
+  | 'acknowledgement_markup'; // Dealer's markup on factory confirmation
 
 export interface Dealer {
   id: string;
@@ -36,6 +89,8 @@ export interface ProjectFile {
   file_path: string;
   file_type: string;
   file_size: number;
+  category: FileCategory;
+  uploaded_by: 'dealer' | 'admin';
   uploaded_at: string;
 }
 
@@ -46,8 +101,11 @@ export interface Order {
   order_number: string;
   status: OrderStatus;
   total_amount: number;
-  quickbooks_invoice_id: string | null;
+  shipping_amount: number | null;
+  quickbooks_order_invoice_id: string | null;
+  quickbooks_shipping_invoice_id: string | null;
   payment_status: PaymentStatus;
+  shipping_payment_status: PaymentStatus;
   shipping_tracking: string | null;
   shipping_carrier: string | null;
   estimated_delivery: string | null;
@@ -56,6 +114,18 @@ export interface Order {
   delivered_at: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface OrderFile {
+  id: string;
+  order_id: string;
+  file_name: string;
+  file_path: string;
+  file_type: string;
+  file_size: number;
+  category: 'acknowledgement' | 'acknowledgement_markup' | 'other';
+  uploaded_by: 'dealer' | 'admin';
+  uploaded_at: string;
 }
 
 export interface OrderStatusUpdate {
@@ -110,6 +180,11 @@ export interface Database {
         Row: Order;
         Insert: Omit<Order, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<Order, 'id'>>;
+      };
+      order_files: {
+        Row: OrderFile;
+        Insert: Omit<OrderFile, 'id' | 'uploaded_at'>;
+        Update: Partial<Omit<OrderFile, 'id'>>;
       };
       order_status_updates: {
         Row: OrderStatusUpdate;

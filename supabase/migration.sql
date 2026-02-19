@@ -4,10 +4,43 @@
 -- =============================================
 
 -- ── Enums ──
-CREATE TYPE project_status AS ENUM ('submitted', 'in_review', 'quoted', 'revision_requested', 'approved');
-CREATE TYPE order_status AS ENUM ('pending_payment', 'paid', 'in_production', 'shipped', 'delivered');
+CREATE TYPE project_status AS ENUM (
+  'submitted',            -- Dealer submitted design packet
+  'in_design',            -- Pronorm USA is designing
+  'design_delivered',     -- Design output package ready for dealer review
+  'changes_requested',    -- Dealer marked up changes
+  'design_revised',       -- Pronorm revised design (can loop back)
+  'approved'              -- Dealer approved design → ready for order
+);
+
+CREATE TYPE order_status AS ENUM (
+  'pending_order_payment',    -- Awaiting order payment (QuickBooks)
+  'order_paid',               -- Order payment received
+  'sent_to_factory',          -- Sent to pronorm factory in Germany
+  'acknowledgement_review',   -- Factory confirmation uploaded for dealer review
+  'acknowledgement_changes',  -- Dealer marked up changes on confirmation
+  'acknowledgement_approved', -- Dealer approved factory confirmation
+  'in_production',            -- Manufacturing in progress
+  'shipped',                  -- Order shipped from factory
+  'pending_shipping_payment', -- Awaiting shipping/balance payment
+  'shipping_paid',            -- Shipping payment received
+  'delivered'                 -- Delivered to dealer/client
+);
+
 CREATE TYPE payment_status AS ENUM ('unpaid', 'partial', 'paid');
 CREATE TYPE warranty_status AS ENUM ('submitted', 'under_review', 'approved', 'shipped', 'resolved', 'denied');
+
+CREATE TYPE file_category AS ENUM (
+  'submission',               -- Dealer's original design packet files
+  'design_output',            -- Pronorm's design output package
+  'dealer_markup',            -- Dealer's marked-up changes
+  'design_revision',          -- Pronorm's revised design files
+  'acknowledgement',          -- Factory order confirmation PDF
+  'acknowledgement_markup'    -- Dealer's markup on factory confirmation
+);
+
+CREATE TYPE order_file_category AS ENUM ('acknowledgement', 'acknowledgement_markup', 'other');
+CREATE TYPE uploader_role AS ENUM ('dealer', 'admin');
 
 -- ── Dealers ──
 CREATE TABLE dealers (
@@ -35,7 +68,7 @@ CREATE TABLE projects (
   updated_at timestamptz DEFAULT now() NOT NULL
 );
 
--- ── Project Files ──
+-- ── Project Files (with category tracking) ──
 CREATE TABLE project_files (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   project_id uuid REFERENCES projects(id) ON DELETE CASCADE NOT NULL,
@@ -43,6 +76,8 @@ CREATE TABLE project_files (
   file_path text NOT NULL,
   file_type text NOT NULL DEFAULT 'application/octet-stream',
   file_size bigint NOT NULL DEFAULT 0,
+  category file_category NOT NULL DEFAULT 'submission',
+  uploaded_by uploader_role NOT NULL DEFAULT 'dealer',
   uploaded_at timestamptz DEFAULT now() NOT NULL
 );
 
@@ -52,10 +87,13 @@ CREATE TABLE orders (
   project_id uuid REFERENCES projects(id) ON DELETE SET NULL,
   dealer_id uuid REFERENCES dealers(id) ON DELETE CASCADE NOT NULL,
   order_number text NOT NULL UNIQUE,
-  status order_status DEFAULT 'pending_payment' NOT NULL,
+  status order_status DEFAULT 'pending_order_payment' NOT NULL,
   total_amount numeric NOT NULL DEFAULT 0,
-  quickbooks_invoice_id text,
+  shipping_amount numeric,
+  quickbooks_order_invoice_id text,
+  quickbooks_shipping_invoice_id text,
   payment_status payment_status DEFAULT 'unpaid' NOT NULL,
+  shipping_payment_status payment_status DEFAULT 'unpaid' NOT NULL,
   shipping_tracking text,
   shipping_carrier text,
   estimated_delivery date,
@@ -64,6 +102,19 @@ CREATE TABLE orders (
   delivered_at timestamptz,
   created_at timestamptz DEFAULT now() NOT NULL,
   updated_at timestamptz DEFAULT now() NOT NULL
+);
+
+-- ── Order Files (acknowledgements + markups) ──
+CREATE TABLE order_files (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  order_id uuid REFERENCES orders(id) ON DELETE CASCADE NOT NULL,
+  file_name text NOT NULL,
+  file_path text NOT NULL,
+  file_type text NOT NULL DEFAULT 'application/octet-stream',
+  file_size bigint NOT NULL DEFAULT 0,
+  category order_file_category NOT NULL DEFAULT 'acknowledgement',
+  uploaded_by uploader_role NOT NULL DEFAULT 'admin',
+  uploaded_at timestamptz DEFAULT now() NOT NULL
 );
 
 -- ── Order Status Updates ──
@@ -116,15 +167,16 @@ ALTER TABLE dealers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE project_files ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_files ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_status_updates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE warranty_claims ENABLE ROW LEVEL SECURITY;
 ALTER TABLE warranty_files ENABLE ROW LEVEL SECURITY;
 
--- Dealers: users can only read their own record
+-- Dealers
 CREATE POLICY "Dealers: read own" ON dealers FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Dealers: update own" ON dealers FOR UPDATE USING (auth.uid() = user_id);
 
--- Projects: dealers can CRUD their own projects
+-- Projects
 CREATE POLICY "Projects: read own" ON projects FOR SELECT USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
 CREATE POLICY "Projects: insert own" ON projects FOR INSERT WITH CHECK (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
 CREATE POLICY "Projects: update own" ON projects FOR UPDATE USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
@@ -135,6 +187,11 @@ CREATE POLICY "Project files: insert own" ON project_files FOR INSERT WITH CHECK
 
 -- Orders
 CREATE POLICY "Orders: read own" ON orders FOR SELECT USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
+CREATE POLICY "Orders: update own" ON orders FOR UPDATE USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
+
+-- Order Files
+CREATE POLICY "Order files: read own" ON order_files FOR SELECT USING (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
+CREATE POLICY "Order files: insert own" ON order_files FOR INSERT WITH CHECK (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
 
 -- Order Status Updates
 CREATE POLICY "Order updates: read own" ON order_status_updates FOR SELECT USING (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
@@ -148,20 +205,19 @@ CREATE POLICY "Warranty files: read own" ON warranty_files FOR SELECT USING (war
 CREATE POLICY "Warranty files: insert own" ON warranty_files FOR INSERT WITH CHECK (warranty_id IN (SELECT id FROM warranty_claims WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
 
 -- ── Storage Buckets ──
--- Run these in the Supabase dashboard under Storage, or via the API:
--- 1. Create bucket "project-files" (private, 50MB max file size)
--- 2. Create bucket "warranty-files" (private, 20MB max file size)
--- Storage policies (add via dashboard):
---   project-files: authenticated users can upload to their dealer folder
---   project-files: authenticated users can read from their dealer folder
---   warranty-files: same as above
+-- Create in Supabase Dashboard → Storage:
+-- 1. "project-files" (private, 50MB max file size)
+-- 2. "order-files" (private, 50MB max file size)
+-- 3. "warranty-files" (private, 20MB max file size)
 
 -- ── Indexes ──
 CREATE INDEX idx_projects_dealer_id ON projects(dealer_id);
 CREATE INDEX idx_projects_status ON projects(status);
+CREATE INDEX idx_project_files_project_id ON project_files(project_id);
+CREATE INDEX idx_project_files_category ON project_files(category);
 CREATE INDEX idx_orders_dealer_id ON orders(dealer_id);
 CREATE INDEX idx_orders_status ON orders(status);
-CREATE INDEX idx_project_files_project_id ON project_files(project_id);
+CREATE INDEX idx_order_files_order_id ON order_files(order_id);
 CREATE INDEX idx_order_status_updates_order_id ON order_status_updates(order_id);
 CREATE INDEX idx_warranty_claims_dealer_id ON warranty_claims(dealer_id);
 CREATE INDEX idx_warranty_claims_order_id ON warranty_claims(order_id);

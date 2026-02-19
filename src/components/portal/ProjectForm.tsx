@@ -46,6 +46,8 @@ export default function ProjectForm({ dealer, onNavigate }: ProjectFormProps) {
           file_path: path,
           file_type: file.type || 'application/octet-stream',
           file_size: file.size,
+          category: 'submission',
+          uploaded_by: 'dealer',
         });
       }
 

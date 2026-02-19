@@ -8,7 +8,7 @@ interface ProjectListProps {
   onNavigate: (path: string) => void;
 }
 
-const STATUS_FILTERS = ['all', 'submitted', 'in_review', 'quoted', 'revision_requested', 'approved'] as const;
+const STATUS_FILTERS = ['all', 'submitted', 'in_design', 'design_delivered', 'changes_requested', 'design_revised', 'approved'] as const;
 
 export default function ProjectList({ dealer, onNavigate }: ProjectListProps) {
   const [projects, setProjects] = useState<Project[]>([]);

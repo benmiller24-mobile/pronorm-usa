@@ -44,6 +44,13 @@ body {
   }
 }
 
+/* Detail page 2-column grid → stacked on mobile */
+@media (max-width: 768px) {
+  .portal-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* Table responsive wrapper */
 @media (max-width: 640px) {
   table {

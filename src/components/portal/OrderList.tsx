@@ -8,7 +8,7 @@ interface OrderListProps {
   onNavigate: (path: string) => void;
 }
 
-const STATUS_FILTERS = ['all', 'pending_payment', 'paid', 'in_production', 'shipped', 'delivered'] as const;
+const STATUS_FILTERS = ['all', 'pending_order_payment', 'order_paid', 'sent_to_factory', 'acknowledgement_review', 'in_production', 'shipped', 'pending_shipping_payment', 'delivered'] as const;
 
 export default function OrderList({ dealer, onNavigate }: OrderListProps) {
   const [orders, setOrders] = useState<Order[]>([]);

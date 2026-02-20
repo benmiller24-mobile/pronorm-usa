@@ -41,6 +41,19 @@ exports.handler = async function(event) {
     k.includes('SUPA') || k.includes('SERVICE') || k.includes('SECRET') || k.includes('PRIVATE')
   );
 
+  // Also scan ALL env vars for JWTs that look like Supabase keys
+  const jwtEnvVars = Object.entries(process.env)
+    .filter(([k, v]) => v && v.startsWith('eyJ') && v.length > 100)
+    .map(([k, v]) => {
+      try {
+        const payload = JSON.parse(Buffer.from(v.split('.')[1], 'base64').toString());
+        return { name: k, role: payload.role, ref: payload.ref };
+      } catch { return { name: k, decoded: false }; }
+    });
+
+  // Check all env var NAMES 
+  const allEnvNames = Object.keys(process.env).sort();
+
   if (!serviceKey) {
     return {
       statusCode: 400,
@@ -49,6 +62,8 @@ exports.handler = async function(event) {
         error: 'No service_role key found',
         anon_key_found: !!anonKey,
         relevant_env_vars: envKeys,
+        jwt_env_vars: jwtEnvVars,
+        all_env_var_names: allEnvNames,
       }, null, 2),
     };
   }

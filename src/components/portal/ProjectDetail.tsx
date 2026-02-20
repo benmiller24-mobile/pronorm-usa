@@ -77,12 +77,14 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
     try {
       for (const file of markupFiles) {
         const path = `${dealer.id}/${project.id}/markup-${Date.now()}-${file.name}`;
-        await supabase.storage.from('project-files').upload(path, file);
-        await supabase.from('project_files').insert({
+        const { error: uploadErr } = await supabase.storage.from('project-files').upload(path, file);
+        if (uploadErr) throw new Error(`Upload failed: ${uploadErr.message}`);
+        const { error: insertErr } = await supabase.from('project_files').insert({
           project_id: project.id, file_name: file.name, file_path: path,
           file_type: file.type || 'application/octet-stream', file_size: file.size,
           category: 'dealer_markup', uploaded_by: 'dealer',
         });
+        if (insertErr) throw new Error(`File record failed: ${insertErr.message}`);
       }
       await supabase.from('projects').update({
         status: 'changes_requested',
@@ -90,7 +92,10 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
       }).eq('id', project.id);
       setMarkupMode(false); setMarkupFiles([]); setMarkupNote('');
       await loadData();
-    } catch (err) { console.error(err); }
+    } catch (err: any) {
+      console.error(err);
+      alert(`Markup submission failed: ${err.message || 'Unknown error'}`);
+    }
     setSubmittingMarkup(false);
   };
 
@@ -118,16 +123,30 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
     try {
       for (const file of adminFiles) {
         const path = `${project.dealer_id}/${project.id}/admin-${Date.now()}-${file.name}`;
-        await supabase.storage.from('project-files').upload(path, file);
-        await supabase.from('project_files').insert({
+        const { error: uploadErr } = await supabase.storage.from('project-files').upload(path, file);
+        if (uploadErr) throw new Error(`Storage upload failed: ${uploadErr.message}`);
+        const { error: insertErr } = await supabase.from('project_files').insert({
           project_id: project.id, file_name: file.name, file_path: path,
           file_type: file.type || 'application/octet-stream', file_size: file.size,
           category: adminFileCategory, uploaded_by: 'admin',
         });
+        if (insertErr) throw new Error(`File record failed: ${insertErr.message}`);
+      }
+      // Auto-update status based on file category
+      const statusUpdates: Record<string, Record<string, string>> = {
+        design_output: { submitted: 'design_delivered', in_design: 'design_delivered' },
+        design_revision: { changes_requested: 'design_revised' },
+      };
+      const newStatus = statusUpdates[adminFileCategory]?.[project.status];
+      if (newStatus) {
+        await supabase.from('projects').update({ status: newStatus }).eq('id', project.id);
       }
       setAdminFiles([]);
       await loadData();
-    } catch (err) { console.error(err); }
+    } catch (err: any) {
+      console.error(err);
+      alert(`Upload failed: ${err.message || 'Unknown error'}`);
+    }
     setAdminUploading(false);
   };
 

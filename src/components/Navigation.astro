@@ -111,9 +111,16 @@ function isActive(href: string) {
 
       <a href="/find-a-dealer" class="nav-cta nav-cta-mobile">Find a Dealer</a>
       <a href="/request-consultation" class="nav-cta-secondary-mobile">Request Consultation</a>
+      <a href="/dealer-portal" class="nav-dealer-login-mobile">Dealer Login →</a>
     </div>
 
     <div class="nav-actions">
+      <a href="/dealer-portal" class="nav-dealer-login" aria-label="Dealer Login">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        <span>Dealer Login</span>
+      </a>
       <button class="nav-search-btn" aria-label="Search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
@@ -233,6 +240,23 @@ function isActive(href: string) {
   .nav-cta-mobile { display:none; }
   .nav-cta-secondary-mobile { display:none; }
 
+  .nav-dealer-login {
+    display:inline-flex; align-items:center; gap:.35rem;
+    color:rgba(255,255,255,.4); text-decoration:none;
+    font-family:var(--font-body); font-size:.68rem; font-weight:400;
+    letter-spacing:.04em; transition:color .3s;
+    padding:.3rem 0;
+  }
+  .nav-dealer-login:hover { color:var(--color-copper); }
+  .nav-dealer-login svg { opacity:.6; transition:opacity .3s; }
+  .nav-dealer-login:hover svg { opacity:1; }
+  .nav-dealer-login-mobile {
+    display:none; text-align:center; margin-top:1.5rem; padding:.6rem;
+    font-size:.75rem; font-family:var(--font-body); color:rgba(255,255,255,.35);
+    text-decoration:none; letter-spacing:.06em; transition:color .3s;
+  }
+  .nav-dealer-login-mobile:hover { color:var(--color-copper); }
+
   .nav-search-btn {
     background:none; border:none; cursor:pointer;
     color:rgba(255,255,255,.45); display:flex; align-items:center;
@@ -262,6 +286,8 @@ function isActive(href: string) {
     .nav-actions { margin-left:auto; }
     .nav-search-btn { display:none; }
     .nav-cta-desktop { display:none; }
+    .nav-dealer-login { display:none; }
+    .nav-dealer-login-mobile { display:block; }
 
     .nav-menu-wrap {
       position:fixed; top:0; right:0; z-index:999;

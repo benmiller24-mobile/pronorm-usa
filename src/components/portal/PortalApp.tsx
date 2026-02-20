@@ -120,21 +120,23 @@ export default function PortalApp() {
   }
 
   const isAdmin = dealer.role === 'admin';
+  const isDesigner = dealer.role === 'designer';
+  const hasElevatedAccess = isAdmin || isDesigner; // can see all projects
 
   // Route matching
   const renderPage = () => {
     if (path === '/dealer-portal/dashboard' || path === '/dealer-portal' || path === '/dealer-portal/') {
-      return <DealerDashboard dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
+      return <DealerDashboard dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
     if (path === '/dealer-portal/projects/new') {
       return <ProjectForm dealer={dealer} onNavigate={navigate} />;
     }
     if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') {
-      return <ProjectList dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
+      return <ProjectList dealer={dealer} onNavigate={navigate} isAdmin={hasElevatedAccess} />;
     }
     if (path.startsWith('/dealer-portal/projects/')) {
       const id = path.split('/').pop()!;
-      return <ProjectDetail projectId={id} dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
+      return <ProjectDetail projectId={id} dealer={dealer} onNavigate={navigate} isAdmin={hasElevatedAccess} />;
     }
     if (path === '/dealer-portal/orders' || path === '/dealer-portal/orders/') {
       return <OrderList dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
@@ -152,11 +154,11 @@ export default function PortalApp() {
     if (path === '/dealer-portal/account') {
       return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;
     }
-    return <DealerDashboard dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    return <DealerDashboard dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
   };
 
   return (
-    <PortalLayout dealer={dealer} currentPath={path} onNavigate={navigate} onLogout={handleLogout} isAdmin={isAdmin}>
+    <PortalLayout dealer={dealer} currentPath={path} onNavigate={navigate} onLogout={handleLogout} isAdmin={isAdmin} isDesigner={isDesigner}>
       {renderPage()}
     </PortalLayout>
   );

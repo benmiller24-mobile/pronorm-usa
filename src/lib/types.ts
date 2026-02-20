@@ -58,6 +58,8 @@ export type FileCategory =
   | 'acknowledgement'       // Factory order confirmation PDF
   | 'acknowledgement_markup'; // Dealer's markup on factory confirmation
 
+export type DealerRole = 'dealer' | 'admin' | 'designer';
+
 export interface Dealer {
   id: string;
   user_id: string;
@@ -66,7 +68,7 @@ export interface Dealer {
   email: string;
   phone: string;
   address: string;
-  role: 'dealer' | 'admin';
+  role: DealerRole;
   created_at: string;
 }
 

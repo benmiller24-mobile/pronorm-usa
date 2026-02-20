@@ -7,6 +7,7 @@ interface PortalLayoutProps {
   onNavigate: (path: string) => void;
   onLogout: () => void;
   isAdmin?: boolean;
+  isDesigner?: boolean;
   children: React.ReactNode;
 }
 
@@ -26,10 +27,16 @@ const ADMIN_NAV_ITEMS = [
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
 
-export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout, isAdmin, children }: PortalLayoutProps) {
+const DESIGNER_NAV_ITEMS = [
+  { path: '/dealer-portal/dashboard', label: 'Design Dashboard', icon: '\u25A3' },
+  { path: '/dealer-portal/projects', label: 'All Projects', icon: '\u2637' },
+  { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
+];
+
+export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout, isAdmin, isDesigner, children }: PortalLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const NAV_ITEMS = isAdmin ? ADMIN_NAV_ITEMS : DEALER_NAV_ITEMS;
+  const NAV_ITEMS = isAdmin ? ADMIN_NAV_ITEMS : isDesigner ? DESIGNER_NAV_ITEMS : DEALER_NAV_ITEMS;
 
   return (
     <div style={{
@@ -70,7 +77,7 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
             </div>
           </a>
           <div style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b87333', marginTop: '0.25rem' }}>
-            {isAdmin ? 'Admin Portal' : 'Dealer Portal'}
+            {isAdmin ? 'Admin Portal' : isDesigner ? 'Designer Portal' : 'Dealer Portal'}
           </div>
         </div>
 
@@ -111,9 +118,9 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
         <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           {dealer && (
             <div style={{ fontSize: '0.78rem', color: '#b5aca3', marginBottom: '0.75rem' }}>
-              {isAdmin ? (
+              {(isAdmin || isDesigner) ? (
                 <>
-                  <div style={{ fontWeight: 600, color: '#b87333' }}>Pronorm Admin</div>
+                  <div style={{ fontWeight: 600, color: '#b87333' }}>{isAdmin ? 'Pronorm Admin' : 'Kitchen Designer'}</div>
                   <div>{dealer.contact_name}</div>
                 </>
               ) : (

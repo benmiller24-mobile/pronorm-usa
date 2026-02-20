@@ -42,6 +42,9 @@ CREATE TYPE file_category AS ENUM (
 CREATE TYPE order_file_category AS ENUM ('acknowledgement', 'acknowledgement_markup', 'other');
 CREATE TYPE uploader_role AS ENUM ('dealer', 'admin');
 
+-- ── Roles Enum ──
+CREATE TYPE dealer_role AS ENUM ('dealer', 'admin', 'designer');
+
 -- ── Dealers ──
 CREATE TABLE dealers (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -51,6 +54,7 @@ CREATE TABLE dealers (
   email text NOT NULL,
   phone text DEFAULT '',
   address text DEFAULT '',
+  role dealer_role DEFAULT 'dealer' NOT NULL,
   created_at timestamptz DEFAULT now() NOT NULL
 );
 
@@ -175,34 +179,74 @@ ALTER TABLE warranty_files ENABLE ROW LEVEL SECURITY;
 -- Dealers
 CREATE POLICY "Dealers: read own" ON dealers FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Dealers: update own" ON dealers FOR UPDATE USING (auth.uid() = user_id);
+-- Admin can read all dealers
+CREATE POLICY "Dealers: admin read all" ON dealers FOR SELECT USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+);
 
 -- Projects
 CREATE POLICY "Projects: read own" ON projects FOR SELECT USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
 CREATE POLICY "Projects: insert own" ON projects FOR INSERT WITH CHECK (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
 CREATE POLICY "Projects: update own" ON projects FOR UPDATE USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
+-- Admin + Designer can read all projects
+CREATE POLICY "Projects: elevated read all" ON projects FOR SELECT USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role IN ('admin', 'designer'))
+);
+-- Admin + Designer can update all projects (advance status, add notes, set quote)
+CREATE POLICY "Projects: elevated update all" ON projects FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role IN ('admin', 'designer'))
+);
 
 -- Project Files
 CREATE POLICY "Project files: read own" ON project_files FOR SELECT USING (project_id IN (SELECT id FROM projects WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
 CREATE POLICY "Project files: insert own" ON project_files FOR INSERT WITH CHECK (project_id IN (SELECT id FROM projects WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
+-- Admin + Designer can read/insert all project files
+CREATE POLICY "Project files: elevated read all" ON project_files FOR SELECT USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role IN ('admin', 'designer'))
+);
+CREATE POLICY "Project files: elevated insert all" ON project_files FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role IN ('admin', 'designer'))
+);
 
--- Orders
+-- Orders (admin only for cross-dealer access)
 CREATE POLICY "Orders: read own" ON orders FOR SELECT USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
 CREATE POLICY "Orders: update own" ON orders FOR UPDATE USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
+CREATE POLICY "Orders: admin read all" ON orders FOR SELECT USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+);
+CREATE POLICY "Orders: admin update all" ON orders FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+);
 
 -- Order Files
 CREATE POLICY "Order files: read own" ON order_files FOR SELECT USING (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
 CREATE POLICY "Order files: insert own" ON order_files FOR INSERT WITH CHECK (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
+CREATE POLICY "Order files: admin read all" ON order_files FOR SELECT USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+);
+CREATE POLICY "Order files: admin insert all" ON order_files FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+);
 
 -- Order Status Updates
 CREATE POLICY "Order updates: read own" ON order_status_updates FOR SELECT USING (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
+CREATE POLICY "Order updates: admin read all" ON order_status_updates FOR SELECT USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+);
 
 -- Warranty Claims
 CREATE POLICY "Warranty: read own" ON warranty_claims FOR SELECT USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
 CREATE POLICY "Warranty: insert own" ON warranty_claims FOR INSERT WITH CHECK (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
+CREATE POLICY "Warranty: admin read all" ON warranty_claims FOR SELECT USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+);
 
 -- Warranty Files
 CREATE POLICY "Warranty files: read own" ON warranty_files FOR SELECT USING (warranty_id IN (SELECT id FROM warranty_claims WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
 CREATE POLICY "Warranty files: insert own" ON warranty_files FOR INSERT WITH CHECK (warranty_id IN (SELECT id FROM warranty_claims WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
+CREATE POLICY "Warranty files: admin read all" ON warranty_files FOR SELECT USING (
+  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+);
 
 -- ── Storage Buckets ──
 -- Create in Supabase Dashboard → Storage:

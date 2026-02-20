@@ -7,9 +7,10 @@ interface DashboardProps {
   dealer: Dealer;
   onNavigate: (path: string) => void;
   isAdmin?: boolean;
+  isDesigner?: boolean;
 }
 
-export default function DealerDashboard({ dealer, onNavigate, isAdmin }: DashboardProps) {
+export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigner }: DashboardProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [warranties, setWarranties] = useState<WarrantyClaim[]>([]);
@@ -27,6 +28,10 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin }: Dashboa
         setProjects(projRes.data || []);
         setOrders(ordRes.data || []);
         setWarranties(warRes.data || []);
+      } else if (isDesigner) {
+        // Designer sees all projects but no orders/warranty
+        const projRes = await supabase.from('projects').select('*').order('created_at', { ascending: false }).limit(10);
+        setProjects(projRes.data || []);
       } else {
         const [projRes, ordRes, warRes] = await Promise.all([
           supabase.from('projects').select('*').eq('dealer_id', dealer.id).order('created_at', { ascending: false }).limit(5),
@@ -40,7 +45,7 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin }: Dashboa
       setLoading(false);
     }
     loadData();
-  }, [dealer.id, isAdmin]);
+  }, [dealer.id, isAdmin, isDesigner]);
 
   // Items needing action
   const actionNeeded = isAdmin
@@ -50,6 +55,11 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin }: Dashboa
         ...orders.filter(o => o.status === 'order_paid').map(o => ({ type: 'order', label: `Send to factory: ${o.order_number}`, id: o.id })),
         ...orders.filter(o => o.status === 'acknowledgement_changes').map(o => ({ type: 'order', label: `Re-upload ack: ${o.order_number}`, id: o.id })),
         ...orders.filter(o => o.status === 'acknowledgement_approved').map(o => ({ type: 'order', label: `Start production: ${o.order_number}`, id: o.id })),
+      ]
+    : isDesigner
+    ? [
+        ...projects.filter(p => p.status === 'submitted').map(p => ({ type: 'project', label: `New submission: ${p.job_name}`, id: p.id })),
+        ...projects.filter(p => p.status === 'changes_requested').map(p => ({ type: 'project', label: `Changes requested: ${p.job_name}`, id: p.id })),
       ]
     : [
         ...projects.filter(p => ['design_delivered', 'design_revised'].includes(p.status)).map(p => ({ type: 'project', label: `Review design: ${p.job_name}`, id: p.id })),
@@ -72,10 +82,10 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin }: Dashboa
     <div>
       <div style={{ marginBottom: '2rem' }}>
         <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2rem', fontWeight: 400, color: '#1a1a1a' }}>
-          {isAdmin ? 'Admin Dashboard' : `Welcome, ${dealer.contact_name}`}
+          {isAdmin ? 'Admin Dashboard' : isDesigner ? 'Design Dashboard' : `Welcome, ${dealer.contact_name}`}
         </h1>
         <p style={{ fontSize: '0.88rem', color: '#8a8279', marginTop: '0.25rem' }}>
-          {isAdmin ? 'Pronorm USA — Manage all dealers, projects & orders' : `${dealer.company_name} — Dealer Dashboard`}
+          {isAdmin ? 'Pronorm USA — Manage all dealers, projects & orders' : isDesigner ? 'Pronorm USA — Kitchen Design & Project Management' : `${dealer.company_name} — Dealer Dashboard`}
         </p>
       </div>
 
@@ -107,7 +117,7 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin }: Dashboa
       </div>
 
       {/* Quick Actions */}
-      {!isAdmin && (
+      {!isAdmin && !isDesigner && (
         <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2.5rem', flexWrap: 'wrap' }}>
           <button onClick={() => onNavigate('/dealer-portal/projects/new')} style={{ padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none', borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit' }}>+ New Project</button>
           <button onClick={() => onNavigate('/dealer-portal/warranty/new')} style={{ padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'transparent', color: '#4a4a4a', border: '1.5px solid #d4cdc5', borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit' }}>+ Warranty Claim</button>

@@ -103,6 +103,7 @@ export interface Order {
   status: OrderStatus;
   total_amount: number;
   shipping_amount: number | null;
+  payment_link: string | null;
   quickbooks_order_invoice_id: string | null;
   quickbooks_shipping_invoice_id: string | null;
   payment_status: PaymentStatus;
@@ -124,7 +125,7 @@ export interface OrderFile {
   file_path: string;
   file_type: string;
   file_size: number;
-  category: 'acknowledgement' | 'acknowledgement_markup' | 'other';
+  category: 'acknowledgement' | 'acknowledgement_revision' | 'acknowledgement_markup' | 'other';
   uploaded_by: 'dealer' | 'admin';
   uploaded_at: string;
 }

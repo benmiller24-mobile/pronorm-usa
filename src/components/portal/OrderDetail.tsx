@@ -49,7 +49,10 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
   const [adminStatusNote, setAdminStatusNote] = useState('');
   const [adminUpdating, setAdminUpdating] = useState(false);
   const [adminFiles, setAdminFiles] = useState<File[]>([]);
+  const [adminFileCategory, setAdminFileCategory] = useState<'acknowledgement' | 'acknowledgement_revision'>('acknowledgement');
   const [adminUploading, setAdminUploading] = useState(false);
+  const [paymentLinkInput, setPaymentLinkInput] = useState('');
+  const [savingPaymentLink, setSavingPaymentLink] = useState(false);
   const [qbOrderInvoice, setQbOrderInvoice] = useState('');
   const [qbShippingInvoice, setQbShippingInvoice] = useState('');
   const [savingQb, setSavingQb] = useState(false);
@@ -70,6 +73,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
     setFiles(filesRes.data || []);
     setUpdates(updRes.data || []);
     if (ordRes.data) {
+      setPaymentLinkInput(ordRes.data.payment_link || '');
       setQbOrderInvoice(ordRes.data.quickbooks_order_invoice_id || '');
       setQbShippingInvoice(ordRes.data.quickbooks_shipping_invoice_id || '');
       setTrackingInput(ordRes.data.shipping_tracking || '');
@@ -91,17 +95,28 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
     try {
       for (const file of markupFiles) {
         const path = `${dealer.id}/${order.id}/ack-markup-${Date.now()}-${file.name}`;
-        await supabase.storage.from('order-files').upload(path, file);
-        await supabase.from('order_files').insert({
+        const { error: uploadErr } = await supabase.storage.from('order-files').upload(path, file);
+        if (uploadErr) throw new Error(`Upload failed: ${uploadErr.message}`);
+        const { error: insertErr } = await supabase.from('order_files').insert({
           order_id: order.id, file_name: file.name, file_path: path,
           file_type: file.type || 'application/octet-stream', file_size: file.size,
           category: 'acknowledgement_markup', uploaded_by: 'dealer',
         });
+        if (insertErr) throw new Error(`File record failed: ${insertErr.message}`);
       }
       await supabase.from('orders').update({ status: 'acknowledgement_changes' }).eq('id', order.id);
+      if (markupNote) {
+        await supabase.from('order_status_updates').insert({
+          order_id: order.id, old_status: order.status, new_status: 'acknowledgement_changes',
+          note: markupNote, updated_by: 'dealer',
+        });
+      }
       setMarkupMode(false); setMarkupFiles([]); setMarkupNote('');
       await loadData();
-    } catch (err) { console.error(err); }
+    } catch (err: any) {
+      console.error(err);
+      alert(`Markup submission failed: ${err.message || 'Unknown error'}`);
+    }
     setSubmittingMarkup(false);
   };
 
@@ -110,6 +125,10 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
     if (!order) return;
     setApproving(true);
     await supabase.from('orders').update({ status: 'acknowledgement_approved' }).eq('id', order.id);
+    await supabase.from('order_status_updates').insert({
+      order_id: order.id, old_status: order.status, new_status: 'acknowledgement_approved',
+      note: 'Dealer approved order confirmation', updated_by: 'dealer',
+    });
     await loadData();
     setApproving(false);
   };
@@ -119,19 +138,14 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
     if (!order || !adminStatus) return;
     setAdminUpdating(true);
     const updateData: Record<string, any> = { status: adminStatus };
-    // Set timestamp fields for relevant statuses
     if (adminStatus === 'in_production') updateData.production_started_at = new Date().toISOString();
     if (adminStatus === 'shipped') updateData.shipped_at = new Date().toISOString();
     if (adminStatus === 'delivered') updateData.delivered_at = new Date().toISOString();
 
     await supabase.from('orders').update(updateData).eq('id', order.id);
-    // Insert status update record
     await supabase.from('order_status_updates').insert({
-      order_id: order.id,
-      old_status: order.status,
-      new_status: adminStatus,
-      note: adminStatusNote || null,
-      updated_by: 'admin',
+      order_id: order.id, old_status: order.status, new_status: adminStatus,
+      note: adminStatusNote || null, updated_by: 'admin',
     });
     setAdminStatus('');
     setAdminStatusNote('');
@@ -145,17 +159,43 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
     try {
       for (const file of adminFiles) {
         const path = `${order.dealer_id}/${order.id}/admin-ack-${Date.now()}-${file.name}`;
-        await supabase.storage.from('order-files').upload(path, file);
-        await supabase.from('order_files').insert({
+        const { error: uploadErr } = await supabase.storage.from('order-files').upload(path, file);
+        if (uploadErr) throw new Error(`Storage upload failed: ${uploadErr.message}`);
+        const { error: insertErr } = await supabase.from('order_files').insert({
           order_id: order.id, file_name: file.name, file_path: path,
           file_type: file.type || 'application/octet-stream', file_size: file.size,
-          category: 'acknowledgement', uploaded_by: 'admin',
+          category: adminFileCategory, uploaded_by: 'admin',
+        });
+        if (insertErr) throw new Error(`File record failed: ${insertErr.message}`);
+      }
+      // Auto-update status when uploading acknowledgement files
+      const statusUpdates: Record<string, Record<string, string>> = {
+        acknowledgement: { sent_to_factory: 'acknowledgement_review' },
+        acknowledgement_revision: { acknowledgement_changes: 'acknowledgement_review' },
+      };
+      const newStatus = statusUpdates[adminFileCategory]?.[order.status];
+      if (newStatus) {
+        await supabase.from('orders').update({ status: newStatus }).eq('id', order.id);
+        await supabase.from('order_status_updates').insert({
+          order_id: order.id, old_status: order.status, new_status: newStatus,
+          note: `Uploaded ${adminFileCategory === 'acknowledgement' ? 'order confirmation' : 'revised confirmation'}`, updated_by: 'admin',
         });
       }
       setAdminFiles([]);
       await loadData();
-    } catch (err) { console.error(err); }
+    } catch (err: any) {
+      console.error(err);
+      alert(`Upload failed: ${err.message || 'Unknown error'}`);
+    }
     setAdminUploading(false);
+  };
+
+  const handleSavePaymentLink = async () => {
+    if (!order) return;
+    setSavingPaymentLink(true);
+    await supabase.from('orders').update({ payment_link: paymentLinkInput || null }).eq('id', order.id);
+    await loadData();
+    setSavingPaymentLink(false);
   };
 
   const handleSaveQb = async () => {
@@ -208,7 +248,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
     };
   });
 
-  const ackFiles = files.filter(f => f.category === 'acknowledgement');
+  const ackFiles = files.filter(f => f.category === 'acknowledgement' || f.category === 'acknowledgement_revision');
   const ackMarkupFiles = files.filter(f => f.category === 'acknowledgement_markup');
   const canReviewAck = !isAdmin && order.status === 'acknowledgement_review';
   const needsOrderPayment = !isAdmin && order.status === 'pending_order_payment';
@@ -274,13 +314,32 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
 
               {/* Upload Acknowledgement */}
               <div style={{ marginBottom: '1.25rem' }}>
-                <label style={labelStyle}>Upload Factory Acknowledgement</label>
+                <label style={labelStyle}>Upload Order Confirmation</label>
+                <div style={{ marginBottom: '0.5rem' }}>
+                  <select value={adminFileCategory} onChange={e => setAdminFileCategory(e.target.value as any)} style={inputStyle}>
+                    <option value="acknowledgement">Order Confirmation</option>
+                    <option value="acknowledgement_revision">Revised Confirmation</option>
+                  </select>
+                </div>
                 <FileUploader onFilesSelected={setAdminFiles} />
                 {adminFiles.length > 0 && (
                   <button onClick={handleAdminFileUpload} disabled={adminUploading} style={{ ...btnPrimary, marginTop: '0.5rem', opacity: adminUploading ? 0.5 : 1 }}>
                     {adminUploading ? 'Uploading...' : `Upload ${adminFiles.length} file${adminFiles.length > 1 ? 's' : ''}`}
                   </button>
                 )}
+              </div>
+
+              {/* Payment Link */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={labelStyle}>Payment Link (visible to dealer)</label>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input value={paymentLinkInput} onChange={e => setPaymentLinkInput(e.target.value)}
+                    placeholder="https://pay.stripe.com/..." style={{ ...inputStyle, flex: 1 }} />
+                  <button onClick={handleSavePaymentLink} disabled={savingPaymentLink}
+                    style={{ ...btnPrimary, opacity: savingPaymentLink ? 0.5 : 1 }}>
+                    {savingPaymentLink ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
               </div>
 
               {/* QuickBooks Invoice IDs */}
@@ -311,18 +370,27 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
           )}
 
           {/* ORDER PAYMENT Banner */}
-          {needsOrderPayment && order.quickbooks_order_invoice_id && (
+          {needsOrderPayment && (order.payment_link || order.quickbooks_order_invoice_id) && (
             <div style={{ ...cardStyle, background: '#fef9f0', borderLeft: '4px solid #b87333' }}>
               <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', fontWeight: 500, marginBottom: '0.35rem' }}>Order Payment Required</h3>
               <p style={{ fontSize: '0.88rem', color: '#4a4a4a', lineHeight: 1.5, marginBottom: '1rem' }}>
-                Your order is ready. Pay via QuickBooks to proceed to production.
+                Your design has been approved and the order is ready. Complete payment to proceed.
               </p>
-              <a href={`https://app.qbo.intuit.com/app/invoice?txnId=${order.quickbooks_order_invoice_id}`}
-                target="_blank" rel="noopener noreferrer" style={{
-                  display: 'inline-block', padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600,
-                  letterSpacing: '0.08em', textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa',
-                  borderRadius: '3px', textDecoration: 'none',
-                }}>Pay Order Invoice &mdash; ${order.total_amount?.toLocaleString()}</a>
+              {order.payment_link ? (
+                <a href={order.payment_link}
+                  target="_blank" rel="noopener noreferrer" style={{
+                    display: 'inline-block', padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600,
+                    letterSpacing: '0.08em', textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa',
+                    borderRadius: '3px', textDecoration: 'none',
+                  }}>Pay for Order{order.total_amount ? ` — $${order.total_amount.toLocaleString()}` : ''}</a>
+              ) : order.quickbooks_order_invoice_id ? (
+                <a href={`https://app.qbo.intuit.com/app/invoice?txnId=${order.quickbooks_order_invoice_id}`}
+                  target="_blank" rel="noopener noreferrer" style={{
+                    display: 'inline-block', padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600,
+                    letterSpacing: '0.08em', textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa',
+                    borderRadius: '3px', textDecoration: 'none',
+                  }}>Pay Order Invoice{order.total_amount ? ` — $${order.total_amount.toLocaleString()}` : ''}</a>
+              ) : null}
             </div>
           )}
 
@@ -438,7 +506,10 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
                     cursor: 'pointer', fontSize: '0.85rem', fontFamily: 'inherit', textAlign: 'left', width: '100%',
                   }}>
                     <span style={{ color: '#2d2d2d', fontWeight: 500 }}>{f.file_name}</span>
-                    <span style={{ color: '#b87333', fontSize: '0.75rem', fontWeight: 600 }}>Download</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      {f.category === 'acknowledgement_revision' && <span style={{ fontSize: '0.65rem', background: '#e8f0fe', color: '#2d5a7b', padding: '0.15rem 0.4rem', borderRadius: '2px', fontWeight: 600 }}>REVISED</span>}
+                      <span style={{ color: '#b87333', fontSize: '0.75rem', fontWeight: 600 }}>Download</span>
+                    </div>
                   </button>
                 ))}
               </div>

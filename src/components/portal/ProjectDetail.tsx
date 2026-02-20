@@ -102,8 +102,40 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
   const handleApprove = async () => {
     if (!project) return;
     setApproving(true);
-    await supabase.from('projects').update({ status: 'approved' }).eq('id', project.id);
-    await loadData();
+    try {
+      // Update project status to approved
+      await supabase.from('projects').update({ status: 'approved' }).eq('id', project.id);
+
+      // Auto-create an order for this project
+      const orderNumber = `ORD-${Date.now().toString(36).toUpperCase()}`;
+      const { error: orderErr } = await supabase.from('orders').insert({
+        project_id: project.id,
+        dealer_id: project.dealer_id,
+        order_number: orderNumber,
+        status: 'pending_order_payment',
+        total_amount: project.quote_amount || 0,
+        shipping_amount: null,
+        payment_link: null,
+        quickbooks_order_invoice_id: null,
+        quickbooks_shipping_invoice_id: null,
+        payment_status: 'unpaid',
+        shipping_payment_status: 'unpaid',
+        shipping_tracking: null,
+        shipping_carrier: null,
+        estimated_delivery: null,
+        production_started_at: null,
+        shipped_at: null,
+        delivered_at: null,
+      });
+      if (orderErr) {
+        console.error('Order creation failed:', orderErr);
+        alert(`Design approved but order creation failed: ${orderErr.message}`);
+      }
+      await loadData();
+    } catch (err: any) {
+      console.error(err);
+      alert(`Approval failed: ${err.message || 'Unknown error'}`);
+    }
     setApproving(false);
   };
 

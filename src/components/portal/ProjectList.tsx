@@ -6,39 +6,87 @@ import StatusBadge from './ui/StatusBadge';
 interface ProjectListProps {
   dealer: Dealer;
   onNavigate: (path: string) => void;
+  isAdmin?: boolean;
 }
 
 const STATUS_FILTERS = ['all', 'submitted', 'in_design', 'design_delivered', 'changes_requested', 'design_revised', 'approved'] as const;
 
-export default function ProjectList({ dealer, onNavigate }: ProjectListProps) {
+export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectListProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
+  const [dealers, setDealers] = useState<Dealer[]>([]);
+  const [selectedDealerId, setSelectedDealerId] = useState<string>('all');
+
+  useEffect(() => {
+    if (isAdmin) {
+      // Load all dealers for the dropdown
+      supabase.from('dealers').select('*').neq('role', 'admin').order('company_name').then(({ data }) => {
+        setDealers(data || []);
+      });
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase.from('projects').select('*').eq('dealer_id', dealer.id).order('created_at', { ascending: false });
+      setLoading(true);
+      let query = supabase.from('projects').select('*').order('created_at', { ascending: false });
+      if (isAdmin) {
+        if (selectedDealerId !== 'all') {
+          query = query.eq('dealer_id', selectedDealerId);
+        }
+      } else {
+        query = query.eq('dealer_id', dealer.id);
+      }
+      const { data } = await query;
       setProjects(data || []);
       setLoading(false);
     }
     load();
-  }, [dealer.id]);
+  }, [dealer.id, isAdmin, selectedDealerId]);
 
   const filtered = filter === 'all' ? projects : projects.filter(p => p.status === filter);
+
+  // Map dealer_id to company name for admin view
+  const dealerMap = new Map(dealers.map(d => [d.id, d.company_name]));
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.8rem', fontWeight: 400 }}>Projects</h1>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.8rem', fontWeight: 400 }}>
+            {isAdmin ? 'All Projects' : 'Projects'}
+          </h1>
           <p style={{ fontSize: '0.85rem', color: '#8a8279', marginTop: '0.2rem' }}>{projects.length} total projects</p>
         </div>
-        <button onClick={() => onNavigate('/dealer-portal/projects/new')} style={{
-          padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em',
-          textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none',
-          borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit',
-        }}>+ New Project</button>
+        {!isAdmin && (
+          <button onClick={() => onNavigate('/dealer-portal/projects/new')} style={{
+            padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em',
+            textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none',
+            borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit',
+          }}>+ New Project</button>
+        )}
       </div>
+
+      {/* Admin dealer selector */}
+      {isAdmin && (
+        <div style={{ marginBottom: '1rem' }}>
+          <select
+            value={selectedDealerId}
+            onChange={e => setSelectedDealerId(e.target.value)}
+            style={{
+              padding: '0.5rem 1rem', fontSize: '0.85rem', border: '1.5px solid #d4cdc5',
+              borderRadius: '3px', background: '#fdfcfa', color: '#1a1a1a', fontFamily: 'inherit',
+              minWidth: '250px',
+            }}
+          >
+            <option value="all">All Dealers</option>
+            {dealers.map(d => (
+              <option key={d.id} value={d.id}>{d.company_name}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
@@ -64,7 +112,7 @@ export default function ProjectList({ dealer, onNavigate }: ProjectListProps) {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid #e8e4df' }}>
-                {['Job Name', 'Client', 'Status', 'Quote', 'Submitted'].map(h => (
+                {(isAdmin ? ['Job Name', 'Dealer', 'Client', 'Status', 'Quote', 'Submitted'] : ['Job Name', 'Client', 'Status', 'Quote', 'Submitted']).map(h => (
                   <th key={h} style={{ textAlign: h === 'Quote' || h === 'Submitted' ? 'right' : 'left', padding: '0.75rem 1rem', fontWeight: 600, color: '#4a4a4a', fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{h}</th>
                 ))}
               </tr>
@@ -76,6 +124,9 @@ export default function ProjectList({ dealer, onNavigate }: ProjectListProps) {
                   onMouseLeave={e => (e.currentTarget.style.background = '')}
                 >
                   <td style={{ padding: '0.75rem 1rem', fontWeight: 500, color: '#1a1a1a' }}>{p.job_name}</td>
+                  {isAdmin && (
+                    <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a', fontSize: '0.82rem' }}>{dealerMap.get(p.dealer_id) || '—'}</td>
+                  )}
                   <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a' }}>{p.client_name}</td>
                   <td style={{ padding: '0.75rem 1rem' }}><StatusBadge status={p.status} /></td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'right', color: '#2d2d2d', fontWeight: 500 }}>

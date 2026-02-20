@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { Order, OrderFile, OrderStatusUpdate, Dealer } from '../../lib/types';
+import { getValidNextOrderStatuses, ORDER_STATUS_LABELS } from '../../lib/admin-utils';
 import StatusBadge from './ui/StatusBadge';
 import StatusTimeline from './ui/StatusTimeline';
 import FileUploader from './ui/FileUploader';
@@ -9,6 +10,7 @@ interface OrderDetailProps {
   orderId: string;
   dealer: Dealer;
   onNavigate: (path: string) => void;
+  isAdmin?: boolean;
 }
 
 const ORDER_STEPS = [
@@ -31,7 +33,7 @@ const STEP_LABELS: Record<string, string> = {
   delivered: 'Delivered',
 };
 
-export default function OrderDetail({ orderId, dealer, onNavigate }: OrderDetailProps) {
+export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: OrderDetailProps) {
   const [order, setOrder] = useState<Order | null>(null);
   const [files, setFiles] = useState<OrderFile[]>([]);
   const [updates, setUpdates] = useState<OrderStatusUpdate[]>([]);
@@ -41,6 +43,20 @@ export default function OrderDetail({ orderId, dealer, onNavigate }: OrderDetail
   const [markupNote, setMarkupNote] = useState('');
   const [submittingMarkup, setSubmittingMarkup] = useState(false);
   const [approving, setApproving] = useState(false);
+
+  // Admin state
+  const [adminStatus, setAdminStatus] = useState('');
+  const [adminStatusNote, setAdminStatusNote] = useState('');
+  const [adminUpdating, setAdminUpdating] = useState(false);
+  const [adminFiles, setAdminFiles] = useState<File[]>([]);
+  const [adminUploading, setAdminUploading] = useState(false);
+  const [qbOrderInvoice, setQbOrderInvoice] = useState('');
+  const [qbShippingInvoice, setQbShippingInvoice] = useState('');
+  const [savingQb, setSavingQb] = useState(false);
+  const [trackingInput, setTrackingInput] = useState('');
+  const [carrierInput, setCarrierInput] = useState('');
+  const [estDeliveryInput, setEstDeliveryInput] = useState('');
+  const [savingShipping, setSavingShipping] = useState(false);
 
   useEffect(() => { loadData(); }, [orderId]);
 
@@ -53,6 +69,13 @@ export default function OrderDetail({ orderId, dealer, onNavigate }: OrderDetail
     setOrder(ordRes.data);
     setFiles(filesRes.data || []);
     setUpdates(updRes.data || []);
+    if (ordRes.data) {
+      setQbOrderInvoice(ordRes.data.quickbooks_order_invoice_id || '');
+      setQbShippingInvoice(ordRes.data.quickbooks_shipping_invoice_id || '');
+      setTrackingInput(ordRes.data.shipping_tracking || '');
+      setCarrierInput(ordRes.data.shipping_carrier || '');
+      setEstDeliveryInput(ordRes.data.estimated_delivery || '');
+    }
     setLoading(false);
   }
 
@@ -91,6 +114,73 @@ export default function OrderDetail({ orderId, dealer, onNavigate }: OrderDetail
     setApproving(false);
   };
 
+  // ── Admin actions ──
+  const handleAdminStatusUpdate = async () => {
+    if (!order || !adminStatus) return;
+    setAdminUpdating(true);
+    const updateData: Record<string, any> = { status: adminStatus };
+    // Set timestamp fields for relevant statuses
+    if (adminStatus === 'in_production') updateData.production_started_at = new Date().toISOString();
+    if (adminStatus === 'shipped') updateData.shipped_at = new Date().toISOString();
+    if (adminStatus === 'delivered') updateData.delivered_at = new Date().toISOString();
+
+    await supabase.from('orders').update(updateData).eq('id', order.id);
+    // Insert status update record
+    await supabase.from('order_status_updates').insert({
+      order_id: order.id,
+      old_status: order.status,
+      new_status: adminStatus,
+      note: adminStatusNote || null,
+      updated_by: 'admin',
+    });
+    setAdminStatus('');
+    setAdminStatusNote('');
+    await loadData();
+    setAdminUpdating(false);
+  };
+
+  const handleAdminFileUpload = async () => {
+    if (!order || adminFiles.length === 0) return;
+    setAdminUploading(true);
+    try {
+      for (const file of adminFiles) {
+        const path = `${order.dealer_id}/${order.id}/admin-ack-${Date.now()}-${file.name}`;
+        await supabase.storage.from('order-files').upload(path, file);
+        await supabase.from('order_files').insert({
+          order_id: order.id, file_name: file.name, file_path: path,
+          file_type: file.type || 'application/octet-stream', file_size: file.size,
+          category: 'acknowledgement', uploaded_by: 'admin',
+        });
+      }
+      setAdminFiles([]);
+      await loadData();
+    } catch (err) { console.error(err); }
+    setAdminUploading(false);
+  };
+
+  const handleSaveQb = async () => {
+    if (!order) return;
+    setSavingQb(true);
+    await supabase.from('orders').update({
+      quickbooks_order_invoice_id: qbOrderInvoice || null,
+      quickbooks_shipping_invoice_id: qbShippingInvoice || null,
+    }).eq('id', order.id);
+    await loadData();
+    setSavingQb(false);
+  };
+
+  const handleSaveShipping = async () => {
+    if (!order) return;
+    setSavingShipping(true);
+    await supabase.from('orders').update({
+      shipping_tracking: trackingInput || null,
+      shipping_carrier: carrierInput || null,
+      estimated_delivery: estDeliveryInput || null,
+    }).eq('id', order.id);
+    await loadData();
+    setSavingShipping(false);
+  };
+
   if (loading) return <div style={{ padding: '3rem', textAlign: 'center', color: '#8a8279' }}>Loading...</div>;
   if (!order) return <div style={{ padding: '3rem', textAlign: 'center', color: '#c44536' }}>Order not found.</div>;
 
@@ -120,12 +210,26 @@ export default function OrderDetail({ orderId, dealer, onNavigate }: OrderDetail
 
   const ackFiles = files.filter(f => f.category === 'acknowledgement');
   const ackMarkupFiles = files.filter(f => f.category === 'acknowledgement_markup');
-  const canReviewAck = order.status === 'acknowledgement_review';
-  const needsOrderPayment = order.status === 'pending_order_payment';
-  const needsShippingPayment = order.status === 'pending_shipping_payment';
+  const canReviewAck = !isAdmin && order.status === 'acknowledgement_review';
+  const needsOrderPayment = !isAdmin && order.status === 'pending_order_payment';
+  const needsShippingPayment = !isAdmin && order.status === 'pending_shipping_payment';
+  const validNextStatuses = isAdmin ? getValidNextOrderStatuses(order.status) : [];
 
   const cardStyle: React.CSSProperties = {
     padding: '1.5rem', background: '#fdfcfa', border: '1px solid rgba(26,26,26,0.08)', borderRadius: '4px',
+  };
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em',
+    textTransform: 'uppercase', color: '#4a4a4a', marginBottom: '0.4rem',
+  };
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '0.6rem 0.8rem', fontSize: '0.88rem', border: '1.5px solid #d4cdc5',
+    borderRadius: '3px', background: '#fdfcfa', color: '#1a1a1a', fontFamily: 'inherit', outline: 'none',
+  };
+  const btnPrimary: React.CSSProperties = {
+    padding: '0.55rem 1.2rem', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.06em',
+    textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none',
+    borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit',
   };
 
   return (
@@ -142,6 +246,69 @@ export default function OrderDetail({ orderId, dealer, onNavigate }: OrderDetail
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.5rem', alignItems: 'start' }} className="portal-detail-grid">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+          {/* ── ADMIN CONTROLS ── */}
+          {isAdmin && (
+            <div style={{ ...cardStyle, background: '#f0f7ff', borderLeft: '4px solid #4a7c9b' }}>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', fontWeight: 500, marginBottom: '1rem', color: '#2d5a7b' }}>Admin Controls</h3>
+
+              {/* Status Update */}
+              {validNextStatuses.length > 0 && (
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <label style={labelStyle}>Update Status</label>
+                  <select value={adminStatus} onChange={e => setAdminStatus(e.target.value)} style={{ ...inputStyle, marginBottom: '0.5rem' }}>
+                    <option value="">Select next status...</option>
+                    {validNextStatuses.map(s => (
+                      <option key={s} value={s}>{ORDER_STATUS_LABELS[s] || s}</option>
+                    ))}
+                  </select>
+                  <textarea value={adminStatusNote} onChange={e => setAdminStatusNote(e.target.value)}
+                    placeholder="Optional note for status change..." rows={2}
+                    style={{ ...inputStyle, resize: 'vertical', marginBottom: '0.5rem' }} />
+                  <button onClick={handleAdminStatusUpdate} disabled={!adminStatus || adminUpdating}
+                    style={{ ...btnPrimary, opacity: !adminStatus || adminUpdating ? 0.5 : 1 }}>
+                    {adminUpdating ? 'Updating...' : 'Update Status'}
+                  </button>
+                </div>
+              )}
+
+              {/* Upload Acknowledgement */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={labelStyle}>Upload Factory Acknowledgement</label>
+                <FileUploader onFilesSelected={setAdminFiles} />
+                {adminFiles.length > 0 && (
+                  <button onClick={handleAdminFileUpload} disabled={adminUploading} style={{ ...btnPrimary, marginTop: '0.5rem', opacity: adminUploading ? 0.5 : 1 }}>
+                    {adminUploading ? 'Uploading...' : `Upload ${adminFiles.length} file${adminFiles.length > 1 ? 's' : ''}`}
+                  </button>
+                )}
+              </div>
+
+              {/* QuickBooks Invoice IDs */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={labelStyle}>QuickBooks Invoice IDs</label>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <input value={qbOrderInvoice} onChange={e => setQbOrderInvoice(e.target.value)} placeholder="Order Invoice ID" style={{ ...inputStyle, flex: 1 }} />
+                  <input value={qbShippingInvoice} onChange={e => setQbShippingInvoice(e.target.value)} placeholder="Shipping Invoice ID" style={{ ...inputStyle, flex: 1 }} />
+                </div>
+                <button onClick={handleSaveQb} disabled={savingQb} style={{ ...btnPrimary, opacity: savingQb ? 0.5 : 1 }}>
+                  {savingQb ? 'Saving...' : 'Save Invoice IDs'}
+                </button>
+              </div>
+
+              {/* Shipping Info */}
+              <div>
+                <label style={labelStyle}>Shipping Information</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <input value={trackingInput} onChange={e => setTrackingInput(e.target.value)} placeholder="Tracking Number" style={inputStyle} />
+                  <input value={carrierInput} onChange={e => setCarrierInput(e.target.value)} placeholder="Carrier (e.g., FedEx, DHL)" style={inputStyle} />
+                  <input type="date" value={estDeliveryInput} onChange={e => setEstDeliveryInput(e.target.value)} style={inputStyle} />
+                </div>
+                <button onClick={handleSaveShipping} disabled={savingShipping} style={{ ...btnPrimary, opacity: savingShipping ? 0.5 : 1 }}>
+                  {savingShipping ? 'Saving...' : 'Save Shipping Info'}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* ORDER PAYMENT Banner */}
           {needsOrderPayment && order.quickbooks_order_invoice_id && (
@@ -187,18 +354,16 @@ export default function OrderDetail({ orderId, dealer, onNavigate }: OrderDetail
               <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', fontWeight: 500, marginBottom: '0.75rem' }}>Submit Confirmation Changes</h3>
               <p style={{ fontSize: '0.85rem', color: '#4a4a4a', marginBottom: '1rem' }}>Upload your marked-up order confirmation and add notes.</p>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#4a4a4a', marginBottom: '0.4rem' }}>Change Notes</label>
+                <label style={labelStyle}>Change Notes</label>
                 <textarea value={markupNote} onChange={e => setMarkupNote(e.target.value)} placeholder="Describe the changes needed..." rows={3}
-                  style={{ width: '100%', padding: '0.75rem 1rem', fontSize: '0.9rem', border: '1.5px solid #d4cdc5', borderRadius: '3px', background: '#fdfcfa', color: '#1a1a1a', fontFamily: 'inherit', outline: 'none', resize: 'vertical' }} />
+                  style={{ ...inputStyle, resize: 'vertical' }} />
               </div>
               <div style={{ marginBottom: '1rem' }}>
                 <FileUploader onFilesSelected={setMarkupFiles} />
               </div>
               <div style={{ display: 'flex', gap: '0.75rem' }}>
                 <button onClick={handleSubmitAckMarkup} disabled={submittingMarkup || markupFiles.length === 0} style={{
-                  padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em',
-                  textTransform: 'uppercase', background: submittingMarkup ? '#d4cdc5' : '#b87333', color: '#fdfcfa',
-                  border: 'none', borderRadius: '3px', cursor: submittingMarkup ? 'wait' : 'pointer', fontFamily: 'inherit',
+                  ...btnPrimary, opacity: submittingMarkup || markupFiles.length === 0 ? 0.5 : 1,
                 }}>{submittingMarkup ? 'Submitting...' : 'Submit Changes'}</button>
                 <button onClick={() => { setMarkupMode(false); setMarkupFiles([]); setMarkupNote(''); }} style={{
                   padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600,
@@ -283,7 +448,9 @@ export default function OrderDetail({ orderId, dealer, onNavigate }: OrderDetail
           {/* Dealer Markup Files on Acknowledgement */}
           {ackMarkupFiles.length > 0 && (
             <div style={cardStyle}>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.1rem', fontWeight: 500, marginBottom: '0.75rem' }}>Your Confirmation Markup</h3>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.1rem', fontWeight: 500, marginBottom: '0.75rem' }}>
+                {isAdmin ? 'Dealer Confirmation Markup' : 'Your Confirmation Markup'}
+              </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {ackMarkupFiles.map(f => (
                   <button key={f.id} onClick={() => downloadFile(f)} style={{

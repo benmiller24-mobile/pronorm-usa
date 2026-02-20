@@ -6,10 +6,11 @@ interface PortalLayoutProps {
   currentPath: string;
   onNavigate: (path: string) => void;
   onLogout: () => void;
+  isAdmin?: boolean;
   children: React.ReactNode;
 }
 
-const NAV_ITEMS = [
+const DEALER_NAV_ITEMS = [
   { path: '/dealer-portal/dashboard', label: 'Dashboard', icon: '\u25A3' },
   { path: '/dealer-portal/projects', label: 'Projects', icon: '\u2637' },
   { path: '/dealer-portal/orders', label: 'Orders', icon: '\u2750' },
@@ -17,8 +18,18 @@ const NAV_ITEMS = [
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
 
-export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout, children }: PortalLayoutProps) {
+const ADMIN_NAV_ITEMS = [
+  { path: '/dealer-portal/dashboard', label: 'Admin Dashboard', icon: '\u25A3' },
+  { path: '/dealer-portal/projects', label: 'All Projects', icon: '\u2637' },
+  { path: '/dealer-portal/orders', label: 'All Orders', icon: '\u2750' },
+  { path: '/dealer-portal/warranty', label: 'Warranty Claims', icon: '\u2696' },
+  { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
+];
+
+export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout, isAdmin, children }: PortalLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const NAV_ITEMS = isAdmin ? ADMIN_NAV_ITEMS : DEALER_NAV_ITEMS;
 
   return (
     <div style={{
@@ -59,7 +70,7 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
             </div>
           </a>
           <div style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#b87333', marginTop: '0.25rem' }}>
-            Dealer Portal
+            {isAdmin ? 'Admin Portal' : 'Dealer Portal'}
           </div>
         </div>
 
@@ -100,8 +111,17 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
         <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           {dealer && (
             <div style={{ fontSize: '0.78rem', color: '#b5aca3', marginBottom: '0.75rem' }}>
-              <div style={{ fontWeight: 600, color: '#fdfcfa' }}>{dealer.company_name}</div>
-              <div>{dealer.contact_name}</div>
+              {isAdmin ? (
+                <>
+                  <div style={{ fontWeight: 600, color: '#b87333' }}>Pronorm Admin</div>
+                  <div>{dealer.contact_name}</div>
+                </>
+              ) : (
+                <>
+                  <div style={{ fontWeight: 600, color: '#fdfcfa' }}>{dealer.company_name}</div>
+                  <div>{dealer.contact_name}</div>
+                </>
+              )}
             </div>
           )}
           <button

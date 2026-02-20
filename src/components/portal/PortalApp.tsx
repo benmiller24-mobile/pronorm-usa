@@ -119,27 +119,29 @@ export default function PortalApp() {
     );
   }
 
+  const isAdmin = dealer.role === 'admin';
+
   // Route matching
   const renderPage = () => {
     if (path === '/dealer-portal/dashboard' || path === '/dealer-portal' || path === '/dealer-portal/') {
-      return <DealerDashboard dealer={dealer} onNavigate={navigate} />;
+      return <DealerDashboard dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path === '/dealer-portal/projects/new') {
       return <ProjectForm dealer={dealer} onNavigate={navigate} />;
     }
     if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') {
-      return <ProjectList dealer={dealer} onNavigate={navigate} />;
+      return <ProjectList dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path.startsWith('/dealer-portal/projects/')) {
       const id = path.split('/').pop()!;
-      return <ProjectDetail projectId={id} dealer={dealer} onNavigate={navigate} />;
+      return <ProjectDetail projectId={id} dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path === '/dealer-portal/orders' || path === '/dealer-portal/orders/') {
-      return <OrderList dealer={dealer} onNavigate={navigate} />;
+      return <OrderList dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path.startsWith('/dealer-portal/orders/')) {
       const id = path.split('/').pop()!;
-      return <OrderDetail orderId={id} dealer={dealer} onNavigate={navigate} />;
+      return <OrderDetail orderId={id} dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path === '/dealer-portal/warranty/new') {
       return <WarrantyForm dealer={dealer} onNavigate={navigate} />;
@@ -150,11 +152,11 @@ export default function PortalApp() {
     if (path === '/dealer-portal/account') {
       return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;
     }
-    return <DealerDashboard dealer={dealer} onNavigate={navigate} />;
+    return <DealerDashboard dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
   };
 
   return (
-    <PortalLayout dealer={dealer} currentPath={path} onNavigate={navigate} onLogout={handleLogout}>
+    <PortalLayout dealer={dealer} currentPath={path} onNavigate={navigate} onLogout={handleLogout} isAdmin={isAdmin}>
       {renderPage()}
     </PortalLayout>
   );

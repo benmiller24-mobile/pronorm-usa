@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { Project, ProjectFile, Dealer } from '../../lib/types';
+import { getValidNextProjectStatuses, PROJECT_STATUS_LABELS } from '../../lib/admin-utils';
 import StatusBadge from './ui/StatusBadge';
 import StatusTimeline from './ui/StatusTimeline';
 import FileUploader from './ui/FileUploader';
@@ -9,6 +10,7 @@ interface ProjectDetailProps {
   projectId: string;
   dealer: Dealer;
   onNavigate: (path: string) => void;
+  isAdmin?: boolean;
 }
 
 const STEP_LABELS: Record<string, string> = {
@@ -27,7 +29,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   design_revision: 'Revised Design from Pronorm',
 };
 
-export default function ProjectDetail({ projectId, dealer, onNavigate }: ProjectDetailProps) {
+export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }: ProjectDetailProps) {
   const [project, setProject] = useState<Project | null>(null);
   const [files, setFiles] = useState<ProjectFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +38,17 @@ export default function ProjectDetail({ projectId, dealer, onNavigate }: Project
   const [markupNote, setMarkupNote] = useState('');
   const [submittingMarkup, setSubmittingMarkup] = useState(false);
   const [approving, setApproving] = useState(false);
+
+  // Admin state
+  const [adminStatus, setAdminStatus] = useState('');
+  const [adminUpdating, setAdminUpdating] = useState(false);
+  const [adminFiles, setAdminFiles] = useState<File[]>([]);
+  const [adminFileCategory, setAdminFileCategory] = useState<'design_output' | 'design_revision'>('design_output');
+  const [adminUploading, setAdminUploading] = useState(false);
+  const [quoteInput, setQuoteInput] = useState('');
+  const [savingQuote, setSavingQuote] = useState(false);
+  const [adminNotesInput, setAdminNotesInput] = useState('');
+  const [savingNotes, setSavingNotes] = useState(false);
 
   useEffect(() => { loadData(); }, [projectId]);
 
@@ -46,6 +59,10 @@ export default function ProjectDetail({ projectId, dealer, onNavigate }: Project
     ]);
     setProject(projRes.data);
     setFiles(filesRes.data || []);
+    if (projRes.data) {
+      setQuoteInput(projRes.data.quote_amount?.toString() || '');
+      setAdminNotesInput(projRes.data.admin_notes || '');
+    }
     setLoading(false);
   }
 
@@ -85,6 +102,52 @@ export default function ProjectDetail({ projectId, dealer, onNavigate }: Project
     setApproving(false);
   };
 
+  // ── Admin actions ──
+  const handleAdminStatusUpdate = async () => {
+    if (!project || !adminStatus) return;
+    setAdminUpdating(true);
+    await supabase.from('projects').update({ status: adminStatus }).eq('id', project.id);
+    setAdminStatus('');
+    await loadData();
+    setAdminUpdating(false);
+  };
+
+  const handleAdminFileUpload = async () => {
+    if (!project || adminFiles.length === 0) return;
+    setAdminUploading(true);
+    try {
+      for (const file of adminFiles) {
+        const path = `${project.dealer_id}/${project.id}/admin-${Date.now()}-${file.name}`;
+        await supabase.storage.from('project-files').upload(path, file);
+        await supabase.from('project_files').insert({
+          project_id: project.id, file_name: file.name, file_path: path,
+          file_type: file.type || 'application/octet-stream', file_size: file.size,
+          category: adminFileCategory, uploaded_by: 'admin',
+        });
+      }
+      setAdminFiles([]);
+      await loadData();
+    } catch (err) { console.error(err); }
+    setAdminUploading(false);
+  };
+
+  const handleSaveQuote = async () => {
+    if (!project) return;
+    setSavingQuote(true);
+    const val = quoteInput ? parseFloat(quoteInput) : null;
+    await supabase.from('projects').update({ quote_amount: val }).eq('id', project.id);
+    await loadData();
+    setSavingQuote(false);
+  };
+
+  const handleSaveNotes = async () => {
+    if (!project) return;
+    setSavingNotes(true);
+    await supabase.from('projects').update({ admin_notes: adminNotesInput || null }).eq('id', project.id);
+    await loadData();
+    setSavingNotes(false);
+  };
+
   if (loading) return <div style={{ padding: '3rem', textAlign: 'center', color: '#8a8279' }}>Loading...</div>;
   if (!project) return <div style={{ padding: '3rem', textAlign: 'center', color: '#c44536' }}>Project not found.</div>;
 
@@ -111,9 +174,24 @@ export default function ProjectDetail({ projectId, dealer, onNavigate }: Project
     return acc;
   }, {} as Record<string, ProjectFile[]>);
 
-  const canAct = ['design_delivered', 'design_revised'].includes(project.status);
+  const canAct = !isAdmin && ['design_delivered', 'design_revised'].includes(project.status);
+  const validNextStatuses = isAdmin ? getValidNextProjectStatuses(project.status) : [];
+
   const cardStyle: React.CSSProperties = {
     padding: '1.5rem', background: '#fdfcfa', border: '1px solid rgba(26,26,26,0.08)', borderRadius: '4px',
+  };
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em',
+    textTransform: 'uppercase', color: '#4a4a4a', marginBottom: '0.4rem',
+  };
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '0.6rem 0.8rem', fontSize: '0.88rem', border: '1.5px solid #d4cdc5',
+    borderRadius: '3px', background: '#fdfcfa', color: '#1a1a1a', fontFamily: 'inherit', outline: 'none',
+  };
+  const btnPrimary: React.CSSProperties = {
+    padding: '0.55rem 1.2rem', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.06em',
+    textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none',
+    borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit',
   };
 
   return (
@@ -132,7 +210,71 @@ export default function ProjectDetail({ projectId, dealer, onNavigate }: Project
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.5rem', alignItems: 'start' }} className="portal-detail-grid">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-          {/* Action Banner */}
+          {/* ── ADMIN CONTROLS ── */}
+          {isAdmin && (
+            <div style={{ ...cardStyle, background: '#f0f7ff', borderLeft: '4px solid #4a7c9b' }}>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', fontWeight: 500, marginBottom: '1rem', color: '#2d5a7b' }}>Admin Controls</h3>
+
+              {/* Status Update */}
+              {validNextStatuses.length > 0 && (
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <label style={labelStyle}>Update Status</label>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <select value={adminStatus} onChange={e => setAdminStatus(e.target.value)} style={{ ...inputStyle, flex: 1 }}>
+                      <option value="">Select next status...</option>
+                      {validNextStatuses.map(s => (
+                        <option key={s} value={s}>{PROJECT_STATUS_LABELS[s] || s}</option>
+                      ))}
+                    </select>
+                    <button onClick={handleAdminStatusUpdate} disabled={!adminStatus || adminUpdating}
+                      style={{ ...btnPrimary, opacity: !adminStatus || adminUpdating ? 0.5 : 1 }}>
+                      {adminUpdating ? 'Updating...' : 'Update'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Upload Design Files */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={labelStyle}>Upload Design Files</label>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <select value={adminFileCategory} onChange={e => setAdminFileCategory(e.target.value as any)} style={{ ...inputStyle, flex: 1 }}>
+                    <option value="design_output">Design Output</option>
+                    <option value="design_revision">Design Revision</option>
+                  </select>
+                </div>
+                <FileUploader onFilesSelected={setAdminFiles} />
+                {adminFiles.length > 0 && (
+                  <button onClick={handleAdminFileUpload} disabled={adminUploading} style={{ ...btnPrimary, marginTop: '0.5rem', opacity: adminUploading ? 0.5 : 1 }}>
+                    {adminUploading ? 'Uploading...' : `Upload ${adminFiles.length} file${adminFiles.length > 1 ? 's' : ''}`}
+                  </button>
+                )}
+              </div>
+
+              {/* Quote Amount */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={labelStyle}>Quote Amount</label>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input type="number" value={quoteInput} onChange={e => setQuoteInput(e.target.value)} placeholder="0.00" style={{ ...inputStyle, flex: 1 }} />
+                  <button onClick={handleSaveQuote} disabled={savingQuote} style={{ ...btnPrimary, opacity: savingQuote ? 0.5 : 1 }}>
+                    {savingQuote ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Admin Notes */}
+              <div>
+                <label style={labelStyle}>Admin Notes (visible to dealer)</label>
+                <textarea value={adminNotesInput} onChange={e => setAdminNotesInput(e.target.value)} rows={3}
+                  style={{ ...inputStyle, resize: 'vertical' }} placeholder="Notes visible to the dealer..." />
+                <button onClick={handleSaveNotes} disabled={savingNotes} style={{ ...btnPrimary, marginTop: '0.5rem', opacity: savingNotes ? 0.5 : 1 }}>
+                  {savingNotes ? 'Saving...' : 'Save Notes'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Dealer Action Banner */}
           {canAct && !markupMode && (
             <div style={{ ...cardStyle, background: '#fef9f0', borderLeft: '4px solid #b87333' }}>
               <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', fontWeight: 500, marginBottom: '0.35rem' }}>Your Action Required</h3>
@@ -160,19 +302,17 @@ export default function ProjectDetail({ projectId, dealer, onNavigate }: Project
               <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', fontWeight: 500, marginBottom: '0.75rem' }}>Submit Changes</h3>
               <p style={{ fontSize: '0.85rem', color: '#4a4a4a', marginBottom: '1rem' }}>Upload your marked-up design files and add notes. Pronorm will revise the design based on your feedback.</p>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#4a4a4a', marginBottom: '0.4rem' }}>Change Notes</label>
+                <label style={labelStyle}>Change Notes</label>
                 <textarea value={markupNote} onChange={e => setMarkupNote(e.target.value)} placeholder="Describe your requested changes..." rows={3}
-                  style={{ width: '100%', padding: '0.75rem 1rem', fontSize: '0.9rem', border: '1.5px solid #d4cdc5', borderRadius: '3px', background: '#fdfcfa', color: '#1a1a1a', fontFamily: 'inherit', outline: 'none', resize: 'vertical' }} />
+                  style={{ ...inputStyle, resize: 'vertical' }} />
               </div>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#4a4a4a', marginBottom: '0.4rem' }}>Marked-Up Files</label>
+                <label style={labelStyle}>Marked-Up Files</label>
                 <FileUploader onFilesSelected={setMarkupFiles} />
               </div>
               <div style={{ display: 'flex', gap: '0.75rem' }}>
                 <button onClick={handleSubmitMarkup} disabled={submittingMarkup || markupFiles.length === 0} style={{
-                  padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em',
-                  textTransform: 'uppercase', background: submittingMarkup ? '#d4cdc5' : '#b87333', color: '#fdfcfa',
-                  border: 'none', borderRadius: '3px', cursor: submittingMarkup ? 'wait' : 'pointer', fontFamily: 'inherit',
+                  ...btnPrimary, opacity: submittingMarkup || markupFiles.length === 0 ? 0.5 : 1,
                 }}>{submittingMarkup ? 'Submitting...' : 'Submit Changes'}</button>
                 <button onClick={() => { setMarkupMode(false); setMarkupFiles([]); setMarkupNote(''); }} style={{
                   padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600,
@@ -199,7 +339,7 @@ export default function ProjectDetail({ projectId, dealer, onNavigate }: Project
           )}
 
           {/* Admin Notes */}
-          {project.admin_notes && (
+          {project.admin_notes && !isAdmin && (
             <div style={{ ...cardStyle, background: '#fef9f0' }}>
               <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.1rem', fontWeight: 500, marginBottom: '0.5rem' }}>Notes from Pronorm Team</h3>
               <p style={{ fontSize: '0.88rem', color: '#4a4a4a', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{project.admin_notes}</p>

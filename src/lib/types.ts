@@ -66,6 +66,7 @@ export interface Dealer {
   email: string;
   phone: string;
   address: string;
+  role: 'dealer' | 'admin';
   created_at: string;
 }
 

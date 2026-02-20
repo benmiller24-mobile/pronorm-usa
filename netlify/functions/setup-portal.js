@@ -51,6 +51,28 @@ exports.handler = async function(event) {
       } catch { return { name: k, decoded: false }; }
     });
 
+  // Try Netlify API to get site env vars (some might be hidden from functions)
+  const siteId = process.env.SITE_ID;
+  const netlifyToken = process.env.NETLIFY_FUNCTIONS_TOKEN;
+  let netlifyApiResult = null;
+  if (siteId && netlifyToken) {
+    try {
+      const siteRes = await fetchJSON('https://api.netlify.com/api/v1/sites/' + siteId, {
+        headers: { 'Authorization': 'Bearer ' + netlifyToken },
+      });
+      if (siteRes.ok) {
+        // Check build_settings.env
+        netlifyApiResult = {
+          site_name: siteRes.data?.name,
+          env_keys: siteRes.data?.build_settings?.env ? Object.keys(siteRes.data.build_settings.env) : 'none',
+          has_build_env: !!siteRes.data?.build_settings?.env,
+        };
+      } else {
+        netlifyApiResult = { error: siteRes.status, data: JSON.stringify(siteRes.data).substring(0, 200) };
+      }
+    } catch (e) { netlifyApiResult = { error: e.message }; }
+  }
+
   // Check all env var NAMES 
   const allEnvNames = Object.keys(process.env).sort();
 
@@ -64,6 +86,8 @@ exports.handler = async function(event) {
         relevant_env_vars: envKeys,
         jwt_env_vars: jwtEnvVars,
         all_env_var_names: allEnvNames,
+        netlify_api: netlifyApiResult,
+        site_id: siteId,
       }, null, 2),
     };
   }

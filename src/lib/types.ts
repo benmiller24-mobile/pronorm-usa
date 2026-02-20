@@ -69,6 +69,7 @@ export interface Dealer {
   phone: string;
   address: string;
   role: DealerRole;
+  parent_dealer_id: string | null; // designers belong to a dealer
   created_at: string;
 }
 

@@ -1,52 +1,49 @@
 -- =============================================
 -- Pronorm USA — Seed Test Users
--- Run this in your Supabase SQL Editor AFTER migration.sql
+-- Run in Supabase SQL Editor AFTER migration.sql
 -- =============================================
 --
 -- STEP 1: Create auth users in Supabase Dashboard → Authentication → Users → "Add User"
 --
---   Admin Test User:
---     Email:    admin@pronormusa.com
---     Password: PronormAdmin2026!
+--   Admin:    admin@pronormusa.com     / PronormAdmin2026!
+--   Dealer:   dealer@pronormusa.com    / PronormDealer2026!
+--   Designer: designer@pronormusa.com  / PronormDesign2026!
 --
---   Designer Test User:
---     Email:    designer@pronormusa.com
---     Password: PronormDesign2026!
---
---   Dealer Test User:
---     Email:    dealer@pronormusa.com
---     Password: PronormDealer2026!
---
--- STEP 2: After creating the auth users above, get their user IDs from the
---         Authentication → Users table and replace the placeholders below:
+-- STEP 2: Copy the UUID for each user from the Authentication → Users table
+--         and replace the placeholders below.
 
--- Replace 'AUTH_USER_ID_ADMIN' with the actual UUID from auth.users
-INSERT INTO dealers (user_id, company_name, contact_name, email, phone, role) VALUES
-  ('AUTH_USER_ID_ADMIN', 'Pronorm USA', 'Ben Miller', 'admin@pronormusa.com', '303-555-0100', 'admin');
+-- Admin (Pronorm USA internal)
+INSERT INTO dealers (user_id, company_name, contact_name, email, phone, role)
+VALUES (
+  'AUTH_USER_ID_ADMIN',        -- ← replace with UUID
+  'Pronorm USA',
+  'Ben Miller',
+  'admin@pronormusa.com',
+  '303-555-0100',
+  'admin'
+);
 
--- Replace 'AUTH_USER_ID_DESIGNER' with the actual UUID from auth.users
-INSERT INTO dealers (user_id, company_name, contact_name, email, phone, role) VALUES
-  ('AUTH_USER_ID_DESIGNER', 'Pronorm USA Design', 'Kitchen Designer', 'designer@pronormusa.com', '303-555-0200', 'designer');
+-- Dealer (test dealership)
+INSERT INTO dealers (user_id, company_name, contact_name, email, phone, role)
+VALUES (
+  'AUTH_USER_ID_DEALER',       -- ← replace with UUID
+  'Elmhurst Kitchen & Bath',
+  'Test Dealer',
+  'dealer@pronormusa.com',
+  '303-555-0300',
+  'dealer'
+);
 
--- Replace 'AUTH_USER_ID_DEALER' with the actual UUID from auth.users
-INSERT INTO dealers (user_id, company_name, contact_name, email, phone, role) VALUES
-  ('AUTH_USER_ID_DEALER', 'Elmhurst Kitchen & Bath', 'Test Dealer', 'dealer@pronormusa.com', '303-555-0300', 'dealer');
-
--- =============================================
--- QUICK SETUP (if you want to do it all in SQL):
--- =============================================
--- You can also create auth users via SQL if you prefer:
---
--- INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
--- VALUES (
---   gen_random_uuid(),
---   'admin@pronormusa.com',
---   crypt('PronormAdmin2026!', gen_salt('bf')),
---   now(),
---   '{"provider":"email","providers":["email"]}',
---   '{}',
---   now(),
---   now()
--- );
---
--- Then use the generated UUID in the dealers INSERT above.
+-- Designer (nested under the dealer above)
+-- NOTE: Run the dealer INSERT first, then grab the dealer's `id` from the
+-- dealers table and replace AUTH_DEALER_ROW_ID below.
+INSERT INTO dealers (user_id, company_name, contact_name, email, phone, role, parent_dealer_id)
+VALUES (
+  'AUTH_USER_ID_DESIGNER',     -- ← replace with auth UUID
+  'Elmhurst Kitchen & Bath',   -- same company as parent dealer
+  'Kitchen Designer',
+  'designer@pronormusa.com',
+  '303-555-0200',
+  'designer',
+  'AUTH_DEALER_ROW_ID'         -- ← replace with the dealer's row id from dealers table
+);

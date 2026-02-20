@@ -55,6 +55,7 @@ CREATE TABLE dealers (
   phone text DEFAULT '',
   address text DEFAULT '',
   role dealer_role DEFAULT 'dealer' NOT NULL,
+  parent_dealer_id uuid REFERENCES dealers(id) ON DELETE SET NULL DEFAULT NULL,
   created_at timestamptz DEFAULT now() NOT NULL
 );
 
@@ -176,76 +177,123 @@ ALTER TABLE order_status_updates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE warranty_claims ENABLE ROW LEVEL SECURITY;
 ALTER TABLE warranty_files ENABLE ROW LEVEL SECURITY;
 
+-- ═══════════════════════════════════════════════════════════════
+-- RLS POLICIES
+-- Admin: sees everything
+-- Dealer: sees own data (dealer_id = their id)
+-- Designer: sees parent dealer's data (parent_dealer_id = project's dealer_id)
+-- ═══════════════════════════════════════════════════════════════
+
 -- Dealers
 CREATE POLICY "Dealers: read own" ON dealers FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Dealers: update own" ON dealers FOR UPDATE USING (auth.uid() = user_id);
--- Admin can read all dealers
 CREATE POLICY "Dealers: admin read all" ON dealers FOR SELECT USING (
   EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
 );
 
 -- Projects
-CREATE POLICY "Projects: read own" ON projects FOR SELECT USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
-CREATE POLICY "Projects: insert own" ON projects FOR INSERT WITH CHECK (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
-CREATE POLICY "Projects: update own" ON projects FOR UPDATE USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
--- Admin + Designer can read all projects
-CREATE POLICY "Projects: elevated read all" ON projects FOR SELECT USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role IN ('admin', 'designer'))
+CREATE POLICY "Projects: read accessible" ON projects FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM dealers d WHERE d.user_id = auth.uid()
+    AND (d.role = 'admin' OR d.id = projects.dealer_id OR d.parent_dealer_id = projects.dealer_id)
+  )
 );
--- Admin + Designer can update all projects (advance status, add notes, set quote)
-CREATE POLICY "Projects: elevated update all" ON projects FOR UPDATE USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role IN ('admin', 'designer'))
+CREATE POLICY "Projects: insert accessible" ON projects FOR INSERT WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM dealers d WHERE d.user_id = auth.uid()
+    AND (d.role = 'admin' OR d.id = projects.dealer_id OR d.parent_dealer_id = projects.dealer_id)
+  )
+);
+CREATE POLICY "Projects: update accessible" ON projects FOR UPDATE USING (
+  EXISTS (
+    SELECT 1 FROM dealers d WHERE d.user_id = auth.uid()
+    AND (d.role = 'admin' OR d.id = projects.dealer_id OR d.parent_dealer_id = projects.dealer_id)
+  )
 );
 
 -- Project Files
-CREATE POLICY "Project files: read own" ON project_files FOR SELECT USING (project_id IN (SELECT id FROM projects WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
-CREATE POLICY "Project files: insert own" ON project_files FOR INSERT WITH CHECK (project_id IN (SELECT id FROM projects WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
--- Admin + Designer can read/insert all project files
-CREATE POLICY "Project files: elevated read all" ON project_files FOR SELECT USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role IN ('admin', 'designer'))
+CREATE POLICY "Project files: read accessible" ON project_files FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM projects p JOIN dealers d ON d.user_id = auth.uid()
+    WHERE p.id = project_files.project_id
+    AND (d.role = 'admin' OR d.id = p.dealer_id OR d.parent_dealer_id = p.dealer_id)
+  )
 );
-CREATE POLICY "Project files: elevated insert all" ON project_files FOR INSERT WITH CHECK (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role IN ('admin', 'designer'))
+CREATE POLICY "Project files: insert accessible" ON project_files FOR INSERT WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM projects p JOIN dealers d ON d.user_id = auth.uid()
+    WHERE p.id = project_files.project_id
+    AND (d.role = 'admin' OR d.id = p.dealer_id OR d.parent_dealer_id = p.dealer_id)
+  )
 );
 
--- Orders (admin only for cross-dealer access)
-CREATE POLICY "Orders: read own" ON orders FOR SELECT USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
-CREATE POLICY "Orders: update own" ON orders FOR UPDATE USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
-CREATE POLICY "Orders: admin read all" ON orders FOR SELECT USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+-- Orders
+CREATE POLICY "Orders: read accessible" ON orders FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM dealers d WHERE d.user_id = auth.uid()
+    AND (d.role = 'admin' OR d.id = orders.dealer_id OR d.parent_dealer_id = orders.dealer_id)
+  )
 );
-CREATE POLICY "Orders: admin update all" ON orders FOR UPDATE USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+CREATE POLICY "Orders: update accessible" ON orders FOR UPDATE USING (
+  EXISTS (
+    SELECT 1 FROM dealers d WHERE d.user_id = auth.uid()
+    AND (d.role = 'admin' OR d.id = orders.dealer_id OR d.parent_dealer_id = orders.dealer_id)
+  )
 );
 
 -- Order Files
-CREATE POLICY "Order files: read own" ON order_files FOR SELECT USING (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
-CREATE POLICY "Order files: insert own" ON order_files FOR INSERT WITH CHECK (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
-CREATE POLICY "Order files: admin read all" ON order_files FOR SELECT USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+CREATE POLICY "Order files: read accessible" ON order_files FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM orders o JOIN dealers d ON d.user_id = auth.uid()
+    WHERE o.id = order_files.order_id
+    AND (d.role = 'admin' OR d.id = o.dealer_id OR d.parent_dealer_id = o.dealer_id)
+  )
 );
-CREATE POLICY "Order files: admin insert all" ON order_files FOR INSERT WITH CHECK (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+CREATE POLICY "Order files: insert accessible" ON order_files FOR INSERT WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM orders o JOIN dealers d ON d.user_id = auth.uid()
+    WHERE o.id = order_files.order_id
+    AND (d.role = 'admin' OR d.id = o.dealer_id OR d.parent_dealer_id = o.dealer_id)
+  )
 );
 
 -- Order Status Updates
-CREATE POLICY "Order updates: read own" ON order_status_updates FOR SELECT USING (order_id IN (SELECT id FROM orders WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
-CREATE POLICY "Order updates: admin read all" ON order_status_updates FOR SELECT USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+CREATE POLICY "Order updates: read accessible" ON order_status_updates FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM orders o JOIN dealers d ON d.user_id = auth.uid()
+    WHERE o.id = order_status_updates.order_id
+    AND (d.role = 'admin' OR d.id = o.dealer_id OR d.parent_dealer_id = o.dealer_id)
+  )
 );
 
 -- Warranty Claims
-CREATE POLICY "Warranty: read own" ON warranty_claims FOR SELECT USING (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
-CREATE POLICY "Warranty: insert own" ON warranty_claims FOR INSERT WITH CHECK (dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid()));
-CREATE POLICY "Warranty: admin read all" ON warranty_claims FOR SELECT USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+CREATE POLICY "Warranty: read accessible" ON warranty_claims FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM dealers d WHERE d.user_id = auth.uid()
+    AND (d.role = 'admin' OR d.id = warranty_claims.dealer_id OR d.parent_dealer_id = warranty_claims.dealer_id)
+  )
+);
+CREATE POLICY "Warranty: insert accessible" ON warranty_claims FOR INSERT WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM dealers d WHERE d.user_id = auth.uid()
+    AND (d.role = 'admin' OR d.id = warranty_claims.dealer_id OR d.parent_dealer_id = warranty_claims.dealer_id)
+  )
 );
 
 -- Warranty Files
-CREATE POLICY "Warranty files: read own" ON warranty_files FOR SELECT USING (warranty_id IN (SELECT id FROM warranty_claims WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
-CREATE POLICY "Warranty files: insert own" ON warranty_files FOR INSERT WITH CHECK (warranty_id IN (SELECT id FROM warranty_claims WHERE dealer_id IN (SELECT id FROM dealers WHERE user_id = auth.uid())));
-CREATE POLICY "Warranty files: admin read all" ON warranty_files FOR SELECT USING (
-  EXISTS (SELECT 1 FROM dealers d WHERE d.user_id = auth.uid() AND d.role = 'admin')
+CREATE POLICY "Warranty files: read accessible" ON warranty_files FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM warranty_claims w JOIN dealers d ON d.user_id = auth.uid()
+    WHERE w.id = warranty_files.warranty_id
+    AND (d.role = 'admin' OR d.id = w.dealer_id OR d.parent_dealer_id = w.dealer_id)
+  )
+);
+CREATE POLICY "Warranty files: insert accessible" ON warranty_files FOR INSERT WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM warranty_claims w JOIN dealers d ON d.user_id = auth.uid()
+    WHERE w.id = warranty_files.warranty_id
+    AND (d.role = 'admin' OR d.id = w.dealer_id OR d.parent_dealer_id = w.dealer_id)
+  )
 );
 
 -- ── Storage Buckets ──

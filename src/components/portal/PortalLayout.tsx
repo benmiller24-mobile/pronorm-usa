@@ -28,8 +28,10 @@ const ADMIN_NAV_ITEMS = [
 ];
 
 const DESIGNER_NAV_ITEMS = [
-  { path: '/dealer-portal/dashboard', label: 'Design Dashboard', icon: '\u25A3' },
-  { path: '/dealer-portal/projects', label: 'All Projects', icon: '\u2637' },
+  { path: '/dealer-portal/dashboard', label: 'Dashboard', icon: '\u25A3' },
+  { path: '/dealer-portal/projects', label: 'Projects', icon: '\u2637' },
+  { path: '/dealer-portal/orders', label: 'Orders', icon: '\u2750' },
+  { path: '/dealer-portal/warranty', label: 'Warranty', icon: '\u2696' },
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
 
@@ -118,10 +120,16 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
         <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           {dealer && (
             <div style={{ fontSize: '0.78rem', color: '#b5aca3', marginBottom: '0.75rem' }}>
-              {(isAdmin || isDesigner) ? (
+              {isAdmin ? (
                 <>
-                  <div style={{ fontWeight: 600, color: '#b87333' }}>{isAdmin ? 'Pronorm Admin' : 'Kitchen Designer'}</div>
+                  <div style={{ fontWeight: 600, color: '#b87333' }}>Pronorm Admin</div>
                   <div>{dealer.contact_name}</div>
+                </>
+              ) : isDesigner ? (
+                <>
+                  <div style={{ fontWeight: 600, color: '#fdfcfa' }}>{dealer.company_name}</div>
+                  <div>{dealer.contact_name}</div>
+                  <div style={{ fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b87333', marginTop: '0.25rem' }}>Designer</div>
                 </>
               ) : (
                 <>

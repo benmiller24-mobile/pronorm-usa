@@ -121,40 +121,46 @@ export default function PortalApp() {
 
   const isAdmin = dealer.role === 'admin';
   const isDesigner = dealer.role === 'designer';
-  const hasElevatedAccess = isAdmin || isDesigner; // can see all projects
+
+  // Designers are nested under a dealer — scope all data to the parent dealer's account.
+  // We swap dealer.id to parent_dealer_id so every component's queries naturally
+  // filter to the parent dealer's projects, orders, and warranty claims.
+  const scopedDealer: Dealer = isDesigner && dealer.parent_dealer_id
+    ? { ...dealer, id: dealer.parent_dealer_id }
+    : dealer;
 
   // Route matching
   const renderPage = () => {
     if (path === '/dealer-portal/dashboard' || path === '/dealer-portal' || path === '/dealer-portal/') {
-      return <DealerDashboard dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
+      return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
     if (path === '/dealer-portal/projects/new') {
-      return <ProjectForm dealer={dealer} onNavigate={navigate} />;
+      return <ProjectForm dealer={scopedDealer} onNavigate={navigate} />;
     }
     if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') {
-      return <ProjectList dealer={dealer} onNavigate={navigate} isAdmin={hasElevatedAccess} />;
+      return <ProjectList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path.startsWith('/dealer-portal/projects/')) {
       const id = path.split('/').pop()!;
-      return <ProjectDetail projectId={id} dealer={dealer} onNavigate={navigate} isAdmin={hasElevatedAccess} />;
+      return <ProjectDetail projectId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path === '/dealer-portal/orders' || path === '/dealer-portal/orders/') {
-      return <OrderList dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
+      return <OrderList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path.startsWith('/dealer-portal/orders/')) {
       const id = path.split('/').pop()!;
-      return <OrderDetail orderId={id} dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} />;
+      return <OrderDetail orderId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path === '/dealer-portal/warranty/new') {
-      return <WarrantyForm dealer={dealer} onNavigate={navigate} />;
+      return <WarrantyForm dealer={scopedDealer} onNavigate={navigate} />;
     }
     if (path === '/dealer-portal/warranty' || path === '/dealer-portal/warranty/') {
-      return <WarrantyList dealer={dealer} onNavigate={navigate} />;
+      return <WarrantyList dealer={scopedDealer} onNavigate={navigate} />;
     }
     if (path === '/dealer-portal/account') {
       return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;
     }
-    return <DealerDashboard dealer={dealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
+    return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
   };
 
   return (

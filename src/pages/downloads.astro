@@ -1,0 +1,306 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const brochures2026 = [
+  {
+    title: "Create Your World — 2026 Collection",
+    description: "The full Pronorm lifestyle brochure showcasing the complete 2026 kitchen and living collection. 29 pages of design inspiration.",
+    file: "/downloads/Create-Your-World-Brochure-2026-EN.pdf",
+    pages: 29,
+    size: "9.7 MB",
+    badge: "New"
+  },
+  {
+    title: "New Era — Küchenmeile 2025 Collection Preview",
+    description: "Pronorm's 2026 collection debut at Küchenmeile featuring proTech X drawer system, new surfaces, and trend colours.",
+    file: "/downloads/New-Era-Collection-2026-EN.pdf",
+    pages: 11,
+    size: "9.5 MB",
+    badge: "New"
+  },
+  {
+    title: "Product Range — Y-line / X-line 2026",
+    description: "Complete program overview for handleless Y-line and C-profile X-line product lines. All fronts, finishes, and price groups.",
+    file: "/downloads/Product-Range-Y-X-2026-EN.pdf",
+    pages: 11,
+    size: "5.3 MB",
+    badge: null
+  },
+  {
+    title: "Product Range — Proline128 / Classicline 2026",
+    description: "Complete program overview for handle-style Proline128 and Classicline product lines. All fronts, finishes, and price groups.",
+    file: "/downloads/Product-Range-Pro-Classic-2026-EN.pdf",
+    pages: 11,
+    size: "5.2 MB",
+    badge: null
+  },
+  {
+    title: "Living Spaces 2026",
+    description: "Pronorm's living furniture collection — wall-hung sideboards, display cabinets, wardrobes, and dressing room systems.",
+    file: "/downloads/Living-Spaces-2026-EN.pdf",
+    pages: 19,
+    size: "5.1 MB",
+    badge: null
+  },
+  {
+    title: "Handle Collection 2026",
+    description: "The complete Pronorm handle catalog — bar handles, knobs, recessed pulls, and integrated grip profiles for every product line.",
+    file: "/downloads/Handle-Collection-2026-EN.pdf",
+    pages: 8,
+    size: "2.1 MB",
+    badge: null
+  },
+];
+
+const brochures2025 = [
+  {
+    title: "Loving Detail 2025",
+    description: "A deep dive into Pronorm's craftsmanship philosophy — precision engineering, quality materials, and the details that set German kitchens apart.",
+    file: "/downloads/Loving-Detail-2025-EN.pdf",
+    pages: 11,
+    size: "4.7 MB",
+    badge: null
+  },
+  {
+    title: "Fronts Overview 2025 — Mix & Match",
+    description: "Visual overview of all available front styles, materials, and colour combinations across every Pronorm product line.",
+    file: "/downloads/Fronts-Overview-2025-EN.pdf",
+    pages: 5,
+    size: "3.0 MB",
+    badge: null
+  },
+];
+
+const reference = [
+  {
+    title: "Care & Operating Instructions",
+    description: "Official Pronorm guide to caring for your kitchen surfaces, mechanisms, and hardware. Cleaning recommendations for every material type.",
+    file: "/downloads/Care-and-Operating-Instructions.pdf",
+    pages: 18,
+    size: "7.8 MB",
+    badge: null
+  },
+];
+---
+
+<BaseLayout title="Downloads & Resources" description="Download official Pronorm brochures, product catalogs, and reference guides. Explore the complete 2026 collection of German fitted kitchens.">
+
+  <section class="page-hero" style="position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:url('/images/xline/xline-exquisitely-designed.jpg');background-size:cover;background-position:center;opacity:0.08;"></div>
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="overline animate-in">Resources</span>
+      <h1 class="animate-in animate-in-delay-1">Downloads &<br/>Resources</h1>
+      <p class="hero-sub animate-in animate-in-delay-2">Official Pronorm brochures and product guides — download and share with your clients or design team.</p>
+    </div>
+  </section>
+
+  <!-- 2026 Collection -->
+  <section class="section">
+    <div class="container-narrow">
+      <span class="overline">Latest</span>
+      <h2>2026 Collection</h2>
+      <p class="section-intro">The newest Pronorm brochures featuring the complete 2026 range — new surfaces, proTech X drawer system, and expanded living furniture.</p>
+
+      <div class="download-grid">
+        {brochures2026.map((item) => (
+          <a href={item.file} target="_blank" rel="noopener" class="download-card reveal">
+            <div class="download-card-top">
+              <div class="download-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <polyline points="9 15 12 18 15 15"/>
+                </svg>
+              </div>
+              {item.badge && <span class="download-badge">{item.badge}</span>}
+            </div>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+            <div class="download-meta">
+              <span>PDF · {item.pages} pages · {item.size}</span>
+              <span class="download-arrow">↓</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 2025 Collection -->
+  <section class="section section-alt">
+    <div class="container-narrow">
+      <span class="overline">Archive</span>
+      <h2>2025 Collection</h2>
+      <p class="section-intro">Previous-year brochures with additional design inspiration and technical reference material.</p>
+
+      <div class="download-grid">
+        {brochures2025.map((item) => (
+          <a href={item.file} target="_blank" rel="noopener" class="download-card reveal">
+            <div class="download-card-top">
+              <div class="download-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <polyline points="9 15 12 18 15 15"/>
+                </svg>
+              </div>
+            </div>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+            <div class="download-meta">
+              <span>PDF · {item.pages} pages · {item.size}</span>
+              <span class="download-arrow">↓</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Reference -->
+  <section class="section">
+    <div class="container-narrow">
+      <span class="overline">Reference</span>
+      <h2>Care & Maintenance</h2>
+
+      <div class="download-grid">
+        {reference.map((item) => (
+          <a href={item.file} target="_blank" rel="noopener" class="download-card reveal">
+            <div class="download-card-top">
+              <div class="download-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <polyline points="9 15 12 18 15 15"/>
+                </svg>
+              </div>
+            </div>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+            <div class="download-meta">
+              <span>PDF · {item.pages} pages · {item.size}</span>
+              <span class="download-arrow">↓</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA />
+</BaseLayout>
+
+<style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
+
+  .hero-sub {
+    margin-top: 1rem;
+    color: var(--color-graphite);
+    font-size: 1.1rem;
+    max-width: 540px;
+  }
+
+  .section-intro {
+    color: var(--color-graphite);
+    margin-bottom: var(--space-2xl);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+
+  .section-alt {
+    background: var(--color-warm-white, #faf9f7);
+  }
+
+  .download-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .download-card {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 4px;
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--duration-normal, 0.3s) var(--ease-out, ease-out);
+    background: white;
+  }
+
+  .download-card:hover {
+    border-color: var(--color-copper, #b87333);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+  }
+
+  .download-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+  }
+
+  .download-icon {
+    color: var(--color-copper, #b87333);
+  }
+
+  .download-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    color: white;
+    background: var(--color-copper, #b87333);
+    padding: 0.2em 0.6em;
+    border-radius: 2px;
+  }
+
+  .download-card h3 {
+    font-family: var(--font-display, Georgia, serif);
+    font-size: 1.15rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .download-card p {
+    font-size: 0.9rem;
+    color: var(--color-graphite, #6b6b6b);
+    line-height: 1.6;
+    flex-grow: 1;
+  }
+
+  .download-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 0.8rem;
+    color: var(--color-graphite, #6b6b6b);
+    letter-spacing: 0.02em;
+  }
+
+  .download-arrow {
+    font-size: 1.2rem;
+    color: var(--color-copper, #b87333);
+    transition: transform 0.2s ease;
+  }
+
+  .download-card:hover .download-arrow {
+    transform: translateY(3px);
+  }
+
+  @media (max-width: 640px) {
+    .download-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

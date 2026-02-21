@@ -33,8 +33,8 @@ export default function StepCabinetSelection({ data, onChange, errors }: Props) 
       {err('productLine') && <span style={errStyle}>{err('productLine')}</span>}
 
       <div style={{ ...grid2, marginTop: '1.25rem' }}>
-        <Field label="Range Code (2-3 Letters) *" error={err('rangeCode')}>
-          <input style={inputStyle(!!err('rangeCode'))} type="text" value={cab.rangeCode} onChange={e => update('rangeCode', e.target.value.toUpperCase())} placeholder="e.g. KS" maxLength={3} />
+        <Field label="Range Code (2-4 Letters) *" error={err('rangeCode')}>
+          <input style={inputStyle(!!err('rangeCode'))} type="text" value={cab.rangeCode} onChange={e => update('rangeCode', e.target.value.toUpperCase())} placeholder="e.g. KS, KSLG" maxLength={4} />
         </Field>
         <Field label="Style Code (3-4 Digits) *" error={err('styleCode')}>
           <input style={inputStyle(!!err('styleCode'))} type="text" value={cab.styleCode} onChange={e => update('styleCode', e.target.value)} placeholder="e.g. 7090" maxLength={4} />

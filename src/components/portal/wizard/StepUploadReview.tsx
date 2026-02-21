@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import type { DesignPacketData, ValidationError } from '../../../lib/design-packet-types';
 import {
-  PROJECT_TYPES, STYLE_OPTIONS, PRODUCT_LINES, INTERIOR_COLORS,
-  DRAWERBOX_STD_OPTIONS, DRAWERBOX_WOOD_OPTIONS, TOEKICK_MATERIALS,
+  PROJECT_TYPES, SKU_SIZE_OPTIONS, PRODUCT_LINES, INTERIOR_COLORS,
+  DRAWERBOX_OPTIONS, TOEKICK_MATERIALS,
   BACKSPLASH_MATERIALS, BACKSPLASH_HEIGHTS, getOptionLabel,
 } from '../../../lib/design-packet-types';
 import FileUploader from '../ui/FileUploader';
@@ -30,7 +30,7 @@ export default function StepUploadReview({ data, files, onFilesSelected, errors,
   const h = data.hardwareDetails;
   const d = data.drawerToekick;
   const bs = data.backsplash;
-  const allDrawerOpts = [...DRAWERBOX_STD_OPTIONS, ...DRAWERBOX_WOOD_OPTIONS];
+  const allDrawerOpts = [...DRAWERBOX_OPTIONS];
 
   return (
     <div>
@@ -63,7 +63,7 @@ export default function StepUploadReview({ data, files, onFilesSelected, errors,
           <ReviewRow label="Address" value={g.jobAddress} />
           <ReviewRow label="Room" value={g.room} />
           <ReviewRow label="Project Type" value={getOptionLabel(PROJECT_TYPES, g.projectType)} />
-          <ReviewRow label="Style" value={getOptionLabel(STYLE_OPTIONS, g.style)} />
+          <ReviewRow label="SKU Size" value={getOptionLabel(SKU_SIZE_OPTIONS, g.skuSize)} />
         </ReviewSection>
 
         {/* Cabinet Details */}
@@ -85,9 +85,9 @@ export default function StepUploadReview({ data, files, onFilesSelected, errors,
           {h.tipOnPushToOpen && <ReviewRow label="Tip-On / Push to Open" value="Yes" />}
           {h.xGolaChannelColor && <ReviewRow label="X-Gola Channel Color" value={h.xGolaChannelColor} />}
           {h.yLineMetalEdgeColor && <ReviewRow label="Y-Line Metal Edge Color" value={h.yLineMetalEdgeColor} />}
-          {d.drawerboxCategory && <ReviewRow label="Drawerbox" value={`${d.drawerboxCategory === 'std' ? 'STD' : 'Wood Laminate'}${d.drawerboxSelection ? ` — ${getOptionLabel(allDrawerOpts, d.drawerboxSelection)}` : ''}`} />}
+          {d.drawerboxSelection && <ReviewRow label="Drawerbox" value={getOptionLabel(allDrawerOpts, d.drawerboxSelection)} />}
           <ReviewRow label="Non-Slip Mats" value={d.nonSlipMats ? 'Yes' : 'No'} />
-          {d.toekickMaterial && <ReviewRow label="Toekick" value={`${getOptionLabel(TOEKICK_MATERIALS, d.toekickMaterial)}${d.toekickHeight ? ` (${d.toekickHeight})` : ''}`} />}
+          {d.toekickMaterial && <ReviewRow label="Toekick" value={getOptionLabel(TOEKICK_MATERIALS, d.toekickMaterial)} />}
         </ReviewSection>
 
         {/* Appliances */}
@@ -135,7 +135,7 @@ export default function StepUploadReview({ data, files, onFilesSelected, errors,
             <>
               <span style={{ fontWeight: 600, fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.03em', color: '#4a4a4a', display: 'block', marginTop: '0.5rem' }}>Backsplash</span>
               <ReviewRow label="Material" value={getOptionLabel(BACKSPLASH_MATERIALS, bs.material)} />
-              <ReviewRow label="Height" value={getOptionLabel(BACKSPLASH_HEIGHTS, bs.height)} />
+              <ReviewRow label="Height" value={bs.height === 'custom' ? `Custom (${bs.customHeight || '—'})` : getOptionLabel(BACKSPLASH_HEIGHTS, bs.height)} />
               {bs.color && <ReviewRow label="Color" value={bs.color} />}
             </>
           )}

@@ -80,7 +80,7 @@ export default function StepPlumbingSurfaces({ data, onChange }: Props) {
 
         <div style={{ marginBottom: '1rem' }}>
           <label style={labelStyle}>Height</label>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {BACKSPLASH_HEIGHTS.map(bh => (
               <label key={bh.value} style={chipStyle(data.backsplash.height === bh.value)}>
                 <input type="radio" name="backsplashHt" value={bh.value} checked={data.backsplash.height === bh.value}
@@ -89,6 +89,11 @@ export default function StepPlumbingSurfaces({ data, onChange }: Props) {
               </label>
             ))}
           </div>
+          {data.backsplash.height === 'custom' && (
+            <div style={{ marginTop: '0.75rem' }}>
+              <input style={inputStyle} type="text" value={data.backsplash.customHeight || ''} onChange={e => updateBacksplash('customHeight', e.target.value)} placeholder="e.g. 200 mm" />
+            </div>
+          )}
         </div>
 
         <Field label="Color">
@@ -123,8 +128,8 @@ function SinkSection({ label, sink, onChange }: {
         </Field>
       </div>
       <div style={grid2}>
-        <Field label="Dimensions">
-          <input style={inputStyle} type="text" value={sink.dimensions} onChange={e => onChange('dimensions', e.target.value)} placeholder="e.g. 32 x 19 inches" />
+        <Field label="Dimensions (mm)">
+          <input style={inputStyle} type="text" value={sink.dimensions} onChange={e => onChange('dimensions', e.target.value)} placeholder="e.g. 810 x 480 mm" />
         </Field>
         <Field label="Color / Finish">
           <input style={inputStyle} type="text" value={sink.colorFinish} onChange={e => onChange('colorFinish', e.target.value)} placeholder="e.g. Stainless Steel" />

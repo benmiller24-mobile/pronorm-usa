@@ -3,18 +3,14 @@
 // ── Option Constants ──
 
 export const PROJECT_TYPES = [
-  { value: 'single_family', label: 'Single Family' },
-  { value: 'multi_family', label: 'Multi-Family' },
   { value: 'new_construction', label: 'New Construction' },
   { value: 'remodel', label: 'Remodel' },
   { value: 'showroom_display', label: 'Showroom Display' },
 ] as const;
 
-export const STYLE_OPTIONS = [
+export const SKU_SIZE_OPTIONS = [
   { value: 'exactly_as_drawn', label: 'Exactly As Drawn' },
-  { value: 'american', label: 'American' },
-  { value: 'german', label: 'German' },
-  { value: 'blend', label: 'Blend' },
+  { value: 'mostly_pronorm_std', label: 'Draw with Mostly Pronorm STD Sizes' },
 ] as const;
 
 export const PRODUCT_LINES = [
@@ -28,15 +24,16 @@ export const INTERIOR_COLORS = [
   { value: 'stratus_gray_pearl', label: 'Stratus Gray Pearl' },
 ] as const;
 
-export const DRAWERBOX_STD_OPTIONS = [
-  { value: 'protech_x_titanium', label: 'ProTech X Titanium (Angular Rail on Side)' },
-  { value: 'protech_x_anthracite', label: 'ProTech X Anthracite (Angular Rail on Side)' },
-  { value: 'protop', label: 'ProTop (Full Metal Sides)' },
-] as const;
-
-export const DRAWERBOX_WOOD_OPTIONS = [
-  { value: 'protech_x_urban_oak', label: 'ProTech X Wood Urban Oak' },
-  { value: 'protech_x_dark_sherwood', label: 'ProTech X Dark Sherwood' },
+export const DRAWERBOX_OPTIONS = [
+  { value: 'pure_light_gray', label: 'Pure — Light Gray' },
+  { value: 'pure_dark_gray', label: 'Pure — Dark Gray' },
+  { value: 'pure_maxi_light_gray', label: 'Pure Maxi — Light Gray' },
+  { value: 'pure_maxi_dark_gray', label: 'Pure Maxi — Dark Gray' },
+  { value: 'woodbox_urban_oak', label: 'woodBox — Urban Oak' },
+  { value: 'woodbox_dark_sherwood', label: 'woodBox — Dark Sherwood' },
+  { value: 'woodbox_maxi_urban_oak', label: 'woodBox Maxi — Urban Oak' },
+  { value: 'woodbox_maxi_dark_sherwood', label: 'woodBox Maxi — Dark Sherwood' },
+  { value: 'glasscase', label: 'glassCase' },
 ] as const;
 
 export const TOEKICK_MATERIALS = [
@@ -67,8 +64,10 @@ export const BACKSPLASH_MATERIALS = [
 ] as const;
 
 export const BACKSPLASH_HEIGHTS = [
-  { value: '4inch', label: '4" High' },
-  { value: 'full_18inch', label: 'Full Height (18"H)' },
+  { value: '100mm', label: '100 mm' },
+  { value: 'full_450mm', label: 'Full Height (450 mm)' },
+  { value: 'to_ceiling', label: 'To the Ceiling' },
+  { value: 'custom', label: 'Custom Height' },
 ] as const;
 
 // ── Data Interfaces ──
@@ -81,7 +80,7 @@ export interface GeneralInfo {
   jobAddress: string;
   room: string;
   projectType: string;
-  style: string;
+  skuSize: string;
 }
 
 export interface CabinetDetails {
@@ -106,11 +105,9 @@ export interface HardwareDetails {
 }
 
 export interface DrawerToekick {
-  drawerboxCategory: 'std' | 'wood_laminate' | '';
   drawerboxSelection: string;
   nonSlipMats: boolean;
   toekickMaterial: string;
-  toekickHeight: string;
 }
 
 export interface ApplianceEntry {
@@ -139,6 +136,7 @@ export interface CountertopEntry {
 export interface BacksplashDetails {
   material: string;
   height: string;
+  customHeight: string;
   color: string;
 }
 
@@ -164,7 +162,7 @@ export const DEFAULT_GENERAL_INFO: GeneralInfo = {
   jobAddress: '',
   room: '',
   projectType: '',
-  style: '',
+  skuSize: '',
 };
 
 export const DEFAULT_CABINET_DETAILS: CabinetDetails = {
@@ -189,11 +187,9 @@ export const DEFAULT_HARDWARE: HardwareDetails = {
 };
 
 export const DEFAULT_DRAWER_TOEKICK: DrawerToekick = {
-  drawerboxCategory: '',
   drawerboxSelection: '',
   nonSlipMats: false,
   toekickMaterial: '',
-  toekickHeight: '',
 };
 
 export const DEFAULT_SINK: SinkDetails = {
@@ -214,6 +210,7 @@ export const DEFAULT_COUNTERTOP: CountertopEntry = {
 export const DEFAULT_BACKSPLASH: BacksplashDetails = {
   material: '',
   height: '',
+  customHeight: '',
   color: '',
 };
 
@@ -248,7 +245,7 @@ export function validateStep1(data: DesignPacketData): ValidationError[] {
   if (!data.generalInfo.jobAddress.trim()) errors.push({ field: 'jobAddress', message: 'Job address is required' });
   if (!data.generalInfo.room.trim()) errors.push({ field: 'room', message: 'Room is required' });
   if (!data.generalInfo.projectType) errors.push({ field: 'projectType', message: 'Select a project type' });
-  if (!data.generalInfo.style) errors.push({ field: 'style', message: 'Select a style' });
+  if (!data.generalInfo.skuSize) errors.push({ field: 'skuSize', message: 'Select a SKU size option' });
   return errors;
 }
 

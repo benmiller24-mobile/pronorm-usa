@@ -1,6 +1,6 @@
 import React from 'react';
 import type { DesignPacketData, ValidationError } from '../../../lib/design-packet-types';
-import { DRAWERBOX_STD_OPTIONS, DRAWERBOX_WOOD_OPTIONS, TOEKICK_MATERIALS } from '../../../lib/design-packet-types';
+import { DRAWERBOX_OPTIONS, TOEKICK_MATERIALS } from '../../../lib/design-packet-types';
 
 interface Props {
   data: DesignPacketData;
@@ -20,9 +20,6 @@ export default function StepHardwareDrawer({ data, onChange, errors }: Props) {
   };
 
   const err = (field: string) => errors.find(e => e.field === field)?.message;
-
-  const drawerboxOptions = dt.drawerboxCategory === 'std' ? DRAWERBOX_STD_OPTIONS
-    : dt.drawerboxCategory === 'wood_laminate' ? DRAWERBOX_WOOD_OPTIONS : [];
 
   return (
     <div>
@@ -66,32 +63,18 @@ export default function StepHardwareDrawer({ data, onChange, errors }: Props) {
 
       {/* Drawerbox Section */}
       <div style={{ borderTop: '1px solid #e8e4df', marginTop: '1.5rem', paddingTop: '1.5rem' }}>
-        <h3 style={subTitle}>Drawerbox</h3>
+        <h3 style={subTitle}>Drawerbox — ProTech X</h3>
+        <p style={hintText}>Select your drawer system from the ProTech X range.</p>
 
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-          <label style={chipStyle(dt.drawerboxCategory === 'std')}>
-            <input type="radio" name="drawerboxCat" value="std" checked={dt.drawerboxCategory === 'std'}
-              onChange={() => { updateDt('drawerboxCategory', 'std'); updateDt('drawerboxSelection', ''); }} style={{ display: 'none' }} />
-            STD
-          </label>
-          <label style={chipStyle(dt.drawerboxCategory === 'wood_laminate')}>
-            <input type="radio" name="drawerboxCat" value="wood_laminate" checked={dt.drawerboxCategory === 'wood_laminate'}
-              onChange={() => { updateDt('drawerboxCategory', 'wood_laminate'); updateDt('drawerboxSelection', ''); }} style={{ display: 'none' }} />
-            Wood Laminate
-          </label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
+          {DRAWERBOX_OPTIONS.map(opt => (
+            <label key={opt.value} style={{ ...checkboxLabel, padding: '0.5rem 0.75rem', border: `1.5px solid ${dt.drawerboxSelection === opt.value ? '#b87333' : '#e8e4df'}`, borderRadius: '3px', background: dt.drawerboxSelection === opt.value ? 'rgba(184,115,51,0.05)' : 'transparent' }}>
+              <input type="radio" name="drawerboxSel" value={opt.value} checked={dt.drawerboxSelection === opt.value}
+                onChange={() => updateDt('drawerboxSelection', opt.value)} style={{ accentColor: '#b87333' }} />
+              {opt.label}
+            </label>
+          ))}
         </div>
-
-        {drawerboxOptions.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
-            {drawerboxOptions.map(opt => (
-              <label key={opt.value} style={{ ...checkboxLabel, padding: '0.5rem 0.75rem', border: `1.5px solid ${dt.drawerboxSelection === opt.value ? '#b87333' : '#e8e4df'}`, borderRadius: '3px', background: dt.drawerboxSelection === opt.value ? 'rgba(184,115,51,0.05)' : 'transparent' }}>
-                <input type="radio" name="drawerboxSel" value={opt.value} checked={dt.drawerboxSelection === opt.value}
-                  onChange={() => updateDt('drawerboxSelection', opt.value)} style={{ accentColor: '#b87333' }} />
-                {opt.label}
-              </label>
-            ))}
-          </div>
-        )}
 
         <label style={checkboxLabel}>
           <input type="checkbox" checked={dt.nonSlipMats} onChange={e => updateDt('nonSlipMats', e.target.checked)} style={checkboxStyle} />
@@ -112,10 +95,6 @@ export default function StepHardwareDrawer({ data, onChange, errors }: Props) {
             </label>
           ))}
         </div>
-
-        <Field label="Height" error={err('toekickHeight')}>
-          <input style={inputStyle} type="text" value={dt.toekickHeight} onChange={e => updateDt('toekickHeight', e.target.value)} placeholder="e.g. 4 inches" />
-        </Field>
       </div>
     </div>
   );

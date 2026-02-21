@@ -1,6 +1,6 @@
 import React from 'react';
 import type { DesignPacketData, ValidationError } from '../../../lib/design-packet-types';
-import { PROJECT_TYPES, STYLE_OPTIONS } from '../../../lib/design-packet-types';
+import { PROJECT_TYPES, SKU_SIZE_OPTIONS } from '../../../lib/design-packet-types';
 
 interface Props {
   data: DesignPacketData;
@@ -61,17 +61,17 @@ export default function StepProjectInfo({ data, onChange, errors }: Props) {
       </div>
 
       <div style={{ marginTop: '1.25rem' }}>
-        <h3 style={subTitle}>Style *</h3>
+        <h3 style={subTitle}>SKU Size Selection *</h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-          {STYLE_OPTIONS.map(s => (
-            <label key={s.value} style={chipStyle(info.style === s.value)}>
-              <input type="radio" name="style" value={s.value} checked={info.style === s.value}
-                onChange={() => update('style', s.value)} style={{ display: 'none' }} />
+          {SKU_SIZE_OPTIONS.map(s => (
+            <label key={s.value} style={chipStyle(info.skuSize === s.value)}>
+              <input type="radio" name="skuSize" value={s.value} checked={info.skuSize === s.value}
+                onChange={() => update('skuSize', s.value)} style={{ display: 'none' }} />
               {s.label}
             </label>
           ))}
         </div>
-        {err('style') && <span style={errStyle}>{err('style')}</span>}
+        {err('skuSize') && <span style={errStyle}>{err('skuSize')}</span>}
       </div>
     </div>
   );

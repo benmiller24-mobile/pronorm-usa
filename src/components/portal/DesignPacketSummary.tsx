@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import type { DesignPacketData } from '../../lib/design-packet-types';
 import {
-  PROJECT_TYPES, STYLE_OPTIONS, PRODUCT_LINES, INTERIOR_COLORS,
-  DRAWERBOX_STD_OPTIONS, DRAWERBOX_WOOD_OPTIONS, TOEKICK_MATERIALS,
+  PROJECT_TYPES, SKU_SIZE_OPTIONS, PRODUCT_LINES, INTERIOR_COLORS,
+  DRAWERBOX_OPTIONS, TOEKICK_MATERIALS,
   BACKSPLASH_MATERIALS, BACKSPLASH_HEIGHTS, getOptionLabel,
 } from '../../lib/design-packet-types';
 
@@ -18,7 +18,7 @@ export default function DesignPacketSummary({ data }: Props) {
   const c = data.cabinetDetails;
   const h = data.hardwareDetails;
   const d = data.drawerToekick;
-  const allDrawerOpts = [...DRAWERBOX_STD_OPTIONS, ...DRAWERBOX_WOOD_OPTIONS];
+  const allDrawerOpts = [...DRAWERBOX_OPTIONS];
 
   return (
     <div style={{ marginTop: '1.5rem' }}>
@@ -35,7 +35,7 @@ export default function DesignPacketSummary({ data }: Props) {
         <Row label="Address" value={g.jobAddress} />
         <Row label="Room" value={g.room} />
         <Row label="Project Type" value={getOptionLabel(PROJECT_TYPES, g.projectType)} />
-        <Row label="Style" value={getOptionLabel(STYLE_OPTIONS, g.style)} />
+        <Row label="SKU Size" value={getOptionLabel(SKU_SIZE_OPTIONS, g.skuSize)} />
       </Section>
 
       <Section title="Cabinet Selection" id="cabinet" expanded={expanded} onToggle={toggle}>
@@ -55,9 +55,9 @@ export default function DesignPacketSummary({ data }: Props) {
         {h.tipOnPushToOpen && <Row label="Tip-On / Push to Open" value="Yes" />}
         {h.xGolaChannelColor && <Row label="X-Gola Color" value={h.xGolaChannelColor} />}
         {h.yLineMetalEdgeColor && <Row label="Y-Line Edge" value={h.yLineMetalEdgeColor} />}
-        {d.drawerboxCategory && <Row label="Drawerbox" value={`${d.drawerboxCategory === 'std' ? 'STD' : 'Wood Laminate'}${d.drawerboxSelection ? ` — ${getOptionLabel(allDrawerOpts, d.drawerboxSelection)}` : ''}`} />}
+        {d.drawerboxSelection && <Row label="Drawerbox" value={getOptionLabel(allDrawerOpts, d.drawerboxSelection)} />}
         <Row label="Non-Slip Mats" value={d.nonSlipMats ? 'Yes' : 'No'} />
-        {d.toekickMaterial && <Row label="Toekick" value={`${getOptionLabel(TOEKICK_MATERIALS, d.toekickMaterial)}${d.toekickHeight ? ` (${d.toekickHeight})` : ''}`} />}
+        {d.toekickMaterial && <Row label="Toekick" value={getOptionLabel(TOEKICK_MATERIALS, d.toekickMaterial)} />}
       </Section>
 
       <Section title={`Appliances (${data.appliances.length})`} id="appliances" expanded={expanded} onToggle={toggle}>
@@ -103,7 +103,7 @@ export default function DesignPacketSummary({ data }: Props) {
           <>
             <SubLabel text="Backsplash" />
             <Row label="Material" value={getOptionLabel(BACKSPLASH_MATERIALS, data.backsplash.material)} />
-            <Row label="Height" value={getOptionLabel(BACKSPLASH_HEIGHTS, data.backsplash.height)} />
+            <Row label="Height" value={data.backsplash.height === 'custom' ? `Custom (${data.backsplash.customHeight || '—'})` : getOptionLabel(BACKSPLASH_HEIGHTS, data.backsplash.height)} />
             {data.backsplash.color && <Row label="Color" value={data.backsplash.color} />}
           </>
         )}

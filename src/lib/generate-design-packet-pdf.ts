@@ -1,8 +1,8 @@
 import jsPDF from 'jspdf';
 import type { DesignPacketData } from './design-packet-types';
 import {
-  PROJECT_TYPES, STYLE_OPTIONS, PRODUCT_LINES, INTERIOR_COLORS,
-  DRAWERBOX_STD_OPTIONS, DRAWERBOX_WOOD_OPTIONS, TOEKICK_MATERIALS,
+  PROJECT_TYPES, SKU_SIZE_OPTIONS, PRODUCT_LINES, INTERIOR_COLORS,
+  DRAWERBOX_OPTIONS, TOEKICK_MATERIALS,
   BACKSPLASH_MATERIALS, BACKSPLASH_HEIGHTS, getOptionLabel,
 } from './design-packet-types';
 
@@ -77,7 +77,7 @@ export async function generateDesignPacketPDF(data: DesignPacketData, dealerName
   const c = data.cabinetDetails;
   const h = data.hardwareDetails;
   const d = data.drawerToekick;
-  const allDrawerOpts = [...DRAWERBOX_STD_OPTIONS, ...DRAWERBOX_WOOD_OPTIONS];
+  const allDrawerOpts = [...DRAWERBOX_OPTIONS];
 
   // ── Project Information ──
   drawHeader('Project Information');
@@ -89,7 +89,7 @@ export async function generateDesignPacketPDF(data: DesignPacketData, dealerName
   drawRow('Address', g.jobAddress);
   drawRow('Room', g.room);
   drawRow('Project Type', getOptionLabel(PROJECT_TYPES, g.projectType));
-  drawRow('Style', getOptionLabel(STYLE_OPTIONS, g.style));
+  drawRow('SKU Size', getOptionLabel(SKU_SIZE_OPTIONS, g.skuSize));
   y += 3;
 
   // ── Cabinet Selection ──
@@ -111,14 +111,12 @@ export async function generateDesignPacketPDF(data: DesignPacketData, dealerName
   if (h.tipOnPushToOpen) drawRow('Tip-On / Push to Open', 'Yes');
   if (h.xGolaChannelColor) drawRow('X-Gola Channel Color', h.xGolaChannelColor);
   if (h.yLineMetalEdgeColor) drawRow('Y-Line Metal Edge', h.yLineMetalEdgeColor);
-  if (d.drawerboxCategory) {
-    const catLabel = d.drawerboxCategory === 'std' ? 'STD' : 'Wood Laminate';
-    const selLabel = d.drawerboxSelection ? getOptionLabel(allDrawerOpts, d.drawerboxSelection) : '';
-    drawRow('Drawerbox', selLabel ? `${catLabel} — ${selLabel}` : catLabel);
+  if (d.drawerboxSelection) {
+    drawRow('Drawerbox', getOptionLabel(allDrawerOpts, d.drawerboxSelection));
   }
   drawRow('Non-Slip Mats', d.nonSlipMats ? 'Yes' : 'No');
   if (d.toekickMaterial) {
-    drawRow('Toekick', `${getOptionLabel(TOEKICK_MATERIALS, d.toekickMaterial)}${d.toekickHeight ? ` (${d.toekickHeight})` : ''}`);
+    drawRow('Toekick', getOptionLabel(TOEKICK_MATERIALS, d.toekickMaterial));
   }
   y += 3;
 
@@ -211,7 +209,7 @@ export async function generateDesignPacketPDF(data: DesignPacketData, dealerName
   if (data.backsplash.material) {
     drawHeader('Backsplash');
     drawRow('Material', getOptionLabel(BACKSPLASH_MATERIALS, data.backsplash.material));
-    drawRow('Height', getOptionLabel(BACKSPLASH_HEIGHTS, data.backsplash.height));
+    drawRow('Height', data.backsplash.height === 'custom' ? `Custom (${data.backsplash.customHeight || '—'})` : getOptionLabel(BACKSPLASH_HEIGHTS, data.backsplash.height));
     if (data.backsplash.color) drawRow('Color', data.backsplash.color);
   }
 

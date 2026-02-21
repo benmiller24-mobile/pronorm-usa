@@ -14,14 +14,14 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigne
   const [projects, setProjects] = useState<Project[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [warranties, setWarranties] = useState<WarrantyClaim[]>([]);
+  const [dealerCount, setDealerCount] = useState(0);
+  const [designerCount, setDesignerCount] = useState(0);
   const [loading, setLoading] = useState(true);
-    const [dealerCount, setDealerCount] = useState(0);
-    const [designerCount, setDesignerCount] = useState(0);
 
   useEffect(() => {
     async function loadData() {
       if (isAdmin) {
-        // Admin sees all record across all dealers
+        // Admin sees all records across all dealers
         const [projRes, ordRes, warRes, dealersRes, designersRes] = await Promise.all([
           supabase.from('projects').select('*').order('created_at', { ascending: false }).limit(10),
           supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(10),

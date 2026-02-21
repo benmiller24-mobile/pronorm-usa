@@ -229,7 +229,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
               Invite {inviteRole === 'dealer' ? 'Dealer' : 'Designer'}
             </h3>
             <button onClick={() => setShowInviteForm(false)} style={{ background: 'none', border: 'none', color: '#8a8279', cursor: 'pointer', fontSize: '1.2rem' }}>
-              â
+              ✕
             </button>
           </div>
 
@@ -242,7 +242,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
           )}
 
           <form onSubmit={handleInvite}>
-            {/* Admin inviting designer â pick which dealer */}
+            {/* Admin inviting designer — pick which dealer */}
             {isAdmin && inviteRole === 'designer' && (
               <div style={{ marginBottom: '1rem' }}>
                 <label style={labelStyle}>Parent Dealer</label>
@@ -254,7 +254,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
                 >
                   <option value="">Select a dealer...</option>
                   {dealers.filter(d => d.role === 'dealer').map(d => (
-                    <option key={d.id} value={d.id}>{d.company_name} â {d.contact_name}</option>
+                    <option key={d.id} value={d.id}>{d.company_name} — {d.contact_name}</option>
                   ))}
                 </select>
               </div>
@@ -338,7 +338,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
                         style={{ borderBottom: '1px solid #f0ebe4', cursor: 'pointer', background: isExpanded ? '#fef9f0' : 'transparent' }}
                       >
                         <td style={{ padding: '0.65rem 0', color: '#1a1a1a', fontWeight: 500 }}>
-                          <span style={{ marginRight: '0.5rem', fontSize: '0.7rem', color: '#8a8279' }}>{isExpanded ? 'â¼' : 'â¶'}</span>
+                          <span style={{ marginRight: '0.5rem', fontSize: '0.7rem', color: '#8a8279' }}>{isExpanded ? '▼' : '▶'}</span>
                           {d.company_name}
                         </td>
                         <td style={{ padding: '0.65rem 0', color: '#4a4a4a' }}>{d.contact_name}</td>
@@ -353,7 +353,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
                           {dDesigners.length === 0 ? (
                             <tr>
                               <td colSpan={5} style={{ padding: '0.5rem 0 0.5rem 2rem', color: '#8a8279', fontSize: '0.82rem', fontStyle: 'italic' }}>
-                                No designers linked â{' '}
+                                No designers linked —{' '}
                                 <button
                                   onClick={(e) => { e.stopPropagation(); openInviteForm('designer', d.id); }}
                                   style={{ background: 'none', border: 'none', color: '#b87333', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600, fontFamily: 'inherit', textDecoration: 'underline' }}
@@ -366,7 +366,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
                             dDesigners.map(des => (
                               <tr key={des.id} style={{ borderBottom: '1px solid #f0ebe4', background: '#fef9f0' }}>
                                 <td style={{ padding: '0.5rem 0 0.5rem 2rem', color: '#4a4a4a', fontSize: '0.82rem' }}>
-                                  â³ {des.contact_name}
+                                  ↳ {des.contact_name}
                                 </td>
                                 <td style={{ padding: '0.5rem 0', color: '#4a4a4a', fontSize: '0.82rem' }}></td>
                                 <td style={{ padding: '0.5rem 0', color: '#8a8279', fontSize: '0.82rem' }}>{des.email}</td>
@@ -425,7 +425,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
                       <span style={{ ...badgeStyle('designer'), marginLeft: '0.5rem' }}>Designer</span>
                     </td>
                     <td style={{ padding: '0.65rem 0', color: '#8a8279' }}>{d.email}</td>
-                    <td style={{ padding: '0.65rem 0', color: '#4a4a4a' }}>{d.phone || 'â'}</td>
+                    <td style={{ padding: '0.65rem 0', color: '#4a4a4a' }}>{d.phone || '—'}</td>
                     <td style={{ padding: '0.65rem 0', color: '#8a8279', textAlign: 'right' }}>
                       {new Date(d.created_at).toLocaleDateString()}
                     </td>

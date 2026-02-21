@@ -76,6 +76,7 @@ export const handler = async function (event) {
 
   // Authorization rules
   if (role === 'dealer') {
+    // Only admins can invite dealers
     if (callerDealer.role !== 'admin') {
       return { statusCode: 403, headers, body: JSON.stringify({ error: 'Only admins can invite dealers' }) };
     }
@@ -83,6 +84,7 @@ export const handler = async function (event) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'company_name is required for dealers' }) };
     }
   } else if (role === 'designer') {
+    // Admins and dealers can invite designers
     if (callerDealer.role !== 'admin' && callerDealer.role !== 'dealer') {
       return { statusCode: 403, headers, body: JSON.stringify({ error: 'Only admins and dealers can invite designers' }) };
     }
@@ -94,8 +96,10 @@ export const handler = async function (event) {
   let parent_dealer_id = null;
   if (role === 'designer') {
     if (body.parent_dealer_id) {
+      // Admin is inviting on behalf of a dealer
       parent_dealer_id = body.parent_dealer_id;
     } else if (callerDealer.role === 'dealer') {
+      // Dealer is inviting their own designer
       parent_dealer_id = callerDealer.id;
     } else {
       return {
@@ -110,13 +114,13 @@ export const handler = async function (event) {
     const { data: newUser, error: createErr } = await supabaseAdmin.auth.admin.createUser({
       email: email.trim().toLowerCase(),
       password,
-      email_confirm: true,
+      email_confirm: true, // Auto-confirm the email
     });
 
     if (createErr) {
       return {
         statusCode: 400, headers,
-        body: JSON.stringify({ error: 'Failed to create user: ' + createErr.message }),
+        body: JSON.stringify({ error: `Failed to create user: ${createErr.message}` }),
       };
     }
 
@@ -140,24 +144,25 @@ export const handler = async function (event) {
       .from('dealers').insert(dealerRecord).select().single();
 
     if (insertErr) {
+      // Clean up: delete the auth user if dealer insert fails
       await supabaseAdmin.auth.admin.deleteUser(newUser.user.id);
       return {
         statusCode: 400, headers,
-        body: JSON.stringify({ error: 'Failed to create dealer record: ' + insertErr.message }),
+        body: JSON.stringify({ error: `Failed to create dealer record: ${insertErr.message}` }),
       };
     }
 
     return {
       statusCode: 200, headers,
       body: JSON.stringify({
-        message: (role === 'dealer' ? 'Dealer' : 'Designer') + ' account created successfully',
+        message: `${role === 'dealer' ? 'Dealer' : 'Designer'} account created successfully`,
         dealer: newDealer,
       }),
     };
   } catch (err) {
     return {
       statusCode: 500, headers,
-      body: JSON.stringify({ error: 'Unexpected error: ' + err.message }),
+      body: JSON.stringify({ error: `Unexpected error: ${err.message}` }),
     };
   }
 };

@@ -15,19 +15,25 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigne
   const [orders, setOrders] = useState<Order[]>([]);
   const [warranties, setWarranties] = useState<WarrantyClaim[]>([]);
   const [loading, setLoading] = useState(true);
+    const [dealerCount, setDealerCount] = useState(0);
+    const [designerCount, setDesignerCount] = useState(0);
 
   useEffect(() => {
     async function loadData() {
       if (isAdmin) {
-        // Admin sees all records across all dealers
-        const [projRes, ordRes, warRes] = await Promise.all([
+        // Admin sees all record across all dealers
+        const [projRes, ordRes, warRes, dealersRes, designersRes] = await Promise.all([
           supabase.from('projects').select('*').order('created_at', { ascending: false }).limit(10),
           supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(10),
           supabase.from('warranty_claims').select('*').order('created_at', { ascending: false }).limit(10),
+          supabase.from('dealers').select('id', { count: 'exact', head: true }).eq('role', 'dealer'),
+          supabase.from('dealers').select('id', { count: 'exact', head: true }).eq('role', 'designer'),
         ]);
         setProjects(projRes.data || []);
         setOrders(ordRes.data || []);
         setWarranties(warRes.data || []);
+        setDealerCount(dealersRes.count || 0);
+        setDesignerCount(designersRes.count || 0);
       } else {
         // Dealer and Designer both scope to dealer.id
         // (Designer's dealer.id is already set to parent_dealer_id by PortalApp)
@@ -108,6 +114,26 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigne
         <div style={cardStyle}><div style={statStyle}>{orders.filter(o => o.status === 'in_production').length}</div><div style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4a4a', marginTop: '0.5rem' }}>In Production</div></div>
         <div style={cardStyle}><div style={statStyle}>{pendingWarranties.length}</div><div style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4a4a', marginTop: '0.5rem' }}>Open Warranty Claims</div></div>
       </div>
+
+      {/* Team Overview — Admin only */}
+      {isAdmin && (
+        <div style={{ ...cardStyle, marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+            <div>
+              <div style={{ ...statStyle, fontSize: '1.8rem' }}>{dealerCount}</div>
+              <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4a4a', marginTop: '0.25rem' }}>Dealers</div>
+            </div>
+            <div>
+              <div style={{ ...statStyle, fontSize: '1.8rem' }}>{designerCount}</div>
+              <div style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4a4a', marginTop: '0.25rem' }}>Designers</div>
+            </div>
+          </div>
+          <button onClick={() => onNavigate('/dealer-portal/team')} style={{
+            background: 'none', border: 'none', color: '#b87333', fontSize: '0.75rem', fontWeight: 600,
+            cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase', fontFamily: 'inherit',
+          }}>Manage Team &rarr;</button>
+        </div>
+      )}
 
       {/* Quick Actions */}
       {!isAdmin && (

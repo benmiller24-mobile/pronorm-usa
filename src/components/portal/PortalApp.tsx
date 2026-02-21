@@ -12,6 +12,7 @@ import OrderDetail from './OrderDetail';
 import WarrantyList from './WarrantyList';
 import WarrantyForm from './WarrantyForm';
 import AccountSettings from './AccountSettings';
+import TeamManagement from './TeamManagement';
 
 export default function PortalApp() {
   const [session, setSession] = useState<any>(null);
@@ -157,6 +158,11 @@ export default function PortalApp() {
     if (path === '/dealer-portal/warranty' || path === '/dealer-portal/warranty/') {
       return <WarrantyList dealer={scopedDealer} onNavigate={navigate} />;
     }
+        if (path === '/dealer-portal/team' || path === '/dealer-portal/team/') {
+                // Designers don't manage anyone — redirect to dashboard
+                if (isDesigner) return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
+                return <TeamManagement dealer={scopedDealer} isAdmin={isAdmin} isDesigner={isDesigner} />;
+        }
     if (path === '/dealer-portal/account') {
       return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;
     }

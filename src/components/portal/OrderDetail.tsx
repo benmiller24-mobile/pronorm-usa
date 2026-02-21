@@ -358,7 +358,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
                 </div>
               </div>
 
-{/* Payment Status */}
+              {/* Payment Status */}
               <div style={{ marginBottom: '1.25rem' }}>
                 <label style={labelStyle}>Payment Status</label>
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
@@ -381,7 +381,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
                 </div>
               </div>
 
-                            {/* QuickBooks Invoice IDs */}
+              {/* QuickBooks Invoice IDs */}
               <div style={{ marginBottom: '1.25rem' }}>
                 <label style={labelStyle}>QuickBooks Invoice IDs</label>
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>

@@ -5,6 +5,7 @@ import { getValidNextProjectStatuses, PROJECT_STATUS_LABELS } from '../../lib/ad
 import StatusBadge from './ui/StatusBadge';
 import StatusTimeline from './ui/StatusTimeline';
 import FileUploader from './ui/FileUploader';
+import { notifyStatusChange } from '../../lib/notifications';
 
 interface ProjectDetailProps {
   projectId: string;
@@ -90,6 +91,7 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
         status: 'changes_requested',
         admin_notes: markupNote ? (project.admin_notes ? project.admin_notes + '\n\n---\nDealer markup notes: ' + markupNote : 'Dealer markup notes: ' + markupNote) : project.admin_notes,
       }).eq('id', project.id);
+      notifyStatusChange('project', project.id, project.status, 'changes_requested', markupNote || undefined);
       setMarkupMode(false); setMarkupFiles([]); setMarkupNote('');
       await loadData();
     } catch (err: any) {
@@ -105,6 +107,7 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
     try {
       // Update project status to approved
       await supabase.from('projects').update({ status: 'approved' }).eq('id', project.id);
+      notifyStatusChange('project', project.id, project.status, 'approved', 'Design approved by dealer');
 
       // Auto-create an order for this project
       const orderNumber = `ORD-${Date.now().toString(36).toUpperCase()}`;
@@ -144,6 +147,7 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
     if (!project || !adminStatus) return;
     setAdminUpdating(true);
     await supabase.from('projects').update({ status: adminStatus }).eq('id', project.id);
+    notifyStatusChange('project', project.id, project.status, adminStatus);
     setAdminStatus('');
     await loadData();
     setAdminUpdating(false);
@@ -172,6 +176,7 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
       const newStatus = statusUpdates[adminFileCategory]?.[project.status];
       if (newStatus) {
         await supabase.from('projects').update({ status: newStatus }).eq('id', project.id);
+        notifyStatusChange('project', project.id, project.status, newStatus, `Design files uploaded (${adminFileCategory === 'design_output' ? 'new design' : 'revision'})`);
       }
       setAdminFiles([]);
       await loadData();

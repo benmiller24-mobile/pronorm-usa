@@ -60,6 +60,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
   const [carrierInput, setCarrierInput] = useState('');
   const [estDeliveryInput, setEstDeliveryInput] = useState('');
   const [savingShipping, setSavingShipping] = useState(false);
+  const [savingPaymentStatus, setSavingPaymentStatus] = useState(false);
 
   useEffect(() => { loadData(); }, [orderId]);
 
@@ -138,6 +139,8 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
     if (!order || !adminStatus) return;
     setAdminUpdating(true);
     const updateData: Record<string, any> = { status: adminStatus };
+    if (adminStatus === 'order_paid') updateData.payment_status = 'paid';
+    if (adminStatus === 'shipping_paid') updateData.shipping_payment_status = 'paid';
     if (adminStatus === 'in_production') updateData.production_started_at = new Date().toISOString();
     if (adminStatus === 'shipped') updateData.shipped_at = new Date().toISOString();
     if (adminStatus === 'delivered') updateData.delivered_at = new Date().toISOString();
@@ -188,6 +191,14 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
       alert(`Upload failed: ${err.message || 'Unknown error'}`);
     }
     setAdminUploading(false);
+  };
+
+  const handleUpdatePaymentStatus = async (field: 'payment_status' | 'shipping_payment_status', value: string) => {
+    if (!order) return;
+    setSavingPaymentStatus(true);
+    await supabase.from('orders').update({ [field]: value }).eq('id', order.id);
+    await loadData();
+    setSavingPaymentStatus(false);
   };
 
   const handleSavePaymentLink = async () => {
@@ -342,7 +353,30 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
                 </div>
               </div>
 
-              {/* QuickBooks Invoice IDs */}
+{/* Payment Status */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={labelStyle}>Payment Status</label>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.25rem' }}>Order Payment</div>
+                    <select value={order?.payment_status || 'unpaid'} onChange={e => handleUpdatePaymentStatus('payment_status', e.target.value)} disabled={savingPaymentStatus} style={inputStyle}>
+                      <option value="unpaid">Unpaid</option>
+                      <option value="partial">Partial</option>
+                      <option value="paid">Paid</option>
+                    </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', color: '#666', marginBottom: '0.25rem' }}>Shipping Payment</div>
+                    <select value={order?.shipping_payment_status || 'unpaid'} onChange={e => handleUpdatePaymentStatus('shipping_payment_status', e.target.value)} disabled={savingPaymentStatus} style={inputStyle}>
+                      <option value="unpaid">Unpaid</option>
+                      <option value="partial">Partial</option>
+                      <option value="paid">Paid</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+                            {/* QuickBooks Invoice IDs */}
               <div style={{ marginBottom: '1.25rem' }}>
                 <label style={labelStyle}>QuickBooks Invoice IDs</label>
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>

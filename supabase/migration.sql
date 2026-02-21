@@ -313,3 +313,7 @@ CREATE INDEX idx_order_files_order_id ON order_files(order_id);
 CREATE INDEX idx_order_status_updates_order_id ON order_status_updates(order_id);
 CREATE INDEX idx_warranty_claims_dealer_id ON warranty_claims(dealer_id);
 CREATE INDEX idx_warranty_claims_order_id ON warranty_claims(order_id);
+
+-- ── Design Packet Questionnaire Data ──
+-- Stores structured questionnaire answers as JSONB (replaces PDF questionnaire uploads)
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS design_packet_data jsonb DEFAULT NULL;

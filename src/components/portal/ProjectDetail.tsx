@@ -6,6 +6,8 @@ import StatusBadge from './ui/StatusBadge';
 import StatusTimeline from './ui/StatusTimeline';
 import FileUploader from './ui/FileUploader';
 import { notifyStatusChange } from '../../lib/notifications';
+import DesignPacketSummary from './DesignPacketSummary';
+import type { DesignPacketData } from '../../lib/design-packet-types';
 
 interface ProjectDetailProps {
   projectId: string;
@@ -383,6 +385,13 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
             <div style={cardStyle}>
               <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.1rem', fontWeight: 500, marginBottom: '0.75rem' }}>Project Notes</h3>
               <p style={{ fontSize: '0.88rem', color: '#4a4a4a', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{project.message}</p>
+            </div>
+          )}
+
+          {/* Design Packet Questionnaire */}
+          {project.design_packet_data && (
+            <div style={cardStyle}>
+              <DesignPacketSummary data={project.design_packet_data as DesignPacketData} />
             </div>
           )}
 

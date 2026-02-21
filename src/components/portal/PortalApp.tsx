@@ -5,7 +5,7 @@ import LoginForm from './LoginForm';
 import PortalLayout from './PortalLayout';
 import DealerDashboard from './DealerDashboard';
 import ProjectList from './ProjectList';
-import ProjectForm from './ProjectForm';
+import DesignPacketWizard from './DesignPacketWizard';
 import ProjectDetail from './ProjectDetail';
 import OrderList from './OrderList';
 import OrderDetail from './OrderDetail';
@@ -136,7 +136,7 @@ export default function PortalApp() {
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
     if (path === '/dealer-portal/projects/new') {
-      return <ProjectForm dealer={scopedDealer} onNavigate={navigate} />;
+      return <DesignPacketWizard dealer={scopedDealer} onNavigate={navigate} />;
     }
     if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') {
       return <ProjectList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;

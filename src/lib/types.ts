@@ -82,6 +82,7 @@ export interface Project {
   status: ProjectStatus;
   admin_notes: string | null;
   quote_amount: number | null;
+  design_packet_data: Record<string, any> | null;
   created_at: string;
   updated_at: string;
 }

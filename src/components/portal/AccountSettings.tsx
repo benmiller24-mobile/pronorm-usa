@@ -69,8 +69,15 @@ export default function AccountSettings({ dealer, onDealerUpdate }: AccountSetti
   return (
     <div style={{ maxWidth: '600px' }}>
       <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.8rem', fontWeight: 400, marginBottom: '0.2rem' }}>Account Settings</h1>
-      <p style={{ fontSize: '0.85rem', color: '#8a8279', marginBottom: '2rem' }}>{dealer.company_name}</p>
-
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
+                      <span style={{ fontSize: '0.85rem', color: '#8a8279' }}>{dealer.company_name}</span>span>
+                      <span style={{
+                display: 'inline-block', padding: '0.15rem 0.5rem', fontSize: '0.6rem', fontWeight: 700,
+                letterSpacing: '0.08em', textTransform: 'uppercase', borderRadius: '2px',
+                background: dealer.role === 'admin' ? '#2d2d2d' : dealer.role === 'designer' ? '#e8ddd0' : '#f0ebe4',
+                color: dealer.role === 'admin' ? '#b87333' : dealer.role === 'designer' ? '#8a6c3e' : '#4a4a4a',
+    }}>{dealer.role}</span>
+            </div>
       {/* Profile */}
       <form onSubmit={handleSave} style={{ ...cardStyle, marginBottom: '1.5rem' }}>
         <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.1rem', fontWeight: 500, marginBottom: '1rem' }}>Profile Information</h3>

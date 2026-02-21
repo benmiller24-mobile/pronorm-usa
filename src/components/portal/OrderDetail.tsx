@@ -5,6 +5,7 @@ import { getValidNextOrderStatuses, ORDER_STATUS_LABELS } from '../../lib/admin-
 import StatusBadge from './ui/StatusBadge';
 import StatusTimeline from './ui/StatusTimeline';
 import FileUploader from './ui/FileUploader';
+import { notifyStatusChange } from '../../lib/notifications';
 
 interface OrderDetailProps {
   orderId: string;
@@ -112,6 +113,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
           note: markupNote, updated_by: 'dealer',
         });
       }
+      notifyStatusChange('order', order.id, order.status, 'acknowledgement_changes', markupNote || undefined);
       setMarkupMode(false); setMarkupFiles([]); setMarkupNote('');
       await loadData();
     } catch (err: any) {
@@ -130,6 +132,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
       order_id: order.id, old_status: order.status, new_status: 'acknowledgement_approved',
       note: 'Dealer approved order confirmation', updated_by: 'dealer',
     });
+    notifyStatusChange('order', order.id, order.status, 'acknowledgement_approved', 'Dealer approved order confirmation');
     await loadData();
     setApproving(false);
   };
@@ -150,6 +153,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
       order_id: order.id, old_status: order.status, new_status: adminStatus,
       note: adminStatusNote || null, updated_by: 'admin',
     });
+    notifyStatusChange('order', order.id, order.status, adminStatus, adminStatusNote || undefined);
     setAdminStatus('');
     setAdminStatusNote('');
     await loadData();
@@ -183,6 +187,7 @@ export default function OrderDetail({ orderId, dealer, onNavigate, isAdmin }: Or
           order_id: order.id, old_status: order.status, new_status: newStatus,
           note: `Uploaded ${adminFileCategory === 'acknowledgement' ? 'order confirmation' : 'revised confirmation'}`, updated_by: 'admin',
         });
+        notifyStatusChange('order', order.id, order.status, newStatus, `${adminFileCategory === 'acknowledgement' ? 'Order confirmation' : 'Revised confirmation'} uploaded`);
       }
       setAdminFiles([]);
       await loadData();

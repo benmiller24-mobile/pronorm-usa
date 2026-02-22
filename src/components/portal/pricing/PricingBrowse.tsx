@@ -34,8 +34,33 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<CatalogItem & { productLine: string; category: string; height: string } | null>(null);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   const productLines = Object.keys(catalogData).sort();
+
+  // Build a global image → all catalog items lookup so that when we display
+  // a product group image, we can show ALL SKUs from that image regardless
+  // of the current height filter.
+  const imageToAllItems = useMemo(() => {
+    const map: Record<string, Array<CatalogItem & { _line: string; _cat: string; _height: string }>> = {};
+    for (const [line, categories] of Object.entries(catalogData)) {
+      for (const [cat, heights] of Object.entries(categories)) {
+        for (const [height, items] of Object.entries(heights)) {
+          for (const item of items) {
+            if (item.img) {
+              if (!map[item.img]) map[item.img] = [];
+              map[item.img].push({ ...item, _line: line, _cat: cat, _height: height });
+            }
+          }
+        }
+      }
+    }
+    // Sort items within each image group by SKU
+    for (const key of Object.keys(map)) {
+      map[key].sort((a, b) => a.s.localeCompare(b.s));
+    }
+    return map;
+  }, [catalogData]);
 
   const getCategories = (line: string) => {
     return Object.keys(catalogData[line] || {}).sort();
@@ -49,7 +74,7 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
     return catalogData[line]?.[category]?.[height] || [];
   };
 
-  const handleAddClick = (item: CatalogItem, line: string, category: string, height: string) => {
+  const handleAddClick = (item: any, line: string, category: string, height: string) => {
     setSelectedItem({ ...item, productLine: line, category, height });
     setModalOpen(true);
   };
@@ -206,10 +231,12 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
         {selectedLine && selectedCategory && selectedHeight ? (
           <PriceBookView
             items={getItems(selectedLine, selectedCategory, selectedHeight)}
-            onAddClick={(item) => handleAddClick(item, selectedLine, selectedCategory, selectedHeight)}
+            imageToAllItems={imageToAllItems}
+            onAddClick={(item, line, cat, height) => handleAddClick(item, line, cat, height)}
             category={selectedCategory}
             height={selectedHeight}
             line={selectedLine}
+            onZoomImage={setZoomedImage}
           />
         ) : (
           <div style={{
@@ -225,7 +252,7 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
         )}
       </div>
 
-      {/* Modal */}
+      {/* Add to Order Modal */}
       {modalOpen && selectedItem && (
         <AddToOrderModal
           item={selectedItem}
@@ -236,43 +263,86 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
           }}
         />
       )}
+
+      {/* Image Zoom Modal */}
+      {zoomedImage && (
+        <div
+          onClick={() => setZoomedImage(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.85)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'zoom-out',
+            padding: '2rem',
+          }}
+        >
+          <img
+            src={`/data/diagrams/${zoomedImage}`}
+            alt="Zoomed product group"
+            style={{
+              maxWidth: '95vw',
+              maxHeight: '90vh',
+              objectFit: 'contain',
+              borderRadius: '4px',
+              boxShadow: '0 4px 30px rgba(0,0,0,0.4)',
+            }}
+          />
+          <div style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1.5rem',
+            color: '#fff',
+            fontSize: '0.8rem',
+            opacity: 0.7,
+          }}>
+            Click anywhere to close
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 
 /**
- * Groups SKU items by their shared image (product group from price book),
- * then displays each group as a full-width price book section image
- * with an "Add to Order" button per individual SKU.
+ * Groups SKU items by their shared image (product group from price book).
+ * For each image, displays ALL catalog SKUs mapped to that image (across
+ * all heights/widths), so every SKU visible in the image has a button.
  */
-function PriceBookView({ items, onAddClick, category, height, line }: {
+function PriceBookView({ items, imageToAllItems, onAddClick, category, height, line, onZoomImage }: {
   items: any[];
-  onAddClick: (item: any) => void;
+  imageToAllItems: Record<string, any[]>;
+  onAddClick: (item: any, line: string, cat: string, height: string) => void;
   category: string;
   height: string;
   line: string;
+  onZoomImage: (img: string) => void;
 }) {
-  // Group items by their image (items sharing same image = same product group)
+  // Collect unique images from the filtered items, maintaining order
   const groups = useMemo(() => {
-    const byImage: Record<string, any[]> = {};
+    const seenImages = new Set<string>();
+    const imageOrder: string[] = [];
     const noImage: any[] = [];
 
     for (const item of items) {
       if (item.img) {
-        if (!byImage[item.img]) byImage[item.img] = [];
-        byImage[item.img].push(item);
+        if (!seenImages.has(item.img)) {
+          seenImages.add(item.img);
+          imageOrder.push(item.img);
+        }
       } else {
         noImage.push(item);
       }
     }
 
-    // Sort groups by first SKU
-    const sorted = Object.entries(byImage).sort(([, a], [, b]) =>
-      a[0].s.localeCompare(b[0].s)
-    );
-
-    return { sorted, noImage };
+    return { imageOrder, noImage };
   }, [items]);
 
   if (items.length === 0) {
@@ -307,14 +377,19 @@ function PriceBookView({ items, onAddClick, category, height, line }: {
 
       {/* Product groups as price book sections */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {groups.sorted.map(([imgSrc, groupItems]) => (
-          <ProductGroupCard
-            key={imgSrc}
-            imgSrc={imgSrc}
-            items={groupItems}
-            onAddClick={onAddClick}
-          />
-        ))}
+        {groups.imageOrder.map((imgSrc) => {
+          // Get ALL items that share this image (across all heights/categories)
+          const allItemsForImage = imageToAllItems[imgSrc] || [];
+          return (
+            <ProductGroupCard
+              key={imgSrc}
+              imgSrc={imgSrc}
+              items={allItemsForImage}
+              onAddClick={onAddClick}
+              onZoomImage={onZoomImage}
+            />
+          );
+        })}
 
         {/* Items without images */}
         {groups.noImage.length > 0 && (
@@ -336,7 +411,11 @@ function PriceBookView({ items, onAddClick, category, height, line }: {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {groups.noImage.map((item) => (
-                <CompactSKURow key={item.s} item={item} onAddClick={() => onAddClick(item)} />
+                <CompactSKURow
+                  key={item.s}
+                  item={item}
+                  onAddClick={() => onAddClick(item, line, category, height)}
+                />
               ))}
             </div>
           </div>
@@ -347,10 +426,11 @@ function PriceBookView({ items, onAddClick, category, height, line }: {
 }
 
 
-function ProductGroupCard({ imgSrc, items, onAddClick }: {
+function ProductGroupCard({ imgSrc, items, onAddClick, onZoomImage }: {
   imgSrc: string;
   items: any[];
-  onAddClick: (item: any) => void;
+  onAddClick: (item: any, line: string, cat: string, height: string) => void;
+  onZoomImage: (img: string) => void;
 }) {
   return (
     <div style={{
@@ -359,72 +439,90 @@ function ProductGroupCard({ imgSrc, items, onAddClick }: {
       borderRadius: '4px',
       overflow: 'hidden',
     }}>
-      {/* Full-width price book section image */}
-      <div style={{
-        width: '100%',
-        background: '#fff',
-        borderBottom: '1px solid #e8e0d8',
-        overflow: 'auto',
-      }}>
+      {/* Full-width price book section image — click to zoom */}
+      <div
+        onClick={() => onZoomImage(imgSrc)}
+        style={{
+          width: '100%',
+          background: '#fff',
+          borderBottom: '1px solid #e8e0d8',
+          cursor: 'zoom-in',
+          position: 'relative',
+        }}
+      >
         <img
           src={`/data/diagrams/${imgSrc}`}
           alt={items[0]?.s || 'Product group'}
           style={{
             display: 'block',
             width: '100%',
-            minWidth: '700px',
             height: 'auto',
           }}
           loading="lazy"
         />
+        <div style={{
+          position: 'absolute',
+          bottom: '0.5rem',
+          right: '0.5rem',
+          background: 'rgba(0,0,0,0.5)',
+          color: '#fff',
+          padding: '0.2rem 0.5rem',
+          borderRadius: '3px',
+          fontSize: '0.65rem',
+        }}>
+          Click to zoom
+        </div>
       </div>
 
-      {/* SKU action row */}
+      {/* SKU action buttons — ALL SKUs for this image */}
       <div style={{
         padding: '0.75rem 1rem',
         background: '#f7f4f0',
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '0.5rem',
-        alignItems: 'center',
       }}>
-        <span style={{
+        <div style={{
           fontSize: '0.72rem',
           fontWeight: 600,
           color: '#8a8279',
           letterSpacing: '0.04em',
-          marginRight: '0.5rem',
+          marginBottom: '0.5rem',
         }}>
-          Add to order:
-        </span>
-        {items.map((item) => (
-          <button
-            key={item.s}
-            onClick={() => onAddClick(item)}
-            title={`${item.s}${item.d ? ' — ' + item.d : ''} (${item.w}cm${item.dr ? ', ' + item.dr : ''})`}
-            style={{
-              padding: '0.4rem 0.75rem',
-              background: '#b87333',
-              color: '#fdfcfa',
-              border: 'none',
-              borderRadius: '3px',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontFamily: "'DM Sans', sans-serif",
-              transition: 'all 200ms',
-              whiteSpace: 'nowrap',
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = '#a0642d';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = '#b87333';
-            }}
-          >
-            {item.s}
-          </button>
-        ))}
+          Add to order ({items.length} SKU{items.length !== 1 ? 's' : ''}):
+        </div>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.4rem',
+          alignItems: 'center',
+        }}>
+          {items.map((item) => (
+            <button
+              key={item.s}
+              onClick={() => onAddClick(item, item._line, item._cat, item._height)}
+              title={`${item.s}${item.d ? ' — ' + item.d : ''} (${item.w}cm${item.dr ? ', ' + item.dr : ''})`}
+              style={{
+                padding: '0.35rem 0.6rem',
+                background: '#b87333',
+                color: '#fdfcfa',
+                border: 'none',
+                borderRadius: '3px',
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: "'DM Sans', sans-serif",
+                transition: 'all 200ms',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = '#a0642d';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = '#b87333';
+              }}
+            >
+              {item.s}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

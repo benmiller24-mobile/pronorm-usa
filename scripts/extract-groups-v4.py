@@ -12,8 +12,9 @@ import sys
 from PIL import Image
 from pathlib import Path
 
-DPI = 200
+DPI = 150
 SCALE = DPI / 72.0
+TARGET_WIDTH = 1400  # Max output image width in pixels
 SKU_RE = re.compile(r'([A-Z]{1,4}(?:\s[A-Z]{1,4})?)\s+(\d{2,3}(?:-\d{2,3}){2,3})')
 
 DESC_STARTERS = [
@@ -63,7 +64,7 @@ def is_pricing_page(text, pdf_source):
 
 
 def get_page_groups(pdf_path, page_num):
-    """Get product group boundaries and SKU mappings from a page."""
+    """Get product group boundaries with TIGHT splitting — one image per product type."""
     try:
         result = subprocess.run(
             ['pdftotext', '-f', str(page_num), '-l', str(page_num), '-bbox', pdf_path, '-'],
@@ -86,74 +87,77 @@ def get_page_groups(pdf_path, page_num):
 
     sorted_ys = sorted(lines_by_y.keys())
 
-    # Find product group boundaries:
-    # A group starts at a description line (e.g. "Base unit") that has or is followed by SKU lines
+    # Build groups with tight boundary detection:
+    # Start a new group whenever a description keyword is found OR there's a >15pt gap
     groups = []
-    i = 0
-    while i < len(sorted_ys):
-        y_key = sorted_ys[i]
+    current_group = None
+
+    for idx, y_key in enumerate(sorted_ys):
         words = sorted(lines_by_y[y_key], key=lambda w: w[0])
         line_text = ' '.join(w[4] for w in words)
+        # Strip L/R door orientation markers that interfere with SKU regex
+        # e.g. "55 L/R DTY 55-76-13" → "55 _/_ DTY 55-76-13"
+        clean_text = re.sub(r'\bL/R\b', '_/_', line_text)
+        line_y_min = min(w[1] for w in words)
+        line_y_max = max(w[3] for w in words)
 
-        # Check if this line starts a product group (description keyword)
         is_desc = any(kw in line_text for kw in DESC_STARTERS)
-        has_sku = bool(SKU_RE.search(line_text))
+        has_sku = bool(SKU_RE.search(clean_text))
 
-        if is_desc or has_sku:
-            group_start_y = min(w[1] for w in words)
-            group_skus = []
+        # Check gap from previous line
+        gap = 0
+        if idx > 0:
+            prev_y = sorted_ys[idx - 1]
+            prev_y_max = max(w[3] for w in lines_by_y[prev_y])
+            gap = line_y_min - prev_y_max
 
-            # Collect SKUs from this line and following lines until next group
-            j = i
-            last_content_y = group_start_y
-            while j < len(sorted_ys):
-                jy = sorted_ys[j]
-                jwords = lines_by_y[jy]
-                jtext = ' '.join(w[4] for w in jwords)
+        # Decide whether to start a new group
+        start_new = False
+        if current_group is None:
+            if is_desc or has_sku:
+                start_new = True
+        else:
+            # Start new group on description keyword (new product type)
+            if is_desc and current_group['skus']:
+                start_new = True
+            # Start new group on gap >15pt
+            elif gap > 15 and current_group['skus']:
+                start_new = True
 
-                # Collect SKUs
-                for m in SKU_RE.finditer(jtext):
-                    sku = f"{m.group(1).strip()} {m.group(2)}"
-                    if sku not in group_skus:
-                        group_skus.append(sku)
-
-                last_content_y = max(w[3] for w in jwords)  # yMax
-
-                # Check if next line starts a new group
-                if j > i:
-                    next_is_desc = any(kw in jtext for kw in DESC_STARTERS)
-                    # Only break if we already have SKUs and this is a new description
-                    if next_is_desc and group_skus and not SKU_RE.search(jtext):
-                        break
-                    # Also break if there's a big gap (>30pt) suggesting new section
-                    if j + 1 < len(sorted_ys):
-                        gap = sorted_ys[j + 1] - jy
-                        if gap > 30 and group_skus:
-                            j += 1
-                            last_content_y = max(w[3] for w in lines_by_y[sorted_ys[j-1]])
-                            break
-
-                j += 1
-
-            if group_skus:
-                # Build base key from first SKU
-                first_sku = group_skus[0]
+        if start_new:
+            # Finalise previous group
+            if current_group and current_group['skus']:
+                first_sku = current_group['skus'][0]
                 parts = first_sku.split(' ')
                 num = parts[-1]
                 num_parts = num.split('-')
                 prefix = ' '.join(parts[:-1])
-                base_key = f"{prefix} xx-{'-'.join(num_parts[1:])}" if len(num_parts) >= 3 else first_sku
+                current_group['base_key'] = f"{prefix} xx-{'-'.join(num_parts[1:])}" if len(num_parts) >= 3 else first_sku
+                groups.append(current_group)
 
-                groups.append({
-                    'y_start': group_start_y,
-                    'y_end': last_content_y,
-                    'base_key': base_key,
-                    'skus': group_skus,
-                })
-                i = j
-                continue
+            current_group = {
+                'y_start': line_y_min,
+                'y_end': line_y_max,
+                'skus': [],
+                'base_key': None,
+            }
 
-        i += 1
+        if current_group is not None:
+            current_group['y_end'] = line_y_max
+            for m in SKU_RE.finditer(clean_text):
+                sku = f"{m.group(1).strip()} {m.group(2)}"
+                if sku not in current_group['skus']:
+                    current_group['skus'].append(sku)
+
+    # Don't forget last group
+    if current_group and current_group['skus']:
+        first_sku = current_group['skus'][0]
+        parts = first_sku.split(' ')
+        num = parts[-1]
+        num_parts = num.split('-')
+        prefix = ' '.join(parts[:-1])
+        current_group['base_key'] = f"{prefix} xx-{'-'.join(num_parts[1:])}" if len(num_parts) >= 3 else first_sku
+        groups.append(current_group)
 
     return groups
 
@@ -217,11 +221,15 @@ def render_and_crop_groups(pdf_path, page_num, groups, pdf_source, output_dir, s
             filename = f"{pdf_source}_{safe_key}_p{page_num}.png"
             filepath = os.path.join(output_dir, filename)
 
-            # Optimize: save as JPEG for smaller file sizes since these are full-width
+            # Resize to target width if wider, preserving aspect ratio
             jpeg_filename = f"{pdf_source}_{safe_key}_p{page_num}.jpg"
             jpeg_path = os.path.join(output_dir, jpeg_filename)
             crop_rgb = crop.convert('RGB')
-            crop_rgb.save(jpeg_path, 'JPEG', quality=85, optimize=True)
+            if crop_rgb.width > TARGET_WIDTH:
+                ratio = TARGET_WIDTH / crop_rgb.width
+                new_h = int(crop_rgb.height * ratio)
+                crop_rgb = crop_rgb.resize((TARGET_WIDTH, new_h), Image.LANCZOS)
+            crop_rgb.save(jpeg_path, 'JPEG', quality=55, optimize=True)
 
             # Map all SKUs in this group to this image
             for sku in g['skus']:

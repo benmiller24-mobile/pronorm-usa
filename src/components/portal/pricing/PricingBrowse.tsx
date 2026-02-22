@@ -36,18 +36,35 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
   const [selectedItem, setSelectedItem] = useState<CatalogItem & { productLine: string; category: string; height: string } | null>(null);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
-  const productLines = Object.keys(catalogData).sort();
+  const plOrder: Record<string, number> = { 'proline': 0, 'x-line': 1, 'y-line': 2, 'living': 3 };
+  const productLines = Object.keys(catalogData).sort((a, b) => (plOrder[a] ?? 99) - (plOrder[b] ?? 99));
 
   const getCategories = (line: string) => {
-    return Object.keys(catalogData[line] || {}).sort();
+    const cats = Object.keys(catalogData[line] || {});
+    // Sort categories by the minimum page number of their items (PDF sequence)
+    return cats.sort((a, b) => {
+      const minPgA = Math.min(...Object.values(catalogData[line]?.[a] || {}).flatMap((items: any) => (items as CatalogItem[]).map((i: CatalogItem) => i.pg || 9999)));
+      const minPgB = Math.min(...Object.values(catalogData[line]?.[b] || {}).flatMap((items: any) => (items as CatalogItem[]).map((i: CatalogItem) => i.pg || 9999)));
+      return minPgA - minPgB;
+    });
   };
 
   const getHeights = (line: string, category: string) => {
-    return Object.keys(catalogData[line]?.[category] || {}).sort((a, b) => parseInt(a) - parseInt(b));
+    const heights = Object.keys(catalogData[line]?.[category] || {});
+    // Sort by minimum page number within each height group (PDF sequence)
+    return heights.sort((a, b) => {
+      const itemsA = catalogData[line]?.[category]?.[a] || [];
+      const itemsB = catalogData[line]?.[category]?.[b] || [];
+      const minPgA = Math.min(...itemsA.map((i: CatalogItem) => i.pg || 9999));
+      const minPgB = Math.min(...itemsB.map((i: CatalogItem) => i.pg || 9999));
+      return minPgA - minPgB;
+    });
   };
 
   const getItems = (line: string, category: string, height: string) => {
-    return catalogData[line]?.[category]?.[height] || [];
+    const items = catalogData[line]?.[category]?.[height] || [];
+    // Sort items by page number (PDF sequence)
+    return [...items].sort((a: CatalogItem, b: CatalogItem) => (a.pg || 9999) - (b.pg || 9999));
   };
 
   const handleAddClick = (item: CatalogItem, line: string, category: string, height: string) => {

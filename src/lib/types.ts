@@ -163,6 +163,123 @@ export interface WarrantyFile {
   uploaded_at: string;
 }
 
+/* ── Design Translation Engine Types ── */
+
+export type DesignTranslationStatus = 'draft' | 'uploading' | 'analyzing' | 'review' | 'validated' | 'proposal_generated';
+
+export type DesignTranslationFileCategory = 'source_floorplan' | 'source_elevation' | 'generated_drawing' | 'proposal_pdf';
+
+export interface WallDefinition {
+  label: string;          // A, B, C, D...
+  length_cm: number;
+  hasWindow: boolean;
+  windowWidth_cm?: number;
+  windowHeight_cm?: number;
+  windowSillHeight_cm?: number;
+  hasDoor: boolean;
+  doorWidth_cm?: number;
+  doorPosition_cm?: number;
+  notes: string;
+}
+
+export interface IntakeData {
+  projectName: string;
+  roomType: 'kitchen' | 'bathroom' | 'laundry' | 'closet' | 'other';
+  roomWidth_cm: number;
+  roomDepth_cm: number;
+  ceilingHeight_cm: number;
+  walls: WallDefinition[];
+  productLine: 'proline';  // Phase 1: ProLine only
+  baseUnitHeight: 76 | 85; // 768mm or 852mm (stored as cm code)
+  styleNotes: string;
+}
+
+export interface CabinetPosition {
+  id: string;               // e.g. "A_1", "A_2", "B_1"
+  wallLabel: string;
+  type: string;             // base_unit, wall_unit, tall_unit, corner_base, sink_base, etc.
+  skuSuggestion: string;    // AI's suggested SKU
+  width_cm: number;
+  height_cm: number;
+  x_cm: number;             // position from left edge of wall
+  doorOrientation: string;  // L, R, LR, none
+  features: string[];
+  confidence: number;       // 0-1
+  reasoning: string;        // AI's explanation
+}
+
+export interface WallAnalysis {
+  label: string;
+  length_cm: number;
+  positions: CabinetPosition[];
+  dimensionCheck: {
+    totalCabinets_cm: number;
+    wallLength_cm: number;
+    gap_cm: number;
+    valid: boolean;
+  };
+}
+
+export interface AIAnalysis {
+  walls: WallAnalysis[];
+  notes: string[];
+  warnings: string[];
+}
+
+export interface MappedItem {
+  positionId: string;
+  wallLabel: string;
+  sku: string;
+  description: string;
+  width_cm: number;
+  height_cm: number;
+  priceGroup: number;
+  unitPrice: number;
+  matchScore: number;
+  alternatives: Array<{
+    sku: string;
+    description: string;
+    width_cm: number;
+    matchScore: number;
+  }>;
+  userOverride: boolean;
+  confirmed: boolean;       // Must be true before proposal generation
+}
+
+export interface ValidationIssue {
+  wallLabel: string;
+  severity: 'error' | 'warning';
+  message: string;
+  positionIds: string[];
+  suggestedFix?: string;
+}
+
+export interface DesignTranslation {
+  id: string;
+  dealer_id: string;
+  name: string;
+  status: DesignTranslationStatus;
+  intake_data: IntakeData;
+  ai_analysis: AIAnalysis | null;
+  mapped_items: MappedItem[] | null;
+  validation_results: ValidationIssue[] | null;
+  proposal_data: any | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DesignTranslationFile {
+  id: string;
+  translation_id: string;
+  file_name: string;
+  file_path: string;
+  file_type: string;
+  file_size: number;
+  category: DesignTranslationFileCategory;
+  wall_label: string | null;
+  created_at: string;
+}
+
 /* ── Supabase Generated Database Type ── */
 export interface Database {
   public: {

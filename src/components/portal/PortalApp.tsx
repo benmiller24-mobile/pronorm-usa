@@ -14,6 +14,7 @@ import WarrantyForm from './WarrantyForm';
 import AccountSettings from './AccountSettings';
 import TeamManagement from './TeamManagement';
 import PricingTool from './PricingTool';
+import DesignEngine from './design-engine/DesignEngine';
 
 export default function PortalApp() {
   const [session, setSession] = useState<any>(null);
@@ -141,6 +142,13 @@ export default function PortalApp() {
       const userEmail = dealer.email || session?.user?.email;
       if (userEmail === 'ben.miller24@gmail.com' || isAdmin) {
         return <PricingTool dealer={scopedDealer} onNavigate={navigate} />;
+      }
+      return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
+    }
+    if (path === '/dealer-portal/design-engine') {
+      const userEmail = dealer.email || session?.user?.email;
+      if (userEmail === 'ben.miller24@gmail.com') {
+        return <DesignEngine dealer={scopedDealer} onNavigate={navigate} />;
       }
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }

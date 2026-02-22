@@ -22,6 +22,7 @@ const DEALER_NAV_ITEMS = [
 ];
 
 const PRICING_NAV_ITEM = { path: '/dealer-portal/pricing', label: 'Pricing', icon: '\u20AC' };
+const DESIGN_ENGINE_NAV_ITEM = { path: '/dealer-portal/design-engine', label: 'Design Engine', icon: '\u2B21' };
 
 const ADMIN_NAV_ITEMS = [
   { path: '/dealer-portal/dashboard', label: 'Admin Dashboard', icon: '\u25A3' },
@@ -43,11 +44,16 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const showPricing = dealerEmail === 'ben.miller24@gmail.com' || isAdmin;
+  const showDesignEngine = dealerEmail === 'ben.miller24@gmail.com';
+  const extraItems = [
+    ...(showPricing ? [PRICING_NAV_ITEM] : []),
+    ...(showDesignEngine ? [DESIGN_ENGINE_NAV_ITEM] : []),
+  ];
   const NAV_ITEMS = isAdmin
-    ? [ADMIN_NAV_ITEMS[0], ...(showPricing ? [PRICING_NAV_ITEM] : []), ...ADMIN_NAV_ITEMS.slice(1)]
+    ? [ADMIN_NAV_ITEMS[0], ...extraItems, ...ADMIN_NAV_ITEMS.slice(1)]
     : isDesigner
-    ? [DESIGNER_NAV_ITEMS[0], ...(showPricing ? [PRICING_NAV_ITEM] : []), ...DESIGNER_NAV_ITEMS.slice(1)]
-    : [DEALER_NAV_ITEMS[0], ...(showPricing ? [PRICING_NAV_ITEM] : []), ...DEALER_NAV_ITEMS.slice(1)];
+    ? [DESIGNER_NAV_ITEMS[0], ...extraItems, ...DESIGNER_NAV_ITEMS.slice(1)]
+    : [DEALER_NAV_ITEMS[0], ...extraItems, ...DEALER_NAV_ITEMS.slice(1)];
 
   return (
     <div style={{

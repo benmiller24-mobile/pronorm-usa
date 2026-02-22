@@ -272,9 +272,8 @@ export default function PricingBrowse({ catalogData, onAddToOrder, specialConstr
           }}
           specialConstructions={
             selectedItem.productLine === 'proline' &&
-            selectedItem.category === 'Base units' &&
-            specialConstructionsData?.proline?.['Base units']
-              ? specialConstructionsData.proline['Base units']
+            specialConstructionsData?.proline?.[selectedItem.category]
+              ? specialConstructionsData.proline[selectedItem.category]
               : undefined
           }
         />

@@ -442,6 +442,492 @@
         "notes": "",
         "seq": 53
       }
+    ],
+    "Wall units": [
+      {
+        "sku": "X-01-O",
+        "description": "Increased depth of a carcase side (up to 715 mm)",
+        "price": 96,
+        "img": "sc_wall_p199_g0.jpg",
+        "input": { "label": "New side depth (mm)", "placeholder": "e.g. 700" },
+        "notes": "L/R. For wall units, worktop units and shelf units. If increase >150mm, X-06 must be confirmed.",
+        "seq": 0
+      },
+      {
+        "sku": "X-01-VR",
+        "description": "Increased depth of a carcase side (up to 715 mm) — worktop units with roller shutters",
+        "price": 210,
+        "img": "sc_wall_p199_g0.jpg",
+        "notes": "L/R. For worktop units with roller shutters.",
+        "seq": 1
+      },
+      {
+        "sku": "X-06-O",
+        "description": "Increased depth of a carcase side (716-1200 mm) with tongue & groove",
+        "price": 154,
+        "img": "sc_wall_p199_g1.jpg",
+        "input": { "label": "New side depth (mm)", "placeholder": "e.g. 900" },
+        "notes": "L/R. For wall units.",
+        "seq": 2
+      },
+      {
+        "sku": "X-02-O",
+        "description": "Reduced carcase depth",
+        "price": 136,
+        "img": "sc_wall_p199_g2.jpg",
+        "input": { "label": "New carcase depth (mm)", "placeholder": "e.g. 300" },
+        "notes": "For wall units, filler panels and shelf units. Cabinets with one post/centre bar can be reduced to 251mm. Depth 465mm without surcharge.",
+        "seq": 3
+      },
+      {
+        "sku": "X-02-O-46",
+        "description": "Reduced carcase depth to 465 mm",
+        "price": 0,
+        "img": "sc_wall_p199_g2.jpg",
+        "notes": "No surcharge. For wall units, filler panels and shelf units.",
+        "seq": 4
+      },
+      {
+        "sku": "X-02-VR",
+        "description": "Reduced carcase depth — worktop units with roller shutters",
+        "price": 409,
+        "img": "sc_wall_p199_g2.jpg",
+        "notes": "For worktop units with roller shutters. Min carcase depth 340mm.",
+        "seq": 5
+      },
+      {
+        "sku": "X-03-O",
+        "description": "Reduced carcase width",
+        "price": 173,
+        "img": "sc_wall_p199_g3.jpg",
+        "input": { "label": "New width (cm)", "placeholder": "e.g. 53" },
+        "notes": "For wall units and shelf units. Not for cabinets with design programmes. Not for handle strips and horiz. rod handles.",
+        "seq": 6
+      },
+      {
+        "sku": "X-03-VR",
+        "description": "Reduced carcase width — worktop units with roller shutters",
+        "price": 103,
+        "img": "sc_wall_p199_g3.jpg",
+        "input": { "label": "New width (cm)", "placeholder": "e.g. 40" },
+        "notes": "Only for roller shutter units with plastic roller shutters. Min carcase width 390mm.",
+        "seq": 7
+      },
+      {
+        "sku": "X-04-O",
+        "description": "Reduced carcase height",
+        "price": 146,
+        "img": "sc_wall_p199_g4.jpg",
+        "input": { "label": "New height (mm)", "placeholder": "e.g. 350" },
+        "notes": "For wall units, filler panels and shelf units. Only for elements without internal fittings. Standard door module sizes possible in all ranges.",
+        "seq": 8
+      },
+      {
+        "sku": "X-04-VR",
+        "description": "Reduced carcase height — worktop units with roller shutters",
+        "price": 154,
+        "img": "sc_wall_p199_g4.jpg",
+        "input": { "label": "New height (mm)", "placeholder": "e.g. 560" },
+        "notes": "Min carcase height 560mm.",
+        "seq": 9
+      },
+      {
+        "sku": "X-07-O-57",
+        "description": "Carcase depth depression (without heavy-duty hangers)",
+        "price": 198,
+        "img": "sc_wall_p199_g6.jpg",
+        "input": { "label": "New depth (mm)", "placeholder": "e.g. 400" },
+        "notes": "For shelves, filler panels, appliance cabinets, diagonal and 90° corner cabinets. Unit hangers dispensed with.",
+        "seq": 10
+      },
+      {
+        "sku": "X-07-O-57-W",
+        "description": "Carcase depth depression (with heavy-duty hangers)",
+        "price": 241,
+        "img": "sc_wall_p199_g6.jpg",
+        "input": { "label": "New depth (mm)", "placeholder": "e.g. 450" },
+        "notes": "For width 200-1200mm, height 384-896mm, depth 352-625mm. Cover caps in white/stratus grey pearl. Not for shelves, appliance, diagonal or 90° corner cabinets.",
+        "seq": 11
+      },
+      {
+        "sku": "X-12-O",
+        "description": "Modification of front width (corner wall units)",
+        "price": 74,
+        "img": "sc_wall_p199_g8.jpg",
+        "input": { "label": "New front width (mm)", "placeholder": "e.g. 400" },
+        "notes": "Not possible with handle strips.",
+        "seq": 12
+      },
+      {
+        "sku": "X-13-O",
+        "description": "Modification of side dimensions (corner wall units)",
+        "price": 550,
+        "img": "sc_wall_p199_g9.jpg",
+        "notes": "Price per side.",
+        "seq": 13
+      },
+      {
+        "sku": "X-14-O",
+        "description": "Widening of corner filler panel (with OE 80/90..-01)",
+        "price": 118,
+        "img": "sc_wall_p199_g10.jpg",
+        "notes": "For unit dimension 390-500mm. Max carcase depth 575mm.",
+        "seq": 14
+      },
+      {
+        "sku": "MP-RW-G",
+        "description": "Rear panel in organic glass (melamine/ultra matt)",
+        "price": 583,
+        "img": "sc_wall_p200_g0.jpg",
+        "notes": "Price per m². Max carcase width 600mm. All organic glass colours.",
+        "seq": 15
+      },
+      {
+        "sku": "MP-RW-G-F",
+        "description": "Rear panel in organic glass (matt lacquer/veneer)",
+        "price": 115,
+        "img": "sc_wall_p200_g0.jpg",
+        "notes": "Price per m². Max carcase width 600mm.",
+        "seq": 16
+      },
+      {
+        "sku": "MP-RW-FE",
+        "description": "Rear panel in decorative veneer (melamine/ultra matt)",
+        "price": 718,
+        "img": "sc_wall_p200_g0.jpg",
+        "notes": "Price per m². Max carcase width 600mm. 9030 Tarsie.",
+        "seq": 17
+      },
+      {
+        "sku": "MP-RW-FE-F",
+        "description": "Rear panel in decorative veneer (matt lacquer/veneer)",
+        "price": 166,
+        "img": "sc_wall_p200_g0.jpg",
+        "notes": "Price per m². Max carcase width 600mm.",
+        "seq": 18
+      },
+      {
+        "sku": "MP-RW-SC",
+        "description": "Rear panel in laminate (melamine/ultra matt)",
+        "price": 238,
+        "img": "sc_wall_p200_g0.jpg",
+        "notes": "Price per m². Max carcase width 600mm. 3410 Metallic Ferro.",
+        "seq": 19
+      },
+      {
+        "sku": "MP-RW-SC-F",
+        "description": "Rear panel in laminate (matt lacquer/veneer)",
+        "price": 95,
+        "img": "sc_wall_p200_g0.jpg",
+        "notes": "Price per m². Max carcase width 600mm.",
+        "seq": 20
+      },
+      {
+        "sku": "MP-G",
+        "description": "Adjustable glass shelves (Parsol grey P1)",
+        "price": 39,
+        "img": "sc_wall_p200_g1.jpg",
+        "notes": "Price per shelf. With wall units with post, replaced with central column. Not for models with door stop on post.",
+        "seq": 21
+      },
+      {
+        "sku": "X-29-30-O",
+        "description": "X-profile base shelf, stainless steel coloured (30 cm)",
+        "price": 119,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "Installation in base shelf of wall unit.",
+        "seq": 22
+      },
+      {
+        "sku": "X-29-40-O",
+        "description": "X-profile base shelf, stainless steel coloured (40 cm)",
+        "price": 127,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 23
+      },
+      {
+        "sku": "X-29-45-O",
+        "description": "X-profile base shelf, stainless steel coloured (45 cm)",
+        "price": 133,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 24
+      },
+      {
+        "sku": "X-29-50-O",
+        "description": "X-profile base shelf, stainless steel coloured (50 cm)",
+        "price": 140,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 25
+      },
+      {
+        "sku": "X-29-55-O",
+        "description": "X-profile base shelf, stainless steel coloured (55 cm)",
+        "price": 148,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 26
+      },
+      {
+        "sku": "X-29-60-O",
+        "description": "X-profile base shelf, stainless steel coloured (60 cm)",
+        "price": 148,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 27
+      },
+      {
+        "sku": "X-29-80-O",
+        "description": "X-profile base shelf, stainless steel coloured (80 cm)",
+        "price": 164,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 28
+      },
+      {
+        "sku": "X-29-90-O",
+        "description": "X-profile base shelf, stainless steel coloured (90 cm)",
+        "price": 173,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 29
+      },
+      {
+        "sku": "X-29-100-O",
+        "description": "X-profile base shelf, stainless steel coloured (100 cm)",
+        "price": 181,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 30
+      },
+      {
+        "sku": "X-29-120-O",
+        "description": "X-profile base shelf, stainless steel coloured (120 cm)",
+        "price": 200,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 31
+      },
+      {
+        "sku": "X-29-30-6",
+        "description": "X-profile base shelf, black (30 cm)",
+        "price": 125,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 32
+      },
+      {
+        "sku": "X-29-40-6",
+        "description": "X-profile base shelf, black (40 cm)",
+        "price": 134,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 33
+      },
+      {
+        "sku": "X-29-45-6",
+        "description": "X-profile base shelf, black (45 cm)",
+        "price": 139,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 34
+      },
+      {
+        "sku": "X-29-50-6",
+        "description": "X-profile base shelf, black (50 cm)",
+        "price": 146,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 35
+      },
+      {
+        "sku": "X-29-55-6",
+        "description": "X-profile base shelf, black (55 cm)",
+        "price": 154,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 36
+      },
+      {
+        "sku": "X-29-60-6",
+        "description": "X-profile base shelf, black (60 cm)",
+        "price": 154,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 37
+      },
+      {
+        "sku": "X-29-80-6",
+        "description": "X-profile base shelf, black (80 cm)",
+        "price": 171,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 38
+      },
+      {
+        "sku": "X-29-90-6",
+        "description": "X-profile base shelf, black (90 cm)",
+        "price": 179,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 39
+      },
+      {
+        "sku": "X-29-100-6",
+        "description": "X-profile base shelf, black (100 cm)",
+        "price": 187,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 40
+      },
+      {
+        "sku": "X-29-120-6",
+        "description": "X-profile base shelf, black (120 cm)",
+        "price": 207,
+        "img": "sc_wall_p200_g2.jpg",
+        "notes": "",
+        "seq": 41
+      },
+      {
+        "sku": "X-35-F",
+        "description": "Amended front configuration",
+        "price": 263,
+        "img": null,
+        "notes": "",
+        "seq": 42
+      },
+      {
+        "sku": "X-35-FV",
+        "description": "Front extension (1.5 cm above floor, up to 2204 mm)",
+        "price": 174,
+        "img": "sc_wall_p200_g4.jpg",
+        "input": { "label": "Extension height (mm)", "placeholder": "e.g. 150" },
+        "notes": "Max extension 230mm. Max bottom extension on wall units 150mm. Not for dishwasher fronts.",
+        "seq": 43
+      },
+      {
+        "sku": "X-35-FVO",
+        "description": "Front extension upwards (for doors, up to 2204 mm)",
+        "price": 174,
+        "img": "sc_wall_p201_g0.jpg",
+        "input": { "label": "Extension height (mm)", "placeholder": "e.g. 100" },
+        "notes": "Max front extension 150mm. Fronts >2204mm always with torsion bar. Not possible with glass doors.",
+        "seq": 44
+      },
+      {
+        "sku": "X-35-V",
+        "description": "Cup hole for remote switch ZHL 010 / ZHL 011",
+        "price": 58,
+        "img": null,
+        "notes": "",
+        "seq": 45
+      },
+      {
+        "sku": "X-36-K",
+        "description": "Any other carcase modification",
+        "price": 150,
+        "img": null,
+        "notes": "Further modifications after consultation.",
+        "seq": 46
+      },
+      {
+        "sku": "X-36-K100",
+        "description": "Carcase modification to filler frame (100-150 mm)",
+        "price": 199,
+        "img": "sc_wall_p201_g2.jpg",
+        "notes": "Without back panel. Without plinth sockets. Without adjustable shelf.",
+        "seq": 47
+      },
+      {
+        "sku": "X-37-D",
+        "description": "Unit as hatch cabinet (without rear front)",
+        "price": 223,
+        "img": "sc_wall_p201_g3.jpg",
+        "notes": "Order rear front elements separately. Refer to spare parts section.",
+        "seq": 48
+      },
+      {
+        "sku": "MP-EBF-60",
+        "description": "Adjustable wooden shelves, veneered (300-600 mm)",
+        "price": 72,
+        "img": "sc_wall_p201_g5.jpg",
+        "notes": "Price per shelf. Instead of glass shelves. Not for corner carousel units.",
+        "seq": 49
+      },
+      {
+        "sku": "MP-EBF-120",
+        "description": "Adjustable wooden shelves, veneered (601-1200 mm)",
+        "price": 209,
+        "img": "sc_wall_p201_g5.jpg",
+        "notes": "Price per shelf. Instead of glass shelves.",
+        "seq": 50
+      },
+      {
+        "sku": "MP-EBFE-60",
+        "description": "Decorative veneer shelves (300-600 mm)",
+        "price": 101,
+        "img": "sc_wall_p201_g5.jpg",
+        "notes": "Price per shelf. Instead of glass shelves.",
+        "seq": 51
+      },
+      {
+        "sku": "MP-EBFE-120",
+        "description": "Decorative veneer shelves (601-1200 mm)",
+        "price": 265,
+        "img": "sc_wall_p201_g5.jpg",
+        "notes": "Price per shelf. Instead of glass shelves.",
+        "seq": 52
+      },
+      {
+        "sku": "E-0",
+        "description": "Missing fixed shelf surcharge",
+        "price": 82,
+        "img": null,
+        "notes": "Per shelf.",
+        "seq": 53
+      },
+      {
+        "sku": "E-1",
+        "description": "1 adjustable shelf instead of 1 fixed shelf",
+        "price": 41,
+        "img": null,
+        "notes": "Per shelf.",
+        "seq": 54
+      },
+      {
+        "sku": "E-2",
+        "description": "2 adjustable shelves instead of 2 fixed shelves",
+        "price": 82,
+        "img": null,
+        "notes": "",
+        "seq": 55
+      },
+      {
+        "sku": "E-4",
+        "description": "4 adjustable shelves instead of 4 fixed shelves",
+        "price": 159,
+        "img": null,
+        "notes": "",
+        "seq": 56
+      },
+      {
+        "sku": "E-5",
+        "description": "5 adjustable shelves instead of 5 fixed shelves",
+        "price": 201,
+        "img": null,
+        "notes": "",
+        "seq": 57
+      },
+      {
+        "sku": "E-6",
+        "description": "6 adjustable shelves instead of 6 fixed shelves",
+        "price": 242,
+        "img": null,
+        "notes": "",
+        "seq": 58
+      }
     ]
   }
 }

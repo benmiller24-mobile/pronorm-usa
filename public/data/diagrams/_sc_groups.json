@@ -1,0 +1,234 @@
+[
+  {
+    "page": 147,
+    "group": 0,
+    "top": 171,
+    "bottom": 282,
+    "height": 111,
+    "filename": "sc_p147_g0.jpg"
+  },
+  {
+    "page": 147,
+    "group": 1,
+    "top": 282,
+    "bottom": 402,
+    "height": 120,
+    "filename": "sc_p147_g1.jpg"
+  },
+  {
+    "page": 147,
+    "group": 2,
+    "top": 402,
+    "bottom": 592,
+    "height": 190,
+    "filename": "sc_p147_g2.jpg"
+  },
+  {
+    "page": 147,
+    "group": 3,
+    "top": 592,
+    "bottom": 721,
+    "height": 129,
+    "filename": "sc_p147_g3.jpg"
+  },
+  {
+    "page": 147,
+    "group": 4,
+    "top": 721,
+    "bottom": 971,
+    "height": 250,
+    "filename": "sc_p147_g4.jpg"
+  },
+  {
+    "page": 147,
+    "group": 5,
+    "top": 971,
+    "bottom": 1081,
+    "height": 110,
+    "filename": "sc_p147_g5.jpg"
+  },
+  {
+    "page": 147,
+    "group": 6,
+    "top": 1081,
+    "bottom": 1336,
+    "height": 255,
+    "filename": "sc_p147_g6.jpg"
+  },
+  {
+    "page": 147,
+    "group": 7,
+    "top": 1336,
+    "bottom": 1566,
+    "height": 230,
+    "filename": "sc_p147_g7.jpg"
+  },
+  {
+    "page": 147,
+    "group": 8,
+    "top": 1566,
+    "bottom": 1721,
+    "height": 155,
+    "filename": "sc_p147_g8.jpg"
+  },
+  {
+    "page": 148,
+    "group": 0,
+    "top": 171,
+    "bottom": 280,
+    "height": 109,
+    "filename": "sc_p148_g0.jpg"
+  },
+  {
+    "page": 148,
+    "group": 1,
+    "top": 280,
+    "bottom": 384,
+    "height": 104,
+    "filename": "sc_p148_g1.jpg"
+  },
+  {
+    "page": 148,
+    "group": 2,
+    "top": 384,
+    "bottom": 428,
+    "height": 44,
+    "filename": "sc_p148_g2.jpg"
+  },
+  {
+    "page": 148,
+    "group": 3,
+    "top": 428,
+    "bottom": 1066,
+    "height": 638,
+    "filename": "sc_p148_g3.jpg"
+  },
+  {
+    "page": 148,
+    "group": 4,
+    "top": 1066,
+    "bottom": 1150,
+    "height": 84,
+    "filename": "sc_p148_g4.jpg"
+  },
+  {
+    "page": 148,
+    "group": 5,
+    "top": 1150,
+    "bottom": 1260,
+    "height": 110,
+    "filename": "sc_p148_g5.jpg"
+  },
+  {
+    "page": 148,
+    "group": 6,
+    "top": 1260,
+    "bottom": 1345,
+    "height": 85,
+    "filename": "sc_p148_g6.jpg"
+  },
+  {
+    "page": 148,
+    "group": 7,
+    "top": 1345,
+    "bottom": 1430,
+    "height": 85,
+    "filename": "sc_p148_g7.jpg"
+  },
+  {
+    "page": 148,
+    "group": 8,
+    "top": 1430,
+    "bottom": 1538,
+    "height": 108,
+    "filename": "sc_p148_g8.jpg"
+  },
+  {
+    "page": 148,
+    "group": 9,
+    "top": 1538,
+    "bottom": 1646,
+    "height": 108,
+    "filename": "sc_p148_g9.jpg"
+  },
+  {
+    "page": 148,
+    "group": 10,
+    "top": 1646,
+    "bottom": 1721,
+    "height": 75,
+    "filename": "sc_p148_g10.jpg"
+  },
+  {
+    "page": 149,
+    "group": 0,
+    "top": 171,
+    "bottom": 215,
+    "height": 44,
+    "filename": "sc_p149_g0.jpg"
+  },
+  {
+    "page": 149,
+    "group": 2,
+    "top": 253,
+    "bottom": 482,
+    "height": 229,
+    "filename": "sc_p149_g2.jpg"
+  },
+  {
+    "page": 149,
+    "group": 3,
+    "top": 482,
+    "bottom": 546,
+    "height": 64,
+    "filename": "sc_p149_g3.jpg"
+  },
+  {
+    "page": 149,
+    "group": 4,
+    "top": 546,
+    "bottom": 642,
+    "height": 96,
+    "filename": "sc_p149_g4.jpg"
+  },
+  {
+    "page": 149,
+    "group": 5,
+    "top": 642,
+    "bottom": 706,
+    "height": 64,
+    "filename": "sc_p149_g5.jpg"
+  },
+  {
+    "page": 149,
+    "group": 6,
+    "top": 706,
+    "bottom": 941,
+    "height": 235,
+    "filename": "sc_p149_g6.jpg"
+  },
+  {
+    "page": 149,
+    "group": 7,
+    "top": 941,
+    "bottom": 1044,
+    "height": 103,
+    "filename": "sc_p149_g7.jpg"
+  },
+  {
+    "page": 149,
+    "group": 8,
+    "top": 1044,
+    "bottom": 1280,
+    "height": 236,
+    "filename": "sc_p149_g8.jpg"
+  },
+  {
+    "page": 149,
+    "group": 9,
+    "top": 1280,
+    "bottom": 1721,
+    "height": 441,
+    "filename": "sc_p149_g9.jpg"
+  }
+]

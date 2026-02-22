@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { OrderLineItem } from '../PricingTool';
 import AddToOrderModal from './AddToOrderModal';
 
@@ -73,11 +73,12 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
   };
 
   const sidebarStyle: React.CSSProperties = {
-    width: '280px',
+    width: '240px',
+    minWidth: '240px',
     background: '#fdfcfa',
     border: '1px solid #e8e0d8',
     borderRadius: '4px',
-    marginRight: '2rem',
+    marginRight: '1.5rem',
     padding: '1rem',
     overflowY: 'auto',
     maxHeight: 'calc(100vh - 300px)',
@@ -200,12 +201,15 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
         })}
       </div>
 
-      {/* Main Content */}
-      <div style={{ flex: 1 }}>
+      {/* Main Content — Price Book View */}
+      <div style={{ flex: 1, minWidth: 0 }}>
         {selectedLine && selectedCategory && selectedHeight ? (
-          <SKUList
+          <PriceBookView
             items={getItems(selectedLine, selectedCategory, selectedHeight)}
             onAddClick={(item) => handleAddClick(item, selectedLine, selectedCategory, selectedHeight)}
+            category={selectedCategory}
+            height={selectedHeight}
+            line={selectedLine}
           />
         ) : (
           <div style={{
@@ -236,176 +240,237 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
   );
 }
 
-function SKUList({ items, onAddClick }: { items: any[]; onAddClick: (item: any) => void }) {
+
+/**
+ * Groups SKU items by their shared image (product group from price book),
+ * then displays each group as a full-width price book section image
+ * with an "Add to Order" button per individual SKU.
+ */
+function PriceBookView({ items, onAddClick, category, height, line }: {
+  items: any[];
+  onAddClick: (item: any) => void;
+  category: string;
+  height: string;
+  line: string;
+}) {
+  // Group items by their image (items sharing same image = same product group)
+  const groups = useMemo(() => {
+    const byImage: Record<string, any[]> = {};
+    const noImage: any[] = [];
+
+    for (const item of items) {
+      if (item.img) {
+        if (!byImage[item.img]) byImage[item.img] = [];
+        byImage[item.img].push(item);
+      } else {
+        noImage.push(item);
+      }
+    }
+
+    // Sort groups by first SKU
+    const sorted = Object.entries(byImage).sort(([, a], [, b]) =>
+      a[0].s.localeCompare(b[0].s)
+    );
+
+    return { sorted, noImage };
+  }, [items]);
+
+  if (items.length === 0) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center', color: '#8a8279' }}>
+        No SKUs found
+      </div>
+    );
+  }
+
   return (
     <div>
-      {items.length === 0 ? (
-        <div style={{ padding: '2rem', textAlign: 'center', color: '#8a8279' }}>
-          No SKUs found
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
-          {items.map((item) => (
-            <SKUCard
-              key={item.s}
-              item={item}
-              onAddClick={() => onAddClick(item)}
-            />
-          ))}
-        </div>
-      )}
+      {/* Section header */}
+      <div style={{
+        marginBottom: '1.25rem',
+        paddingBottom: '0.75rem',
+        borderBottom: '2px solid #b87333',
+      }}>
+        <h3 style={{
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontSize: '1.35rem',
+          fontWeight: 500,
+          color: '#2d2d2d',
+          marginBottom: '0.25rem',
+        }}>
+          {category}
+        </h3>
+        <span style={{ fontSize: '0.82rem', color: '#8a8279' }}>
+          {line} — Carcase height {height}mm — {items.length} SKU{items.length !== 1 ? 's' : ''}
+        </span>
+      </div>
+
+      {/* Product groups as price book sections */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        {groups.sorted.map(([imgSrc, groupItems]) => (
+          <ProductGroupCard
+            key={imgSrc}
+            imgSrc={imgSrc}
+            items={groupItems}
+            onAddClick={onAddClick}
+          />
+        ))}
+
+        {/* Items without images */}
+        {groups.noImage.length > 0 && (
+          <div style={{
+            background: '#fdfcfa',
+            border: '1px solid #e8e0d8',
+            borderRadius: '4px',
+            padding: '1.25rem',
+          }}>
+            <div style={{
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: '#8a8279',
+              marginBottom: '1rem',
+            }}>
+              Additional SKUs
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {groups.noImage.map((item) => (
+                <CompactSKURow key={item.s} item={item} onAddClick={() => onAddClick(item)} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-function SKUCard({ item, onAddClick }: { item: any; onAddClick: () => void }) {
-  const priceGroupLabels = ['N', '0', '1', '2', '3', '4', '5', '6', '7', '8', '10'];
-  const materialLabels = ['K', 'KS', 'LU', 'L', 'H', 'H1', 'H2', 'F', 'FE', 'G'];
-  const labels = item.pt === 'material' ? materialLabels : priceGroupLabels;
 
-  const formatPrice = (price: number) => {
-    return `€${price.toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-  };
-
+function ProductGroupCard({ imgSrc, items, onAddClick }: {
+  imgSrc: string;
+  items: any[];
+  onAddClick: (item: any) => void;
+}) {
   return (
     <div style={{
       background: '#fdfcfa',
       border: '1px solid #e8e0d8',
       borderRadius: '4px',
-      padding: '1.25rem',
+      overflow: 'hidden',
+    }}>
+      {/* Full-width price book section image */}
+      <div style={{
+        width: '100%',
+        background: '#fff',
+        borderBottom: '1px solid #e8e0d8',
+        overflow: 'auto',
+      }}>
+        <img
+          src={`/data/diagrams/${imgSrc}`}
+          alt={items[0]?.s || 'Product group'}
+          style={{
+            display: 'block',
+            width: '100%',
+            minWidth: '700px',
+            height: 'auto',
+          }}
+          loading="lazy"
+        />
+      </div>
+
+      {/* SKU action row */}
+      <div style={{
+        padding: '0.75rem 1rem',
+        background: '#f7f4f0',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '0.5rem',
+        alignItems: 'center',
+      }}>
+        <span style={{
+          fontSize: '0.72rem',
+          fontWeight: 600,
+          color: '#8a8279',
+          letterSpacing: '0.04em',
+          marginRight: '0.5rem',
+        }}>
+          Add to order:
+        </span>
+        {items.map((item) => (
+          <button
+            key={item.s}
+            onClick={() => onAddClick(item)}
+            title={`${item.s}${item.d ? ' — ' + item.d : ''} (${item.w}cm${item.dr ? ', ' + item.dr : ''})`}
+            style={{
+              padding: '0.4rem 0.75rem',
+              background: '#b87333',
+              color: '#fdfcfa',
+              border: 'none',
+              borderRadius: '3px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: "'DM Sans', sans-serif",
+              transition: 'all 200ms',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background = '#a0642d';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background = '#b87333';
+            }}
+          >
+            {item.s}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+function CompactSKURow({ item, onAddClick }: { item: any; onAddClick: () => void }) {
+  return (
+    <div style={{
       display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0.5rem 0.75rem',
+      background: '#f7f4f0',
+      borderRadius: '3px',
       gap: '1rem',
     }}>
-      {/* Diagram image */}
-      {item.img && (
-        <div style={{
-          flexShrink: 0,
-          width: '80px',
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          paddingTop: '0.25rem',
-        }}>
-          <img
-            src={`/data/diagrams/${item.img}`}
-            alt={item.s}
-            style={{
-              maxWidth: '80px',
-              maxHeight: '120px',
-              objectFit: 'contain',
-              borderRadius: '2px',
-            }}
-            loading="lazy"
-          />
-        </div>
-      )}
-
       <div style={{ flex: 1, minWidth: 0 }}>
-      <div style={{ marginBottom: '1rem' }}>
-        <h4 style={{
+        <span style={{
           fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontSize: '1.15rem',
           fontWeight: 500,
           color: '#b87333',
-          marginBottom: '0.25rem',
+          fontSize: '0.95rem',
+          marginRight: '0.75rem',
         }}>
           {item.s}
-        </h4>
+        </span>
         {item.d && (
-          <p style={{ fontSize: '0.78rem', color: '#8a8279', lineHeight: 1.4 }}>
+          <span style={{ fontSize: '0.78rem', color: '#8a8279' }}>
             {item.d}
-          </p>
+          </span>
         )}
       </div>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '0.75rem',
-        marginBottom: '1rem',
-        fontSize: '0.78rem',
-      }}>
-        <div>
-          <span style={{ color: '#8a8279', fontWeight: 600 }}>Width:</span>{' '}
-          <span style={{ color: '#2d2d2d' }}>{item.w}mm</span>
-        </div>
-        {item.dr && (
-          <div>
-            <span style={{ color: '#8a8279', fontWeight: 600 }}>Door:</span>{' '}
-            <span style={{ color: '#2d2d2d' }}>{item.dr}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Price Grid */}
-      <div style={{
-        marginBottom: '1.25rem',
-        background: '#f7f4f0',
-        padding: '0.75rem',
-        borderRadius: '3px',
-        overflowX: 'auto',
-      }}>
-        <table style={{ width: '100%', fontSize: '0.7rem', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              {labels.map((label) => (
-                <th
-                  key={label}
-                  style={{
-                    padding: '0.4rem 0.3rem',
-                    textAlign: 'center',
-                    fontWeight: 600,
-                    color: '#4a4a4a',
-                    borderBottom: '1px solid #d4cdc5',
-                  }}
-                >
-                  {label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              {labels.map((label) => {
-                const priceKey = item.pt === 'material'
-                  ? label
-                  : label === 'N' ? '0' : label;
-                const price = item.p[priceKey] || 0;
-                return (
-                  <td
-                    key={label}
-                    style={{
-                      padding: '0.35rem 0.3rem',
-                      textAlign: 'center',
-                      color: '#2d2d2d',
-                      borderBottom: '1px solid #d4cdc5',
-                    }}
-                  >
-                    {formatPrice(price)}
-                  </td>
-                );
-              })}
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
       <button
         onClick={onAddClick}
         style={{
-          width: '100%',
-          padding: '0.65rem',
+          padding: '0.35rem 0.75rem',
           background: '#b87333',
           color: '#fdfcfa',
           border: 'none',
           borderRadius: '3px',
-          fontSize: '0.78rem',
+          fontSize: '0.72rem',
           fontWeight: 600,
-          letterSpacing: '0.06em',
-          textTransform: 'uppercase',
           cursor: 'pointer',
           fontFamily: 'inherit',
-          transition: 'all 200ms',
+          whiteSpace: 'nowrap',
         }}
         onMouseEnter={(e) => {
           (e.currentTarget as HTMLButtonElement).style.background = '#a0642d';
@@ -414,9 +479,8 @@ function SKUCard({ item, onAddClick }: { item: any; onAddClick: () => void }) {
           (e.currentTarget as HTMLButtonElement).style.background = '#b87333';
         }}
       >
-        Add to Order
+        Add
       </button>
-      </div>
     </div>
   );
 }

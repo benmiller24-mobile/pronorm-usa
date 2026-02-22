@@ -129,7 +129,7 @@ export default function PricingSearch({ searchData, onAddToOrder }: PricingSearc
           Start typing to search for products
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           {results.map((item) => (
             <SearchResultCard
               key={`${item.pl}-${item.cat}-${item.ch}-${item.s}`}
@@ -156,109 +156,64 @@ export default function PricingSearch({ searchData, onAddToOrder }: PricingSearc
 }
 
 function SearchResultCard({ item, onAddClick }: { item: any; onAddClick: () => void }) {
-  const formatPrice = (price: number) => {
-    return `€${price.toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-  };
-
-  const basePrice = Math.min(...Object.values(item.p));
-  const maxPrice = Math.max(...Object.values(item.p));
-
   return (
     <div style={{
       background: '#fdfcfa',
       border: '1px solid #e8e0d8',
       borderRadius: '4px',
-      padding: '1.25rem',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1rem',
+      overflow: 'hidden',
     }}>
-      {/* Diagram image */}
+      {/* Price book section image */}
       {item.img && (
         <div style={{
-          flexShrink: 0,
-          width: '70px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          width: '100%',
+          background: '#fff',
+          borderBottom: '1px solid #e8e0d8',
+          overflow: 'auto',
         }}>
           <img
             src={`/data/diagrams/${item.img}`}
             alt={item.s}
             style={{
-              maxWidth: '70px',
-              maxHeight: '90px',
-              objectFit: 'contain',
-              borderRadius: '2px',
+              display: 'block',
+              width: '100%',
+              minWidth: '700px',
+              height: 'auto',
             }}
             loading="lazy"
           />
         </div>
       )}
-      <div style={{ flex: 1 }}>
-        <h4 style={{
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontSize: '1.1rem',
-          fontWeight: 500,
-          color: '#b87333',
-          marginBottom: '0.25rem',
-        }}>
-          {item.s}
-        </h4>
-        {item.d && (
-          <p style={{
-            fontSize: '0.78rem',
-            color: '#8a8279',
-            marginBottom: '0.5rem',
-            lineHeight: 1.4,
-          }}>
-            {item.d}
-          </p>
-        )}
-        <div style={{
-          display: 'flex',
-          gap: '1.5rem',
-          fontSize: '0.78rem',
-          color: '#4a4a4a',
-        }}>
-          <span><strong>Line:</strong> {item.pl}</span>
-          <span><strong>Category:</strong> {item.cat}</span>
-          <span><strong>Height:</strong> {item.ch}mm</span>
-          <span><strong>Width:</strong> {item.w}mm</span>
-          {item.dr && <span><strong>Door:</strong> {item.dr}</span>}
-        </div>
-      </div>
 
+      {/* Info + action row */}
       <div style={{
+        padding: '0.75rem 1rem',
+        background: '#f7f4f0',
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        gap: '0.75rem',
-        whiteSpace: 'nowrap',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '1rem',
+        flexWrap: 'wrap',
       }}>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{
-            fontSize: '0.7rem',
-            color: '#8a8279',
-            fontWeight: 600,
-            marginBottom: '0.25rem',
-            letterSpacing: '0.05em',
-          }}>
-            Price Range
-          </div>
-          <div style={{
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <span style={{
             fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: '0.95rem',
             fontWeight: 500,
-            color: '#2d2d2d',
+            color: '#b87333',
+            fontSize: '1rem',
+            marginRight: '0.75rem',
           }}>
-            {formatPrice(basePrice)} – {formatPrice(maxPrice)}
-          </div>
+            {item.s}
+          </span>
+          <span style={{ fontSize: '0.78rem', color: '#8a8279' }}>
+            {item.pl} — {item.cat} — {item.ch}mm — {item.w}cm
+            {item.dr ? ` — ${item.dr}` : ''}
+          </span>
         </div>
         <button
           onClick={onAddClick}
           style={{
-            padding: '0.6rem 1.2rem',
+            padding: '0.5rem 1.2rem',
             background: '#b87333',
             color: '#fdfcfa',
             border: 'none',
@@ -270,6 +225,7 @@ function SearchResultCard({ item, onAddClick }: { item: any; onAddClick: () => v
             cursor: 'pointer',
             fontFamily: 'inherit',
             transition: 'all 200ms',
+            whiteSpace: 'nowrap',
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.background = '#a0642d';
@@ -278,7 +234,7 @@ function SearchResultCard({ item, onAddClick }: { item: any; onAddClick: () => v
             (e.currentTarget as HTMLButtonElement).style.background = '#b87333';
           }}
         >
-          Add
+          Add to Order
         </button>
       </div>
     </div>

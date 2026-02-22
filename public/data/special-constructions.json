@@ -3577,5 +3577,479 @@
         "seq": 40
       }
     ]
+  },
+  "living": {
+    "Other": [
+      {
+        "sku": "X-01-U",
+        "description": "Increased depth of a carcase side, up to side depth 715 mm, for base units",
+        "price": 104,
+        "img": "sc_living_sets_p125_g0.jpg",
+        "seq": 1
+      },
+      {
+        "sku": "X-06-U",
+        "description": "Increased depth of a carcase side, from side depth 716 to 1200 mm, for base units, with tongue and groove connection",
+        "price": 133,
+        "img": "sc_living_sets_p125_g1.jpg",
+        "seq": 2
+      },
+      {
+        "sku": "X-02-U",
+        "description": "Reduced carcase depth, for base units and shelf units",
+        "price": 146,
+        "img": "sc_living_sets_p125_g2.jpg",
+        "seq": 3
+      },
+      {
+        "sku": "X-02-U-35",
+        "description": "Reduced carcase depth, to carcase depth 351 mm",
+        "price": 0,
+        "img": "sc_living_sets_p125_g2.jpg",
+        "notes": "Carcase depth 463-364 mm or 351 mm = runner depth 300 mm",
+        "seq": 4
+      },
+      {
+        "sku": "X-02-U-46",
+        "description": "Reduced carcase depth, to carcase depth 465 mm",
+        "price": 0,
+        "img": "sc_living_sets_p125_g2.jpg",
+        "notes": "Carcase depth 563-464 mm = runner depth 400 mm",
+        "seq": 5
+      },
+      {
+        "sku": "X-03-U",
+        "description": "Reduced carcase width, for base units",
+        "price": 181,
+        "img": "sc_living_sets_p125_g3.jpg",
+        "input": {
+          "label": "New width (cm)",
+          "placeholder": "e.g. 53"
+        },
+        "seq": 6
+      },
+      {
+        "sku": "X-03-AZ-1",
+        "description": "Width reduction on drawers and pull-outs, 1 drawer/pull-out",
+        "price": 44,
+        "img": "sc_living_sets_p125_g4.jpg",
+        "seq": 7
+      },
+      {
+        "sku": "X-03-AZ-2",
+        "description": "Width reduction on drawers and pull-outs, 2 drawers/pull-outs",
+        "price": 88,
+        "img": "sc_living_sets_p125_g4.jpg",
+        "seq": 8
+      },
+      {
+        "sku": "X-03-AZ-3",
+        "description": "Width reduction on drawers and pull-outs, 3 drawers/pull-outs",
+        "price": 130,
+        "img": "sc_living_sets_p125_g4.jpg",
+        "seq": 9
+      },
+      {
+        "sku": "X-03-AZ-4",
+        "description": "Width reduction on drawers and pull-outs, 4 drawers/pull-outs",
+        "price": 173,
+        "img": "sc_living_sets_p125_g4.jpg",
+        "seq": 10
+      },
+      {
+        "sku": "X-03-AZ-5",
+        "description": "Width reduction on drawers and pull-outs, 5 drawers/pull-outs",
+        "price": 217,
+        "img": "sc_living_sets_p125_g4.jpg",
+        "seq": 11
+      },
+      {
+        "sku": "X-03-AZ-6",
+        "description": "Width reduction on drawers and pull-outs, 6 drawers/pull-outs",
+        "price": 259,
+        "img": "sc_living_sets_p125_g4.jpg",
+        "seq": 12
+      },
+      {
+        "sku": "X-04-U",
+        "description": "Reduced carcase height, for base units and shelf units",
+        "price": 199,
+        "img": "sc_living_sets_p125_g5.jpg",
+        "seq": 13
+      },
+      {
+        "sku": "X-07-U",
+        "description": "Carcase depth depression, for base units without drawers/pull-outs",
+        "price": 202,
+        "img": "sc_living_sets_p125_g6.jpg",
+        "seq": 14
+      },
+      {
+        "sku": "X-07-U-61",
+        "description": "Carcase depth depression, for base units without drawers/pull-outs, carcase depth 615 mm",
+        "price": 0,
+        "img": "sc_living_sets_p125_g6.jpg",
+        "seq": 15
+      },
+      {
+        "sku": "X-07-U-AZ",
+        "description": "Carcase depth depression, for base units with drawers/pull-outs",
+        "price": 295,
+        "img": "sc_living_sets_p125_g6.jpg",
+        "seq": 16
+      },
+      {
+        "sku": "X-07-U-AZ-61",
+        "description": "Carcase depth depression, for base units with drawers/pull-outs, carcase depth 615 mm",
+        "price": 93,
+        "img": "sc_living_sets_p125_g6.jpg",
+        "seq": 17
+      },
+      {
+        "sku": "MP-RW-G",
+        "description": "Surcharge for rear panel, organic glass, for melamine and ultra matt lacquer",
+        "price": 583,
+        "img": "sc_living_sets_p126_g0.jpg",
+        "notes": "Price per m², max carcase width 600 mm",
+        "seq": 18
+      },
+      {
+        "sku": "MP-RW-G-F",
+        "description": "Surcharge for rear panel, organic glass, for matt lacquer, veneer and decorative veneer",
+        "price": 115,
+        "img": "sc_living_sets_p126_g0.jpg",
+        "notes": "Price per m²",
+        "seq": 19
+      },
+      {
+        "sku": "MP-RW-FE",
+        "description": "Surcharge for rear panel, decorative veneer, for melamine and ultra matt lacquer",
+        "price": 718,
+        "img": "sc_living_sets_p126_g0.jpg",
+        "notes": "Price per m², max carcase width 600 mm",
+        "seq": 20
+      },
+      {
+        "sku": "MP-RW-FE-F",
+        "description": "Surcharge for rear panel, decorative veneer, for matt lacquer, veneer and decorative veneer",
+        "price": 166,
+        "img": "sc_living_sets_p126_g0.jpg",
+        "notes": "Price per m²",
+        "seq": 21
+      },
+      {
+        "sku": "MP-RW-SC",
+        "description": "Surcharge for rear panel, laminate, for melamine and ultra matt lacquer",
+        "price": 238,
+        "img": "sc_living_sets_p126_g0.jpg",
+        "notes": "Price per m², max carcase width 600 mm",
+        "seq": 22
+      },
+      {
+        "sku": "MP-RW-SC-F",
+        "description": "Surcharge for rear panel, laminate, for matt lacquer, veneer and decorative veneer",
+        "price": 95,
+        "img": "sc_living_sets_p126_g0.jpg",
+        "notes": "Price per m²",
+        "seq": 23
+      },
+      {
+        "sku": "MP-G",
+        "description": "Surcharge for adjustable glass shelves, Parsol grey",
+        "price": 39,
+        "img": "sc_living_sets_p126_g1.jpg",
+        "notes": "Price per shelf",
+        "seq": 24
+      },
+      {
+        "sku": "X-35-FV",
+        "description": "Front extension, increased by 1.5 cm above floor, for doors and pull-outs, up to front height 2204 mm",
+        "price": 174,
+        "img": "sc_living_sets_p126_g3.jpg",
+        "seq": 25
+      },
+      {
+        "sku": "X-36-K",
+        "description": "Any other carcase modification, modification of drilling position",
+        "price": 150,
+        "img": "sc_living_sets_p126_g4.jpg",
+        "seq": 26
+      },
+      {
+        "sku": "E-0",
+        "description": "Surcharge for missing fixed shelf",
+        "price": 82,
+        "img": "sc_living_sets_p126_g5.jpg",
+        "seq": 27
+      },
+      {
+        "sku": "E-1",
+        "description": "1 adjustable shelf instead of 1 fixed shelf",
+        "price": 41,
+        "img": "sc_living_sets_p126_g5.jpg",
+        "seq": 28
+      },
+      {
+        "sku": "E-2",
+        "description": "2 adjustable shelves instead of 2 fixed shelves",
+        "price": 82,
+        "img": "sc_living_sets_p126_g5.jpg",
+        "seq": 29
+      },
+      {
+        "sku": "E-4",
+        "description": "4 adjustable shelves instead of 4 fixed shelves",
+        "price": 159,
+        "img": "sc_living_sets_p126_g5.jpg",
+        "seq": 30
+      },
+      {
+        "sku": "E-5",
+        "description": "5 adjustable shelves instead of 5 fixed shelves",
+        "price": 201,
+        "img": "sc_living_sets_p126_g5.jpg",
+        "seq": 31
+      },
+      {
+        "sku": "E-6",
+        "description": "6 adjustable shelves instead of 6 fixed shelves",
+        "price": 242,
+        "img": "sc_living_sets_p126_g5.jpg",
+        "seq": 32
+      }
+    ],
+    "Dressing room": [
+      {
+        "sku": "X-01-U",
+        "description": "Increased depth of a carcase side, up to side depth 715 mm, for base units",
+        "price": 104,
+        "img": "sc_living_dress_p161_g0.jpg",
+        "seq": 1
+      },
+      {
+        "sku": "X-01-H",
+        "description": "Increased depth of a carcase side, up to side depth 715 mm, for tall units and worktops units",
+        "price": 157,
+        "img": "sc_living_dress_p161_g1.jpg",
+        "seq": 2
+      },
+      {
+        "sku": "X-02-U",
+        "description": "Reduced carcase depth, for base units and shelf units",
+        "price": 146,
+        "img": "sc_living_dress_p161_g2.jpg",
+        "seq": 3
+      },
+      {
+        "sku": "X-02-U-35",
+        "description": "Reduced carcase depth, to carcase depth 351 mm",
+        "price": 0,
+        "img": "sc_living_dress_p161_g2.jpg",
+        "seq": 4
+      },
+      {
+        "sku": "X-02-U-46",
+        "description": "Reduced carcase depth, to carcase depth 465 mm",
+        "price": 0,
+        "img": "sc_living_dress_p161_g2.jpg",
+        "seq": 5
+      },
+      {
+        "sku": "X-02-H",
+        "description": "Reduced carcase depth, for tall units, worktop units and shelf units",
+        "price": 199,
+        "img": "sc_living_dress_p161_g3.jpg",
+        "seq": 6
+      },
+      {
+        "sku": "X-02-H-35",
+        "description": "Reduced carcase depth, for tall units, to carcase depth 351 mm",
+        "price": 0,
+        "img": "sc_living_dress_p161_g3.jpg",
+        "seq": 7
+      },
+      {
+        "sku": "X-02-H-46",
+        "description": "Reduced carcase depth, for tall units, to carcase depth 465 mm",
+        "price": 0,
+        "img": "sc_living_dress_p161_g3.jpg",
+        "seq": 8
+      },
+      {
+        "sku": "X-03-U",
+        "description": "Reduced carcase width, for base units",
+        "price": 181,
+        "img": "sc_living_dress_p161_g4.jpg",
+        "input": {
+          "label": "New width (cm)",
+          "placeholder": "e.g. 53"
+        },
+        "seq": 9
+      },
+      {
+        "sku": "X-03-H",
+        "description": "Reduced carcase width, for tall units and worktops units",
+        "price": 236,
+        "img": "sc_living_dress_p161_g5.jpg",
+        "input": {
+          "label": "New width (cm)",
+          "placeholder": "e.g. 53"
+        },
+        "seq": 10
+      },
+      {
+        "sku": "X-04-U",
+        "description": "Reduced carcase height, for base units and shelf units",
+        "price": 199,
+        "img": "sc_living_dress_p161_g6.jpg",
+        "seq": 11
+      },
+      {
+        "sku": "X-04-H",
+        "description": "Reduced carcase height, for tall units, worktop units and shelf units",
+        "price": 253,
+        "img": "sc_living_dress_p161_g7.jpg",
+        "seq": 12
+      },
+      {
+        "sku": "X-07-U",
+        "description": "Carcase depth depression, for base units without drawers/pull-outs",
+        "price": 202,
+        "img": "sc_living_dress_p162_g0.jpg",
+        "seq": 13
+      },
+      {
+        "sku": "X-07-U-61",
+        "description": "Carcase depth depression, for base units without drawers/pull-outs, carcase depth 615 mm",
+        "price": 0,
+        "img": "sc_living_dress_p162_g0.jpg",
+        "seq": 14
+      },
+      {
+        "sku": "X-07-U-AZ",
+        "description": "Carcase depth depression, for base units with drawers/pull-outs",
+        "price": 295,
+        "img": "sc_living_dress_p162_g0.jpg",
+        "seq": 15
+      },
+      {
+        "sku": "X-07-U-AZ-61",
+        "description": "Carcase depth depression, for base units with drawers/pull-outs, carcase depth 615 mm",
+        "price": 93,
+        "img": "sc_living_dress_p162_g0.jpg",
+        "seq": 16
+      },
+      {
+        "sku": "X-07-H",
+        "description": "Carcase depth depression, for tall units without drawers/pull-outs",
+        "price": 319,
+        "img": "sc_living_dress_p162_g1.jpg",
+        "seq": 17
+      },
+      {
+        "sku": "X-07-H-61",
+        "description": "Carcase depth depression, for tall units without drawers/pull-outs, carcase depth 615 mm",
+        "price": 0,
+        "img": "sc_living_dress_p162_g1.jpg",
+        "seq": 18
+      },
+      {
+        "sku": "X-07-H-AZ",
+        "description": "Carcase depth depression, for tall units with drawers/pull-outs",
+        "price": 412,
+        "img": "sc_living_dress_p162_g1.jpg",
+        "seq": 19
+      },
+      {
+        "sku": "X-07-H-AZ-61",
+        "description": "Carcase depth depression, for tall units with drawers/pull-outs, carcase depth 615 mm",
+        "price": 93,
+        "img": "sc_living_dress_p162_g1.jpg",
+        "seq": 20
+      },
+      {
+        "sku": "MP-RW-G",
+        "description": "Surcharge for rear panel, organic glass, for melamine and ultra matt lacquer",
+        "price": 583,
+        "img": "sc_living_dress_p162_g2.jpg",
+        "notes": "Price per m², max carcase width 600 mm",
+        "seq": 21
+      },
+      {
+        "sku": "MP-RW-G-F",
+        "description": "Surcharge for rear panel, organic glass, for matt lacquer, veneer and decorative veneer",
+        "price": 115,
+        "img": "sc_living_dress_p162_g2.jpg",
+        "notes": "Price per m²",
+        "seq": 22
+      },
+      {
+        "sku": "MP-RW-FE",
+        "description": "Surcharge for rear panel, decorative veneer, for melamine and ultra matt lacquer",
+        "price": 718,
+        "img": "sc_living_dress_p162_g2.jpg",
+        "notes": "Price per m², max carcase width 600 mm",
+        "seq": 23
+      },
+      {
+        "sku": "MP-RW-FE-F",
+        "description": "Surcharge for rear panel, decorative veneer, for matt lacquer, veneer and decorative veneer",
+        "price": 166,
+        "img": "sc_living_dress_p162_g2.jpg",
+        "notes": "Price per m²",
+        "seq": 24
+      },
+      {
+        "sku": "MP-RW-SC",
+        "description": "Surcharge for rear panel, laminate, for melamine and ultra matt lacquer",
+        "price": 238,
+        "img": "sc_living_dress_p162_g2.jpg",
+        "notes": "Price per m², max carcase width 600 mm",
+        "seq": 25
+      },
+      {
+        "sku": "MP-RW-SC-F",
+        "description": "Surcharge for rear panel, laminate, for matt lacquer, veneer and decorative veneer",
+        "price": 95,
+        "img": "sc_living_dress_p162_g2.jpg",
+        "notes": "Price per m²",
+        "seq": 26
+      },
+      {
+        "sku": "X-35-F",
+        "description": "Amended front configuration",
+        "price": 263,
+        "img": "sc_living_dress_p162_g4.jpg",
+        "seq": 27
+      },
+      {
+        "sku": "X-35-FV",
+        "description": "Front extension, increased by 1.5 cm above floor, for doors and pull-outs, up to front height 2204 mm",
+        "price": 174,
+        "img": "sc_living_dress_p162_g4.jpg",
+        "seq": 28
+      },
+      {
+        "sku": "X-35-FV2204",
+        "description": "Front extension, starting from front height 2205 mm",
+        "price": 231,
+        "img": "sc_living_dress_p163_g0.jpg",
+        "seq": 29
+      },
+      {
+        "sku": "X-35-FVO",
+        "description": "Front extension upwards, for doors, up to front height 2204 mm",
+        "price": 174,
+        "img": "sc_living_dress_p163_g1.jpg",
+        "seq": 30
+      },
+      {
+        "sku": "X-36-K",
+        "description": "Any other carcase modification, modification of drilling position",
+        "price": 150,
+        "img": "sc_living_dress_p163_g2.jpg",
+        "seq": 31
+      }
+    ]
   }
 }

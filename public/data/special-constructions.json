@@ -2954,6 +2954,272 @@
         "notes": "Price per shelf.",
         "seq": 44
       }
+    ],
+    "Wall units": [
+      {
+        "sku": "X-01-O",
+        "description": "Increased depth of a carcase side (up to 715 mm)",
+        "price": 96,
+        "img": "sc_xwall_p461_g0.jpg",
+        "input": {
+          "label": "New side depth (mm)",
+          "placeholder": "e.g. 700"
+        },
+        "notes": "If the dimension of the increase to the side depth is greater than 150 mm, an X-06-.. must be confirmed.",
+        "seq": 0
+      },
+      {
+        "sku": "X-06-O",
+        "description": "Increased depth of a carcase side (716–1200 mm, tongue & groove)",
+        "price": 154,
+        "img": "sc_xwall_p461_g1.jpg",
+        "input": {
+          "label": "New side depth (mm)",
+          "placeholder": "e.g. 900"
+        },
+        "notes": "If technically possible, heavy-duty hangers are automatically fitted when the cabinet depth is increased.",
+        "seq": 1
+      },
+      {
+        "sku": "X-02-O",
+        "description": "Reduced carcase depth",
+        "price": 136,
+        "img": "sc_xwall_p461_g2.jpg",
+        "input": {
+          "label": "New depth (mm)",
+          "placeholder": "e.g. 400"
+        },
+        "notes": "Cabinets with one post/centre bar can be reduced up to a dimension of 251 mm. Max. carcase depth 575 mm. Carcase depth 475 mm without extra charge.",
+        "seq": 2
+      },
+      {
+        "sku": "X-02-O-47",
+        "description": "Reduced carcase depth to 475 mm",
+        "price": 0,
+        "img": "sc_xwall_p461_g2.jpg",
+        "notes": "Carcase depth 475 mm without extra charge.",
+        "seq": 3
+      },
+      {
+        "sku": "X-03-O",
+        "description": "Reduced carcase width",
+        "price": 173,
+        "img": "sc_xwall_p461_g3.jpg",
+        "input": {
+          "label": "New width (cm)",
+          "placeholder": "e.g. 53"
+        },
+        "notes": "The handle strips 960 and 962 are cut to size in case of special widths. This may lead to colour deviations.",
+        "seq": 4
+      },
+      {
+        "sku": "X-04-O",
+        "description": "Reduced carcase height",
+        "price": 146,
+        "img": "sc_xwall_p461_g4.jpg",
+        "input": {
+          "label": "New height (mm)",
+          "placeholder": "e.g. 700"
+        },
+        "notes": "Only possible for elements without internal fittings. Reductions in the carcase height in standard door module sizes are possible in all ranges. Other dimensions on request.",
+        "seq": 5
+      },
+      {
+        "sku": "X-07-O-57",
+        "description": "Carcase depth depression (shelves, filler panels, appliance cabinets)",
+        "price": 198,
+        "img": "sc_xwall_p461_g5.jpg",
+        "notes": "Unit hangers dispensed with.",
+        "seq": 6
+      },
+      {
+        "sku": "X-07-O-57-W",
+        "description": "Carcase depth depression with heavy-duty hangers",
+        "price": 241,
+        "img": "sc_xwall_p461_g6.jpg",
+        "notes": "Delivered with heavy-duty hangers. For carcase width 200–1200 mm. Width 200–299 mm is only possible if the cabinet is connected to other cabinets. For carcase height 384–896 mm. For carcase depth 352–625 mm. Not possible with: shelves, appliance cabinets, diagonal and 90° corner cabinets.",
+        "seq": 7
+      },
+      {
+        "sku": "X-12-O",
+        "description": "Modification of the front width of corner wall units",
+        "price": 74,
+        "img": "sc_xwall_p461_g8.jpg",
+        "seq": 8
+      },
+      {
+        "sku": "X-13-O",
+        "description": "Modification of the side dimensions of corner wall units",
+        "price": 550,
+        "img": "sc_xwall_p461_g9.jpg",
+        "notes": "Price per side.",
+        "seq": 9
+      },
+      {
+        "sku": "MP-X-29-6",
+        "description": "Surcharge for X profile in black",
+        "price": 8,
+        "img": "sc_xwall_p461_g10.jpg",
+        "seq": 10
+      },
+      {
+        "sku": "X-36-K",
+        "description": "Any other carcase modification / drilling position modification",
+        "price": 150,
+        "img": "sc_xwall_p461_g12.jpg",
+        "notes": "Further modifications after consultation.",
+        "seq": 11
+      },
+      {
+        "sku": "X-35-F",
+        "description": "Amended front configuration",
+        "price": 263,
+        "img": "sc_xwall_p461_g12.jpg",
+        "seq": 12
+      },
+      {
+        "sku": "X-35-FV",
+        "description": "Front extension (up to front height 2204 mm)",
+        "price": 174,
+        "img": "sc_xwall_p461_g12.jpg",
+        "input": {
+          "label": "Extension (mm)",
+          "placeholder": "e.g. 15"
+        },
+        "notes": "Max. front extension 230 mm. Max. front extension to the bottom on wall units 150 mm. Observe the maximum front height of the range. Each refrigerator requires a minimum air inlet of 200 cm² at the base. Not possible for dishwasher fronts. Pull-outs in combination with frame fronts are not possible for technical reasons.",
+        "seq": 13
+      },
+      {
+        "sku": "X-35-FVO",
+        "description": "Front extension upwards (up to front height 2204 mm)",
+        "price": 174,
+        "img": "sc_xwall_p462_g0.jpg",
+        "input": {
+          "label": "Extension (mm)",
+          "placeholder": "e.g. 15"
+        },
+        "notes": "Max. front extension 150 mm. Observe the maximum front height of the range. Fronts higher than 2204 mm are always provided with a torsion bar. Not possible with glass doors.",
+        "seq": 14
+      },
+      {
+        "sku": "X-35-FWV",
+        "description": "Front extension for profiled panels",
+        "price": 263,
+        "img": "sc_xwall_p462_g1.jpg",
+        "notes": "Max. front extension 230 mm. Max. front extension to the bottom on wall unit front return panels 150 mm. Observe the maximum front height of the range.",
+        "seq": 15
+      },
+      {
+        "sku": "MP-RW-G",
+        "description": "Rear panel in different colour — Organic glass (melamine/ultra matt)",
+        "price": 583,
+        "img": "sc_xwall_p462_g2.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. Available in all organic glass colours. For cabinets with glass frame or design fronts.",
+        "seq": 16
+      },
+      {
+        "sku": "MP-RW-G-F",
+        "description": "Rear panel in different colour — Organic glass (matt lacquer/veneer)",
+        "price": 115,
+        "img": "sc_xwall_p462_g2.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. For cabinets with glass frame or design fronts.",
+        "seq": 17
+      },
+      {
+        "sku": "MP-RW-FE",
+        "description": "Rear panel in different colour — Decorative veneer (melamine/ultra matt)",
+        "price": 718,
+        "img": "sc_xwall_p462_g2.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. Available colours: 9030 Tarsie. For cabinets with glass frame or design fronts.",
+        "seq": 18
+      },
+      {
+        "sku": "MP-RW-FE-F",
+        "description": "Rear panel in different colour — Decorative veneer (matt lacquer/veneer)",
+        "price": 166,
+        "img": "sc_xwall_p462_g2.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. For cabinets with glass frame or design fronts.",
+        "seq": 19
+      },
+      {
+        "sku": "MP-RW-SC",
+        "description": "Rear panel in different colour — Laminate (melamine/ultra matt)",
+        "price": 238,
+        "img": "sc_xwall_p462_g2.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. Available colours: 3410 Metallic Ferro. For cabinets with glass frame or design fronts.",
+        "seq": 20
+      },
+      {
+        "sku": "MP-RW-SC-F",
+        "description": "Rear panel in different colour — Laminate (matt lacquer/veneer)",
+        "price": 95,
+        "img": "sc_xwall_p462_g2.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. For cabinets with glass frame or design fronts.",
+        "seq": 21
+      },
+      {
+        "sku": "MP-G",
+        "description": "Surcharge for adjustable glass shelves — Parsol grey",
+        "price": 39,
+        "img": "sc_xwall_p462_g3.jpg",
+        "notes": "Price per shelf. Please select version P1 = Parsol grey.",
+        "seq": 22
+      },
+      {
+        "sku": "X-35-V",
+        "description": "Cup hole for remote switch ZHL 010 / ZHL 011",
+        "price": 58,
+        "img": "sc_xwall_p462_g4.jpg",
+        "seq": 23
+      },
+      {
+        "sku": "X-36-K100",
+        "description": "Carcase modification to filler frame (depth 100–150 mm)",
+        "price": 199,
+        "img": "sc_xwall_p462_g5.jpg",
+        "notes": "Without back panel. Without plinth sockets. Without adjustable shelf.",
+        "seq": 24
+      },
+      {
+        "sku": "X-37-D",
+        "description": "Unit as hatch cabinet (without rear front)",
+        "price": 223,
+        "img": "sc_xwall_p462_g6.jpg",
+        "notes": "Order rear front elements separately. Refer to the spare parts section.",
+        "seq": 25
+      },
+      {
+        "sku": "MP-EBF-60",
+        "description": "Adjustable wooden shelf instead of glass — Veneered (width 300–600 mm)",
+        "price": 72,
+        "img": "sc_xwall_p462_g7.jpg",
+        "notes": "Price per shelf.",
+        "seq": 26
+      },
+      {
+        "sku": "MP-EBF-120",
+        "description": "Adjustable wooden shelf instead of glass — Veneered (width 601–1200 mm)",
+        "price": 209,
+        "img": "sc_xwall_p462_g7.jpg",
+        "notes": "Price per shelf.",
+        "seq": 27
+      },
+      {
+        "sku": "MP-EBFE-60",
+        "description": "Adjustable wooden shelf instead of glass — Dec. veneer (width 300–600 mm)",
+        "price": 101,
+        "img": "sc_xwall_p462_g7.jpg",
+        "notes": "Price per shelf.",
+        "seq": 28
+      },
+      {
+        "sku": "MP-EBFE-120",
+        "description": "Adjustable wooden shelf instead of glass — Dec. veneer (width 601–1200 mm)",
+        "price": 265,
+        "img": "sc_xwall_p462_g7.jpg",
+        "notes": "Price per shelf.",
+        "seq": 29
+      }
     ]
   }
 }

@@ -2570,5 +2570,390 @@
         "seq": 34
       }
     ]
+  },
+  "x-line": {
+    "Base units": [
+      {
+        "sku": "X-01-U",
+        "description": "Increased depth of a carcase side (up to 715 mm)",
+        "price": 104,
+        "img": "sc_xbase_p393_g0.jpg",
+        "input": {
+          "label": "New side depth (mm)",
+          "placeholder": "e.g. 700"
+        },
+        "notes": "If the dimension of the increase to the side depth is greater than 150 mm, an X-06-.. must be confirmed.",
+        "seq": 0
+      },
+      {
+        "sku": "X-06-U",
+        "description": "Increased depth of a carcase side (716–1200 mm, tongue & groove)",
+        "price": 133,
+        "img": "sc_xbase_p393_g1.jpg",
+        "input": {
+          "label": "New side depth (mm)",
+          "placeholder": "e.g. 900"
+        },
+        "notes": "Not possible for angled base units UA..",
+        "seq": 1
+      },
+      {
+        "sku": "X-02-U",
+        "description": "Reduced carcase depth",
+        "price": 146,
+        "img": "sc_xbase_p393_g2.jpg",
+        "input": {
+          "label": "New depth (mm)",
+          "placeholder": "e.g. 500"
+        },
+        "notes": "Only possible for elements without internal fittings. For base units with drawers and pull-outs, a reduction of up to 351 mm unit depth is possible. Shortened runners are fitted. Carcase depth 563–464 mm = runner depth 400 mm. Carcase depth 463–374 mm or 351 mm = runner depth 300 mm.",
+        "seq": 2
+      },
+      {
+        "sku": "X-02-U-35",
+        "description": "Reduced carcase depth to 351 mm",
+        "price": 0,
+        "img": "sc_xbase_p393_g2.jpg",
+        "notes": "Carcase depth 351 mm without surcharge.",
+        "seq": 3
+      },
+      {
+        "sku": "X-02-U-47",
+        "description": "Reduced carcase depth to 475 mm",
+        "price": 0,
+        "img": "sc_xbase_p393_g2.jpg",
+        "notes": "Carcase depth 475 mm without surcharge.",
+        "seq": 4
+      },
+      {
+        "sku": "X-03-U",
+        "description": "Reduced carcase width",
+        "price": 181,
+        "img": "sc_xbase_p393_g3.jpg",
+        "input": {
+          "label": "New width (cm)",
+          "placeholder": "e.g. 53"
+        },
+        "notes": "Only possible for elements without internal fittings. Reduced carcase width on request. Units with pull-outs include additional order code X-03-AZ. The handle strips 960 and 962 are cut to size in case of special widths. This may lead to colour deviations.",
+        "seq": 5
+      },
+      {
+        "sku": "X-03-AZ-1",
+        "description": "Width reduction on drawers/pull-outs (1 drawer)",
+        "price": 44,
+        "img": "sc_xbase_p393_g4.jpg",
+        "notes": "Applies only for carcase widths other than standard widths of 275, 300, 400, 450, 500, 550, 600, 800, 900, 1000 or 1200 mm. Minimum unit width 275 mm.",
+        "seq": 6
+      },
+      {
+        "sku": "X-03-AZ-2",
+        "description": "Width reduction on drawers/pull-outs (2 drawers)",
+        "price": 88,
+        "img": "sc_xbase_p393_g4.jpg",
+        "seq": 7
+      },
+      {
+        "sku": "X-03-AZ-3",
+        "description": "Width reduction on drawers/pull-outs (3 drawers)",
+        "price": 130,
+        "img": "sc_xbase_p393_g4.jpg",
+        "seq": 8
+      },
+      {
+        "sku": "X-03-AZ-4",
+        "description": "Width reduction on drawers/pull-outs (4 drawers)",
+        "price": 173,
+        "img": "sc_xbase_p393_g4.jpg",
+        "seq": 9
+      },
+      {
+        "sku": "X-03-AZ-5",
+        "description": "Width reduction on drawers/pull-outs (5 drawers)",
+        "price": 217,
+        "img": "sc_xbase_p393_g4.jpg",
+        "seq": 10
+      },
+      {
+        "sku": "X-03-AZ-6",
+        "description": "Width reduction on drawers/pull-outs (6 drawers)",
+        "price": 259,
+        "img": "sc_xbase_p393_g4.jpg",
+        "seq": 11
+      },
+      {
+        "sku": "X-04-U",
+        "description": "Reduced carcase height",
+        "price": 199,
+        "img": "sc_xbase_p393_g5.jpg",
+        "input": {
+          "label": "New height (mm)",
+          "placeholder": "e.g. 700"
+        },
+        "notes": "Only possible for elements without internal fittings. Not possible for cabinets with design programmes. Reductions in the carcase height in standard door module sizes are possible in all ranges. Other dimensions on request.",
+        "seq": 12
+      },
+      {
+        "sku": "X-07-U",
+        "description": "Carcase depth depression (no drawers/pull-outs)",
+        "price": 202,
+        "img": "sc_xbase_p393_g6.jpg",
+        "input": {
+          "label": "Depression depth (mm)",
+          "placeholder": "e.g. 600"
+        },
+        "notes": "Price per base unit. There is no extra charge for a carcase recess in units with a carcase depth of 625 mm. For cabinets with drawers/pull-outs with a cabinet depth of 608 mm or more, we calculate a frame depth increase to 550 mm (X-07-U-AZ).",
+        "seq": 13
+      },
+      {
+        "sku": "X-07-U-62",
+        "description": "Carcase depth depression (no drawers, 625 mm depth)",
+        "price": 0,
+        "img": "sc_xbase_p393_g6.jpg",
+        "notes": "With carcase depth 625 mm.",
+        "seq": 14
+      },
+      {
+        "sku": "X-07-U-AZ",
+        "description": "Carcase depth depression (with drawers/pull-outs)",
+        "price": 295,
+        "img": "sc_xbase_p393_g6.jpg",
+        "notes": "With carcase depth 625 mm.",
+        "seq": 15
+      },
+      {
+        "sku": "X-07-U-AZ-62",
+        "description": "Carcase depth depression (with drawers, 625 mm depth)",
+        "price": 93,
+        "img": "sc_xbase_p393_g6.jpg",
+        "notes": "With carcase depth 625 mm.",
+        "seq": 16
+      },
+      {
+        "sku": "X-U-57-W",
+        "description": "Surcharge for wall mounting with base cabinets",
+        "price": 43,
+        "img": "sc_xbase_p393_g7.jpg",
+        "notes": "Delivered with heavy-duty hangers. For carcase width 200–1200 mm. Width 200–299 mm is only possible if the cabinet is connected to other cabinets. For carcase height 384–896 mm. For carcase depth 352–625 mm, provided that no fixtures or fittings prevent the placement of the hangers. Without plinth foot.",
+        "seq": 17
+      },
+      {
+        "sku": "X-15-U",
+        "description": "Reduction of the corner filler panel with UE..",
+        "price": 118,
+        "img": "sc_xbase_p393_g9.jpg",
+        "notes": "Smallest side dimension 45 mm. Not possible with: shelves, appliance cabinets, diagonal and 90° corner cabinets.",
+        "seq": 18
+      },
+      {
+        "sku": "MP-RW-G",
+        "description": "Rear panel in different colour — Organic glass (melamine/ultra matt)",
+        "price": 583,
+        "img": "sc_xbase_p394_g0.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. Available in all organic glass colours. For cabinets with glass frame or design fronts.",
+        "seq": 19
+      },
+      {
+        "sku": "MP-RW-G-F",
+        "description": "Rear panel in different colour — Organic glass (matt lacquer/veneer)",
+        "price": 115,
+        "img": "sc_xbase_p394_g0.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. For cabinets with glass frame or design fronts.",
+        "seq": 20
+      },
+      {
+        "sku": "MP-RW-FE",
+        "description": "Rear panel in different colour — Decorative veneer (melamine/ultra matt)",
+        "price": 718,
+        "img": "sc_xbase_p394_g0.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. Available colours: 9030 Tarsie. For cabinets with glass frame or design fronts.",
+        "seq": 21
+      },
+      {
+        "sku": "MP-RW-FE-F",
+        "description": "Rear panel in different colour — Decorative veneer (matt lacquer/veneer)",
+        "price": 166,
+        "img": "sc_xbase_p394_g0.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. For cabinets with glass frame or design fronts.",
+        "seq": 22
+      },
+      {
+        "sku": "MP-RW-SC",
+        "description": "Rear panel in different colour — Laminate (melamine/ultra matt)",
+        "price": 238,
+        "img": "sc_xbase_p394_g0.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. Available colours: 3410 Metallic Ferro. For cabinets with glass frame or design fronts.",
+        "seq": 23
+      },
+      {
+        "sku": "MP-RW-SC-F",
+        "description": "Rear panel in different colour — Laminate (matt lacquer/veneer)",
+        "price": 95,
+        "img": "sc_xbase_p394_g0.jpg",
+        "notes": "Price per m², max. carcase width 600 mm. For cabinets with glass frame or design fronts.",
+        "seq": 24
+      },
+      {
+        "sku": "MP-G",
+        "description": "Surcharge for adjustable glass shelves — Parsol grey",
+        "price": 39,
+        "img": "sc_xbase_p394_g1.jpg",
+        "notes": "Price per shelf. Please select version P1 = Parsol grey.",
+        "seq": 25
+      },
+      {
+        "sku": "X-36-NZ",
+        "description": "Surcharge for low-rise drawer instead of standard drawer",
+        "price": 89,
+        "img": "sc_xbase_p394_g2.jpg",
+        "notes": "EASYS is not possible when using the lower pull out. Push-To-Open is not possible in combination with proTech. Drawer frame depth 500 mm. Max. front height 172 mm.",
+        "seq": 26
+      },
+      {
+        "sku": "X-36-ZAR",
+        "description": "Surcharge for pull-out with sink drain cut-out",
+        "price": 156,
+        "img": "sc_xbase_p394_g3.jpg",
+        "notes": "Only possible for carcase width 800 mm, 900 mm, 1000 mm and 1200 mm.",
+        "seq": 27
+      },
+      {
+        "sku": "X-36-ZAS",
+        "description": "Surcharge for sink pull-out with scooped profile",
+        "price": 113,
+        "img": "sc_xbase_p394_g4.jpg",
+        "notes": "Only possible for carcase widths 600 mm, 800 mm, 900 mm, 1000 mm and 1200 mm.",
+        "seq": 28
+      },
+      {
+        "sku": "X-36-VK",
+        "description": "Pre-milling for hob cut-out on site (for UG...)",
+        "price": 31,
+        "img": "sc_xbase_p394_g5.jpg",
+        "notes": "In general, both carcase sides are processed. Min. carcase depth 565 mm. Not possible for wall mounted base units. Only possible if technically feasible.",
+        "seq": 29
+      },
+      {
+        "sku": "X-36-VS",
+        "description": "Pre-milling for sink cut-out on site",
+        "price": 31,
+        "img": "sc_xbase_p394_g6.jpg",
+        "notes": "In general, both carcase sides are processed. Min. carcase depth 565 mm. Not possible for wall mounted base units. Only possible if technically feasible.",
+        "seq": 30
+      },
+      {
+        "sku": "X-35-F",
+        "description": "Amended front configuration",
+        "price": 263,
+        "img": "sc_xbase_p394_g8.jpg",
+        "seq": 31
+      },
+      {
+        "sku": "X-35-FV",
+        "description": "Front extension (up to front height 2204 mm)",
+        "price": 174,
+        "img": "sc_xbase_p394_g8.jpg",
+        "input": {
+          "label": "Extension (mm)",
+          "placeholder": "e.g. 15"
+        },
+        "notes": "Max. front extension 230 mm. Max. front extension to the bottom on wall units 150 mm. Observe the maximum front height of the range. Each refrigerator requires a minimum air inlet of 200 cm² at the base. Not possible for dishwasher fronts. Pull-outs in combination with frame fronts are not possible for technical reasons.",
+        "seq": 32
+      },
+      {
+        "sku": "X-35-FWV",
+        "description": "Front extension for profiled panels",
+        "price": 263,
+        "img": "sc_xbase_p395_g0.jpg",
+        "notes": "Max. front extension 230 mm. Max. front extension to the bottom on wall unit front return panels 150 mm. Observe the maximum front height of the range.",
+        "seq": 33
+      },
+      {
+        "sku": "MP-DB60102",
+        "description": "Surcharge for 155° hinge (per front)",
+        "price": 12,
+        "img": "sc_xbase_p395_g2.jpg",
+        "seq": 34
+      },
+      {
+        "sku": "X-36-K",
+        "description": "Any other carcase modification / drilling position modification",
+        "price": 150,
+        "img": "sc_xbase_p395_g2.jpg",
+        "notes": "Further modifications after consultation.",
+        "seq": 35
+      },
+      {
+        "sku": "X-36-K100",
+        "description": "Carcase modification to filler frame (depth 100–150 mm)",
+        "price": 199,
+        "img": "sc_xbase_p395_g3.jpg",
+        "notes": "Without back panel. Without plinth sockets. Without adjustable shelf.",
+        "seq": 36
+      },
+      {
+        "sku": "X-37-D",
+        "description": "Unit as hatch cabinet (without rear front)",
+        "price": 223,
+        "img": "sc_xbase_p395_g4.jpg",
+        "notes": "Order rear front elements separately. Refer to the spare parts section.",
+        "seq": 37
+      },
+      {
+        "sku": "X-74059-U",
+        "description": "Surcharge for inserted plinth feet (width < 600 mm)",
+        "price": 34,
+        "img": "sc_xbase_p395_g5.jpg",
+        "notes": "Each inserted plinth foot is supplied with one stabilizing plate. Only available on carcase width with minimum 310 mm.",
+        "seq": 38
+      },
+      {
+        "sku": "X-74120-U",
+        "description": "Surcharge for inserted plinth feet (width >= 600 mm)",
+        "price": 126,
+        "img": "sc_xbase_p395_g5.jpg",
+        "notes": "From carcase width 600 mm 2 additional stabilizing bars are supplied.",
+        "seq": 39
+      },
+      {
+        "sku": "X-BODEN",
+        "description": "Closed top panel for base units",
+        "price": 79,
+        "img": "sc_xbase_p395_g6.jpg",
+        "notes": "Not possible for corner carousel units.",
+        "seq": 40
+      },
+      {
+        "sku": "MP-EBF-60",
+        "description": "Adjustable wooden shelf instead of glass — Veneered (width 300–600 mm)",
+        "price": 72,
+        "img": "sc_xbase_p395_g7.jpg",
+        "notes": "Price per shelf.",
+        "seq": 41
+      },
+      {
+        "sku": "MP-EBF-120",
+        "description": "Adjustable wooden shelf instead of glass — Veneered (width 601–1200 mm)",
+        "price": 209,
+        "img": "sc_xbase_p395_g7.jpg",
+        "notes": "Price per shelf.",
+        "seq": 42
+      },
+      {
+        "sku": "MP-EBFE-60",
+        "description": "Adjustable wooden shelf instead of glass — Dec. veneer (width 300–600 mm)",
+        "price": 101,
+        "img": "sc_xbase_p395_g7.jpg",
+        "notes": "Price per shelf.",
+        "seq": 43
+      },
+      {
+        "sku": "MP-EBFE-120",
+        "description": "Adjustable wooden shelf instead of glass — Dec. veneer (width 601–1200 mm)",
+        "price": 265,
+        "img": "sc_xbase_p395_g7.jpg",
+        "notes": "Price per shelf.",
+        "seq": 44
+      }
+    ]
   }
 }

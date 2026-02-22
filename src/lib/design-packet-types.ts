@@ -33,7 +33,8 @@ export const DRAWERBOX_OPTIONS = [
   { value: 'woodbox_dark_sherwood', label: 'woodBox — Dark Sherwood' },
   { value: 'woodbox_maxi_urban_oak', label: 'woodBox Maxi — Urban Oak' },
   { value: 'woodbox_maxi_dark_sherwood', label: 'woodBox Maxi — Dark Sherwood' },
-  { value: 'glasscase', label: 'glassCase' },
+  { value: 'glasscase_light_gray', label: 'glassCase — Light Gray' },
+  { value: 'glasscase_dark_gray', label: 'glassCase — Dark Gray' },
 ] as const;
 
 export const TOEKICK_MATERIALS = [

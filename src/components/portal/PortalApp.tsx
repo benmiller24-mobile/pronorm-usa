@@ -138,7 +138,8 @@ export default function PortalApp() {
     }
     if (path === '/dealer-portal/pricing') {
       // Only show pricing tool to the specific dealer or admin
-      if (dealer.email === 'ben.miller24@gmail.com' || isAdmin) {
+      const userEmail = dealer.email || session?.user?.email;
+      if (userEmail === 'ben.miller24@gmail.com' || isAdmin) {
         return <PricingTool dealer={scopedDealer} onNavigate={navigate} />;
       }
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
@@ -178,7 +179,7 @@ export default function PortalApp() {
   };
 
   return (
-    <PortalLayout dealer={dealer} dealerEmail={dealer?.email} currentPath={path} onNavigate={navigate} onLogout={handleLogout} isAdmin={isAdmin} isDesigner={isDesigner}>
+    <PortalLayout dealer={dealer} dealerEmail={dealer?.email || session?.user?.email} currentPath={path} onNavigate={navigate} onLogout={handleLogout} isAdmin={isAdmin} isDesigner={isDesigner}>
       {renderPage()}
     </PortalLayout>
   );

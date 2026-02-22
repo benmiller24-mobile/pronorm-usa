@@ -15,7 +15,11 @@ from pathlib import Path
 DPI = 150
 SCALE = DPI / 72.0
 TARGET_WIDTH = 1400  # Max output image width in pixels
-SKU_RE = re.compile(r'([A-Z]{1,4}(?:\s[A-Z]{1,4})?)\s+(\d{2,3}(?:-\d{2,3}){2,3})')
+# Broad SKU regex: matches 2-part (RW 30-76), 3-part (U 80-76-01), 4-part (KH 60-195-00-063)
+# Also allows up to 6-letter prefixes (PFGSM) and optional multi-word prefix (R HSP)
+SKU_RE = re.compile(r'([A-Z]{1,6}(?:\s[A-Z]{1,6})?)\s+(\d{1,4}(?:-\d{2,4}){1,4})')
+# No-space SKU format: PFGSM450-32-56 (letters immediately followed by digits then dashes)
+NOSPACE_SKU_RE = re.compile(r'([A-Z]{2,6}\d{2,4})-(\d{2,4}(?:-\d{2,4}){0,3})')
 
 DESC_STARTERS = [
     'Base unit', 'Wall unit', 'Tall unit', 'Front', 'Closing', 'Surcharge',
@@ -102,7 +106,7 @@ def get_page_groups(pdf_path, page_num):
         line_y_max = max(w[3] for w in words)
 
         is_desc = any(kw in line_text for kw in DESC_STARTERS)
-        has_sku = bool(SKU_RE.search(clean_text))
+        has_sku = bool(SKU_RE.search(clean_text)) or bool(NOSPACE_SKU_RE.search(clean_text))
 
         # Check gap from previous line
         gap = 0
@@ -112,22 +116,24 @@ def get_page_groups(pdf_path, page_num):
             gap = line_y_min - prev_y_max
 
         # Extract SKU suffix (number part after width) for continuation detection
-        # e.g. "U 80-76-01" → suffix "76-01"
+        # e.g. "U 80-76-01" → suffix "76-01", "RW 30-76" → suffix "76"
         line_sku_suffix = None
         sku_match = SKU_RE.search(clean_text)
+        if not sku_match:
+            sku_match = NOSPACE_SKU_RE.search(clean_text)
         if sku_match:
-            num = sku_match.group(2)  # e.g. "80-76-01"
+            num = sku_match.group(2)  # e.g. "80-76-01" or "32-56"
             num_parts = num.split('-')
-            if len(num_parts) >= 3:
-                line_sku_suffix = '-'.join(num_parts[1:])  # e.g. "76-01"
+            if len(num_parts) >= 2:
+                line_sku_suffix = '-'.join(num_parts[1:])  # e.g. "76-01" or "56"
 
         # Get current group's SKU suffix for comparison
         current_suffix = None
         if current_group and current_group['skus']:
             first_num = current_group['skus'][0].split(' ')[-1]  # e.g. "27-76-01"
             first_parts = first_num.split('-')
-            if len(first_parts) >= 3:
-                current_suffix = '-'.join(first_parts[1:])  # e.g. "76-01"
+            if len(first_parts) >= 2:
+                current_suffix = '-'.join(first_parts[1:])  # e.g. "76-01" or "76"
 
         # Decide whether to start a new group
         start_new = False
@@ -169,8 +175,14 @@ def get_page_groups(pdf_path, page_num):
 
         if current_group is not None:
             current_group['y_end'] = line_y_max
+            # Match standard SKU patterns (e.g. "U 80-76-01", "RW 30-76")
             for m in SKU_RE.finditer(clean_text):
                 sku = f"{m.group(1).strip()} {m.group(2)}"
+                if sku not in current_group['skus']:
+                    current_group['skus'].append(sku)
+            # Match no-space SKU patterns (e.g. "PFGSM450-32-56")
+            for m in NOSPACE_SKU_RE.finditer(clean_text):
+                sku = f"{m.group(1)}-{m.group(2)}"
                 if sku not in current_group['skus']:
                     current_group['skus'].append(sku)
 

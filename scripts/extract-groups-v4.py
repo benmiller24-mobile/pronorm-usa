@@ -91,8 +91,10 @@ def get_page_groups(pdf_path, page_num):
 
     sorted_ys = sorted(lines_by_y.keys())
 
-    # Build groups with tight boundary detection:
-    # Start a new group whenever a description keyword is found OR there's a >15pt gap
+    # Build groups: each product type gets its own group.
+    # KEY RULE: A line with BOTH a description keyword AND a SKU = new group.
+    # Description-only lines (e.g. "2 adjustable shelves") are continuations.
+    # SKU-only lines (e.g. "45 L/R U 45-76-01") are continuations.
     groups = []
     current_group = None
 
@@ -100,7 +102,6 @@ def get_page_groups(pdf_path, page_num):
         words = sorted(lines_by_y[y_key], key=lambda w: w[0])
         line_text = ' '.join(w[4] for w in words)
         # Strip L/R door orientation markers that interfere with SKU regex
-        # e.g. "55 L/R DTY 55-76-13" → "55 _/_ DTY 55-76-13"
         clean_text = re.sub(r'\bL/R\b', '_/_', line_text)
         line_y_min = min(w[1] for w in words)
         line_y_max = max(w[3] for w in words)
@@ -115,55 +116,26 @@ def get_page_groups(pdf_path, page_num):
             prev_y_max = max(w[3] for w in lines_by_y[prev_y])
             gap = line_y_min - prev_y_max
 
-        # Extract SKU suffix (number part after width) for continuation detection
-        # e.g. "U 80-76-01" → suffix "76-01", "RW 30-76" → suffix "76"
-        line_sku_suffix = None
-        sku_match = SKU_RE.search(clean_text)
-        if not sku_match:
-            sku_match = NOSPACE_SKU_RE.search(clean_text)
-        if sku_match:
-            num = sku_match.group(2)  # e.g. "80-76-01" or "32-56"
-            num_parts = num.split('-')
-            if len(num_parts) >= 2:
-                line_sku_suffix = '-'.join(num_parts[1:])  # e.g. "76-01" or "56"
-
-        # Get current group's SKU suffix for comparison
-        current_suffix = None
-        if current_group and current_group['skus']:
-            first_num = current_group['skus'][0].split(' ')[-1]  # e.g. "27-76-01"
-            first_parts = first_num.split('-')
-            if len(first_parts) >= 2:
-                current_suffix = '-'.join(first_parts[1:])  # e.g. "76-01" or "76"
-
         # Decide whether to start a new group
         start_new = False
         if current_group is None:
             if is_desc or has_sku:
                 start_new = True
         else:
-            # Start new group on description keyword (new product type)
-            # BUT only if the SKU suffix differs (same suffix = continuation of same product)
-            if is_desc and current_group['skus']:
-                if line_sku_suffix and current_suffix and line_sku_suffix == current_suffix:
-                    pass  # Same product, don't split (continuation rows)
-                else:
-                    start_new = True
-            # Start new group on gap >15pt (only if suffix differs)
-            elif gap > 15 and current_group['skus']:
-                if line_sku_suffix and current_suffix and line_sku_suffix == current_suffix:
-                    pass  # Same product continuation after gap
-                else:
-                    start_new = True
+            # NEW GROUP when: description keyword + SKU on same line
+            # This catches "Base unit 27 L/R U 27-76-01" as a group start
+            # but NOT "2 adjustable shelves" (no SKU) or "45 L/R U 45-76-01" (no desc)
+            if is_desc and has_sku and current_group['skus']:
+                start_new = True
+            # Also new group on large gap (>30pt) with a SKU
+            elif gap > 30 and has_sku and current_group['skus']:
+                start_new = True
 
         if start_new:
-            # Finalise previous group
+            # Finalise previous group — use first SKU's actual number for unique naming
             if current_group and current_group['skus']:
                 first_sku = current_group['skus'][0]
-                parts = first_sku.split(' ')
-                num = parts[-1]
-                num_parts = num.split('-')
-                prefix = ' '.join(parts[:-1])
-                current_group['base_key'] = f"{prefix} xx-{'-'.join(num_parts[1:])}" if len(num_parts) >= 3 else first_sku
+                current_group['base_key'] = first_sku
                 groups.append(current_group)
 
             current_group = {
@@ -189,11 +161,7 @@ def get_page_groups(pdf_path, page_num):
     # Don't forget last group
     if current_group and current_group['skus']:
         first_sku = current_group['skus'][0]
-        parts = first_sku.split(' ')
-        num = parts[-1]
-        num_parts = num.split('-')
-        prefix = ' '.join(parts[:-1])
-        current_group['base_key'] = f"{prefix} xx-{'-'.join(num_parts[1:])}" if len(num_parts) >= 3 else first_sku
+        current_group['base_key'] = first_sku
         groups.append(current_group)
 
     return groups
@@ -255,10 +223,6 @@ def render_and_crop_groups(pdf_path, page_num, groups, pdf_source, output_dir, s
                 pass
 
             safe_key = g['base_key'].replace(' ', '_').replace('/', '-')
-            filename = f"{pdf_source}_{safe_key}_p{page_num}.png"
-            filepath = os.path.join(output_dir, filename)
-
-            # Resize to target width if wider, preserving aspect ratio
             jpeg_filename = f"{pdf_source}_{safe_key}_p{page_num}.jpg"
             jpeg_path = os.path.join(output_dir, jpeg_filename)
             crop_rgb = crop.convert('RGB')

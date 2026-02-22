@@ -10,6 +10,7 @@ interface CatalogItem {
   pt: 'price_group' | 'material';
   p: Record<string, number>;
   pg: number;
+  img?: string;
 }
 
 interface CatalogData {
@@ -272,7 +273,34 @@ function SKUCard({ item, onAddClick }: { item: any; onAddClick: () => void }) {
       border: '1px solid #e8e0d8',
       borderRadius: '4px',
       padding: '1.25rem',
+      display: 'flex',
+      gap: '1rem',
     }}>
+      {/* Diagram image */}
+      {item.img && (
+        <div style={{
+          flexShrink: 0,
+          width: '80px',
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          paddingTop: '0.25rem',
+        }}>
+          <img
+            src={`/data/diagrams/${item.img}`}
+            alt={item.s}
+            style={{
+              maxWidth: '80px',
+              maxHeight: '120px',
+              objectFit: 'contain',
+              borderRadius: '2px',
+            }}
+            loading="lazy"
+          />
+        </div>
+      )}
+
+      <div style={{ flex: 1, minWidth: 0 }}>
       <div style={{ marginBottom: '1rem' }}>
         <h4 style={{
           fontFamily: "'Cormorant Garamond', Georgia, serif",
@@ -388,6 +416,7 @@ function SKUCard({ item, onAddClick }: { item: any; onAddClick: () => void }) {
       >
         Add to Order
       </button>
+      </div>
     </div>
   );
 }

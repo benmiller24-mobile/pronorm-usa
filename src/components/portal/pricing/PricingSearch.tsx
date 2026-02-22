@@ -12,6 +12,7 @@ interface SearchItem {
   pt: 'price_group' | 'material';
   p: Record<string, number>;
   dr: string | null;
+  img?: string;
 }
 
 interface PricingSearchProps {
@@ -169,10 +170,31 @@ function SearchResultCard({ item, onAddClick }: { item: any; onAddClick: () => v
       borderRadius: '4px',
       padding: '1.25rem',
       display: 'flex',
-      justifyContent: 'space-between',
       alignItems: 'center',
       gap: '1rem',
     }}>
+      {/* Diagram image */}
+      {item.img && (
+        <div style={{
+          flexShrink: 0,
+          width: '70px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <img
+            src={`/data/diagrams/${item.img}`}
+            alt={item.s}
+            style={{
+              maxWidth: '70px',
+              maxHeight: '90px',
+              objectFit: 'contain',
+              borderRadius: '2px',
+            }}
+            loading="lazy"
+          />
+        </div>
+      )}
       <div style={{ flex: 1 }}>
         <h4 style={{
           fontFamily: "'Cormorant Garamond', Georgia, serif",

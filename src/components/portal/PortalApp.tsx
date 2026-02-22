@@ -13,6 +13,7 @@ import WarrantyList from './WarrantyList';
 import WarrantyForm from './WarrantyForm';
 import AccountSettings from './AccountSettings';
 import TeamManagement from './TeamManagement';
+import PricingTool from './PricingTool';
 
 export default function PortalApp() {
   const [session, setSession] = useState<any>(null);
@@ -135,6 +136,13 @@ export default function PortalApp() {
     if (path === '/dealer-portal/dashboard' || path === '/dealer-portal' || path === '/dealer-portal/') {
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
+    if (path === '/dealer-portal/pricing') {
+      // Only show pricing tool to the specific dealer or admin
+      if (dealer.email === 'ben.miller24@gmail.com' || isAdmin) {
+        return <PricingTool dealer={scopedDealer} onNavigate={navigate} />;
+      }
+      return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
+    }
     if (path === '/dealer-portal/projects/new') {
       return <DesignPacketWizard dealer={scopedDealer} onNavigate={navigate} />;
     }
@@ -170,7 +178,7 @@ export default function PortalApp() {
   };
 
   return (
-    <PortalLayout dealer={dealer} currentPath={path} onNavigate={navigate} onLogout={handleLogout} isAdmin={isAdmin} isDesigner={isDesigner}>
+    <PortalLayout dealer={dealer} dealerEmail={dealer?.email} currentPath={path} onNavigate={navigate} onLogout={handleLogout} isAdmin={isAdmin} isDesigner={isDesigner}>
       {renderPage()}
     </PortalLayout>
   );

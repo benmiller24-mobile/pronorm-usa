@@ -8,6 +8,7 @@ interface PortalLayoutProps {
   onLogout: () => void;
   isAdmin?: boolean;
   isDesigner?: boolean;
+  dealerEmail?: string;
   children: React.ReactNode;
 }
 
@@ -19,6 +20,8 @@ const DEALER_NAV_ITEMS = [
   { path: '/dealer-portal/team', label: 'Team', icon: '\u2302' },
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
+
+const PRICING_NAV_ITEM = { path: '/dealer-portal/pricing', label: 'Pricing', icon: '\u20AC' };
 
 const ADMIN_NAV_ITEMS = [
   { path: '/dealer-portal/dashboard', label: 'Admin Dashboard', icon: '\u25A3' },
@@ -36,10 +39,15 @@ const DESIGNER_NAV_ITEMS = [
   { path: '/dealer-portal/warranty', label: 'Warranty', icon: '\u2696' },
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
-export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout, isAdmin, isDesigner, children }: PortalLayoutProps) {
+export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout, isAdmin, isDesigner, dealerEmail, children }: PortalLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const NAV_ITEMS = isAdmin ? ADMIN_NAV_ITEMS : isDesigner ? DESIGNER_NAV_ITEMS : DEALER_NAV_ITEMS;
+  const showPricing = dealerEmail === 'ben.miller24@gmail.com' || isAdmin;
+  const NAV_ITEMS = isAdmin
+    ? [ADMIN_NAV_ITEMS[0], ...(showPricing ? [PRICING_NAV_ITEM] : []), ...ADMIN_NAV_ITEMS.slice(1)]
+    : isDesigner
+    ? [DESIGNER_NAV_ITEMS[0], ...(showPricing ? [PRICING_NAV_ITEM] : []), ...DESIGNER_NAV_ITEMS.slice(1)]
+    : [DEALER_NAV_ITEMS[0], ...(showPricing ? [PRICING_NAV_ITEM] : []), ...DEALER_NAV_ITEMS.slice(1)];
 
   return (
     <div style={{

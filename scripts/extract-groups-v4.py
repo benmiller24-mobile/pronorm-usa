@@ -111,6 +111,24 @@ def get_page_groups(pdf_path, page_num):
             prev_y_max = max(w[3] for w in lines_by_y[prev_y])
             gap = line_y_min - prev_y_max
 
+        # Extract SKU suffix (number part after width) for continuation detection
+        # e.g. "U 80-76-01" → suffix "76-01"
+        line_sku_suffix = None
+        sku_match = SKU_RE.search(clean_text)
+        if sku_match:
+            num = sku_match.group(2)  # e.g. "80-76-01"
+            num_parts = num.split('-')
+            if len(num_parts) >= 3:
+                line_sku_suffix = '-'.join(num_parts[1:])  # e.g. "76-01"
+
+        # Get current group's SKU suffix for comparison
+        current_suffix = None
+        if current_group and current_group['skus']:
+            first_num = current_group['skus'][0].split(' ')[-1]  # e.g. "27-76-01"
+            first_parts = first_num.split('-')
+            if len(first_parts) >= 3:
+                current_suffix = '-'.join(first_parts[1:])  # e.g. "76-01"
+
         # Decide whether to start a new group
         start_new = False
         if current_group is None:
@@ -118,11 +136,18 @@ def get_page_groups(pdf_path, page_num):
                 start_new = True
         else:
             # Start new group on description keyword (new product type)
+            # BUT only if the SKU suffix differs (same suffix = continuation of same product)
             if is_desc and current_group['skus']:
-                start_new = True
-            # Start new group on gap >15pt
+                if line_sku_suffix and current_suffix and line_sku_suffix == current_suffix:
+                    pass  # Same product, don't split (continuation rows)
+                else:
+                    start_new = True
+            # Start new group on gap >15pt (only if suffix differs)
             elif gap > 15 and current_group['skus']:
-                start_new = True
+                if line_sku_suffix and current_suffix and line_sku_suffix == current_suffix:
+                    pass  # Same product continuation after gap
+                else:
+                    start_new = True
 
         if start_new:
             # Finalise previous group

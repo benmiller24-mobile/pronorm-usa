@@ -38,30 +38,6 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
 
   const productLines = Object.keys(catalogData).sort();
 
-  // Build a global image → all catalog items lookup so that when we display
-  // a product group image, we can show ALL SKUs from that image regardless
-  // of the current height filter.
-  const imageToAllItems = useMemo(() => {
-    const map: Record<string, Array<CatalogItem & { _line: string; _cat: string; _height: string }>> = {};
-    for (const [line, categories] of Object.entries(catalogData)) {
-      for (const [cat, heights] of Object.entries(categories)) {
-        for (const [height, items] of Object.entries(heights)) {
-          for (const item of items) {
-            if (item.img) {
-              if (!map[item.img]) map[item.img] = [];
-              map[item.img].push({ ...item, _line: line, _cat: cat, _height: height });
-            }
-          }
-        }
-      }
-    }
-    // Sort items within each image group by SKU
-    for (const key of Object.keys(map)) {
-      map[key].sort((a, b) => a.s.localeCompare(b.s));
-    }
-    return map;
-  }, [catalogData]);
-
   const getCategories = (line: string) => {
     return Object.keys(catalogData[line] || {}).sort();
   };
@@ -74,7 +50,7 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
     return catalogData[line]?.[category]?.[height] || [];
   };
 
-  const handleAddClick = (item: any, line: string, category: string, height: string) => {
+  const handleAddClick = (item: CatalogItem, line: string, category: string, height: string) => {
     setSelectedItem({ ...item, productLine: line, category, height });
     setModalOpen(true);
   };
@@ -231,8 +207,7 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
         {selectedLine && selectedCategory && selectedHeight ? (
           <PriceBookView
             items={getItems(selectedLine, selectedCategory, selectedHeight)}
-            imageToAllItems={imageToAllItems}
-            onAddClick={(item, line, cat, height) => handleAddClick(item, line, cat, height)}
+            onAddClick={(item) => handleAddClick(item, selectedLine, selectedCategory, selectedHeight)}
             category={selectedCategory}
             height={selectedHeight}
             line={selectedLine}
@@ -312,37 +287,37 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
 
 
 /**
- * Groups SKU items by their shared image (product group from price book).
- * For each image, displays ALL catalog SKUs mapped to that image (across
- * all heights/widths), so every SKU visible in the image has a button.
+ * Groups items by shared image and shows price book sections with
+ * only the items from the current filtered view as Add buttons.
  */
-function PriceBookView({ items, imageToAllItems, onAddClick, category, height, line, onZoomImage }: {
+function PriceBookView({ items, onAddClick, category, height, line, onZoomImage }: {
   items: any[];
-  imageToAllItems: Record<string, any[]>;
-  onAddClick: (item: any, line: string, cat: string, height: string) => void;
+  onAddClick: (item: any) => void;
   category: string;
   height: string;
   line: string;
   onZoomImage: (img: string) => void;
 }) {
-  // Collect unique images from the filtered items, maintaining order
+  // Group items by their image
   const groups = useMemo(() => {
-    const seenImages = new Set<string>();
-    const imageOrder: string[] = [];
+    const byImage: Record<string, any[]> = {};
     const noImage: any[] = [];
 
     for (const item of items) {
       if (item.img) {
-        if (!seenImages.has(item.img)) {
-          seenImages.add(item.img);
-          imageOrder.push(item.img);
-        }
+        if (!byImage[item.img]) byImage[item.img] = [];
+        byImage[item.img].push(item);
       } else {
         noImage.push(item);
       }
     }
 
-    return { imageOrder, noImage };
+    // Sort groups by first SKU
+    const sorted = Object.entries(byImage).sort(([, a], [, b]) =>
+      a[0].s.localeCompare(b[0].s)
+    );
+
+    return { sorted, noImage };
   }, [items]);
 
   if (items.length === 0) {
@@ -377,19 +352,15 @@ function PriceBookView({ items, imageToAllItems, onAddClick, category, height, l
 
       {/* Product groups as price book sections */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {groups.imageOrder.map((imgSrc) => {
-          // Get ALL items that share this image (across all heights/categories)
-          const allItemsForImage = imageToAllItems[imgSrc] || [];
-          return (
-            <ProductGroupCard
-              key={imgSrc}
-              imgSrc={imgSrc}
-              items={allItemsForImage}
-              onAddClick={onAddClick}
-              onZoomImage={onZoomImage}
-            />
-          );
-        })}
+        {groups.sorted.map(([imgSrc, groupItems]) => (
+          <ProductGroupCard
+            key={imgSrc}
+            imgSrc={imgSrc}
+            items={groupItems}
+            onAddClick={onAddClick}
+            onZoomImage={onZoomImage}
+          />
+        ))}
 
         {/* Items without images */}
         {groups.noImage.length > 0 && (
@@ -414,7 +385,7 @@ function PriceBookView({ items, imageToAllItems, onAddClick, category, height, l
                 <CompactSKURow
                   key={item.s}
                   item={item}
-                  onAddClick={() => onAddClick(item, line, category, height)}
+                  onAddClick={() => onAddClick(item)}
                 />
               ))}
             </div>
@@ -429,7 +400,7 @@ function PriceBookView({ items, imageToAllItems, onAddClick, category, height, l
 function ProductGroupCard({ imgSrc, items, onAddClick, onZoomImage }: {
   imgSrc: string;
   items: any[];
-  onAddClick: (item: any, line: string, cat: string, height: string) => void;
+  onAddClick: (item: any) => void;
   onZoomImage: (img: string) => void;
 }) {
   return (
@@ -474,7 +445,7 @@ function ProductGroupCard({ imgSrc, items, onAddClick, onZoomImage }: {
         </div>
       </div>
 
-      {/* SKU action buttons — ALL SKUs for this image */}
+      {/* SKU action buttons */}
       <div style={{
         padding: '0.75rem 1rem',
         background: '#f7f4f0',
@@ -486,7 +457,7 @@ function ProductGroupCard({ imgSrc, items, onAddClick, onZoomImage }: {
           letterSpacing: '0.04em',
           marginBottom: '0.5rem',
         }}>
-          Add to order ({items.length} SKU{items.length !== 1 ? 's' : ''}):
+          Add to order:
         </div>
         <div style={{
           display: 'flex',
@@ -497,7 +468,7 @@ function ProductGroupCard({ imgSrc, items, onAddClick, onZoomImage }: {
           {items.map((item) => (
             <button
               key={item.s}
-              onClick={() => onAddClick(item, item._line, item._cat, item._height)}
+              onClick={() => onAddClick(item)}
               title={`${item.s}${item.d ? ' — ' + item.d : ''} (${item.w}cm${item.dr ? ', ' + item.dr : ''})`}
               style={{
                 padding: '0.35rem 0.6rem',

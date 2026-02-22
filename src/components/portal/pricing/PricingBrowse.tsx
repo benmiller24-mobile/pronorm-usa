@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import type { OrderLineItem } from '../PricingTool';
+import type { SelectedConstruction } from './SpecialConstructionsModal';
 import AddToOrderModal from './AddToOrderModal';
 
 interface CatalogItem {
@@ -25,9 +26,10 @@ interface CatalogData {
 interface PricingBrowseProps {
   catalogData: CatalogData;
   onAddToOrder: (item: OrderLineItem) => void;
+  specialConstructionsData?: any;
 }
 
-export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrowseProps) {
+export default function PricingBrowse({ catalogData, onAddToOrder, specialConstructionsData }: PricingBrowseProps) {
   const [selectedLine, setSelectedLine] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedHeight, setSelectedHeight] = useState<string | null>(null);
@@ -73,11 +75,24 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
     setModalOpen(true);
   };
 
-  const handleConfirmAdd = (quantity: number, priceGroup: number) => {
+  const handleConfirmAdd = (quantity: number, priceGroup: number, specialConstructions?: SelectedConstruction[]) => {
     if (!selectedItem) return;
+
+    // Build description combining base + special constructions
+    let description = selectedItem.d;
+    if (specialConstructions && specialConstructions.length > 0) {
+      const scParts = specialConstructions.map((sc) => {
+        if (sc.inputValue) {
+          return `${sc.description} to ${sc.inputValue} (${sc.sku})`;
+        }
+        return `${sc.description} (${sc.sku})`;
+      });
+      description = description ? `${description} + ${scParts.join(', ')}` : scParts.join(', ');
+    }
+
     onAddToOrder({
       sku: selectedItem.s,
-      description: selectedItem.d,
+      description,
       width: selectedItem.w,
       doorOrientation: selectedItem.dr || 'N/A',
       priceGroup,
@@ -86,6 +101,7 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
       productLine: selectedItem.productLine,
       category: selectedItem.category,
       height: parseInt(selectedItem.height),
+      specialConstructions,
     });
     setModalOpen(false);
     setSelectedItem(null);
@@ -254,6 +270,13 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
             setModalOpen(false);
             setSelectedItem(null);
           }}
+          specialConstructions={
+            selectedItem.productLine === 'proline' &&
+            selectedItem.category === 'Base units' &&
+            specialConstructionsData?.proline?.['Base units']
+              ? specialConstructionsData.proline['Base units']
+              : undefined
+          }
         />
       )}
 

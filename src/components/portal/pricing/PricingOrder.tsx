@@ -24,7 +24,14 @@ export default function PricingOrder({
     return `€${price.toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
   };
 
-  const subtotal = items.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+  const getItemTotal = (item: OrderLineItem) => {
+    const scTotal = item.specialConstructions
+      ? item.specialConstructions.reduce((sum, sc) => sum + sc.price, 0)
+      : 0;
+    return (item.unitPrice + scTotal) * item.quantity;
+  };
+
+  const subtotal = items.reduce((sum, item) => sum + getItemTotal(item), 0);
   const discountAmount = subtotal * (discount / 100);
   const discountedTotal = subtotal - discountAmount;
   const grandTotal = discountedTotal + freight;
@@ -137,6 +144,27 @@ export default function PricingOrder({
                   <div style={{ fontSize: '0.7rem', color: '#8a8279' }}>
                     {item.productLine} / {item.category}
                   </div>
+                  {item.specialConstructions && item.specialConstructions.length > 0 && (
+                    <div style={{ marginTop: '0.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                      {item.specialConstructions.map((sc) => (
+                        <span
+                          key={sc.sku}
+                          style={{
+                            display: 'inline-block',
+                            background: '#fef9f0',
+                            border: '1px solid #e8e0d8',
+                            padding: '0.1rem 0.4rem',
+                            borderRadius: '8px',
+                            fontSize: '0.65rem',
+                            color: '#b87333',
+                            fontWeight: 500,
+                          }}
+                        >
+                          {sc.sku} +{formatPrice(sc.price)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </td>
                 <td style={{ padding: '0.75rem', textAlign: 'center', color: '#2d2d2d' }}>
                   {item.width}mm
@@ -145,7 +173,7 @@ export default function PricingOrder({
                   {item.priceGroup}
                 </td>
                 <td style={{ padding: '0.75rem', textAlign: 'right', color: '#2d2d2d' }}>
-                  {formatPrice(item.unitPrice)}
+                  {formatPrice(item.unitPrice + (item.specialConstructions ? item.specialConstructions.reduce((s, sc) => s + sc.price, 0) : 0))}
                 </td>
                 <td style={{ padding: '0.75rem', textAlign: 'center' }}>
                   <input
@@ -165,7 +193,7 @@ export default function PricingOrder({
                   />
                 </td>
                 <td style={{ padding: '0.75rem', textAlign: 'right', color: '#b87333', fontWeight: 600 }}>
-                  {formatPrice(item.unitPrice * item.quantity)}
+                  {formatPrice(getItemTotal(item))}
                 </td>
                 <td style={{ padding: '0.75rem', textAlign: 'center' }}>
                   <button

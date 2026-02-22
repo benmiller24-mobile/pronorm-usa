@@ -39,6 +39,13 @@ interface SearchItem {
   dr: string | null;
 }
 
+export interface SpecialConstructionSelection {
+  sku: string;
+  description: string;
+  price: number;
+  inputValue?: string;
+}
+
 export interface OrderLineItem {
   sku: string;
   description: string;
@@ -50,6 +57,7 @@ export interface OrderLineItem {
   productLine: string;
   category: string;
   height: number;
+  specialConstructions?: SpecialConstructionSelection[];
 }
 
 export default function PricingTool({ dealer, onNavigate }: PricingToolProps) {
@@ -61,8 +69,9 @@ export default function PricingTool({ dealer, onNavigate }: PricingToolProps) {
   const [orderItems, setOrderItems] = useState<OrderLineItem[]>([]);
   const [discount, setDiscount] = useState(0);
   const [freight, setFreight] = useState(0);
+  const [specialConstructionsData, setSpecialConstructionsData] = useState<any>(null);
 
-  // Load catalog on mount
+  // Load catalog and special constructions on mount
   useEffect(() => {
     async function loadCatalog() {
       try {
@@ -75,7 +84,17 @@ export default function PricingTool({ dealer, onNavigate }: PricingToolProps) {
         setCatalogLoading(false);
       }
     }
+    async function loadSpecialConstructions() {
+      try {
+        const response = await fetch('/data/special-constructions.json');
+        const data = await response.json();
+        setSpecialConstructionsData(data);
+      } catch (error) {
+        console.error('Failed to load special constructions:', error);
+      }
+    }
     loadCatalog();
+    loadSpecialConstructions();
   }, []);
 
   // Load search data lazily when search tab is opened
@@ -193,6 +212,7 @@ export default function PricingTool({ dealer, onNavigate }: PricingToolProps) {
             <PricingBrowse
               catalogData={catalogData}
               onAddToOrder={addToOrder}
+              specialConstructionsData={specialConstructionsData}
             />
           ) : (
             <div style={{ padding: '2rem', textAlign: 'center', color: '#d9534f' }}>

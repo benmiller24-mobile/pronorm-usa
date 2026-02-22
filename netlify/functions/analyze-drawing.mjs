@@ -44,11 +44,14 @@ export default async (req, context) => {
     }
 
     if (!anthropicKey) {
-      return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured' }), {
+      return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured. Add it in Netlify dashboard → Site settings → Environment variables.' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // Trim any whitespace that may have been pasted with the key
+    const cleanKey = anthropicKey.trim();
 
     // 2. Parse request
     const body = await req.json();
@@ -230,7 +233,7 @@ IMPORTANT:
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
+        'x-api-key': cleanKey,
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
@@ -249,7 +252,15 @@ IMPORTANT:
     if (!claudeResponse.ok) {
       const errBody = await claudeResponse.text();
       console.error('Claude API error:', claudeResponse.status, errBody);
-      return new Response(JSON.stringify({ error: `Claude API error: ${claudeResponse.status}` }), {
+      const keyPrefix = cleanKey.slice(0, 10) + '...';
+      return new Response(JSON.stringify({
+        error: `Claude API error: ${claudeResponse.status}`,
+        detail: errBody.slice(0, 500),
+        keyPrefix,
+        hint: claudeResponse.status === 401
+          ? 'The API key was rejected. Check: (1) no extra whitespace in Netlify env var, (2) key starts with "sk-ant-", (3) key is active at console.anthropic.com'
+          : undefined,
+      }), {
         status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

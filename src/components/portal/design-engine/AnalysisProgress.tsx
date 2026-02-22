@@ -125,8 +125,14 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
       clearTimeout(phaseTimer2);
 
       if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Analysis failed (${response.status}): ${errText}`);
+        let errMsg = `Analysis failed (${response.status})`;
+        try {
+          const errJson = await response.json();
+          errMsg = errJson.hint || errJson.detail || errJson.error || errMsg;
+        } catch {
+          errMsg += ': ' + (await response.text()).slice(0, 300);
+        }
+        throw new Error(errMsg);
       }
 
       const aiAnalysis: AIAnalysis = await response.json();

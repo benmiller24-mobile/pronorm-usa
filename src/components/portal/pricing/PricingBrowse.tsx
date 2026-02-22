@@ -10,6 +10,7 @@ interface CatalogItem {
   pt: 'price_group' | 'material';
   p: Record<string, number>;
   pg: number;
+  seq?: number;
   img?: string;
 }
 
@@ -41,30 +42,30 @@ export default function PricingBrowse({ catalogData, onAddToOrder }: PricingBrow
 
   const getCategories = (line: string) => {
     const cats = Object.keys(catalogData[line] || {});
-    // Sort categories by the minimum page number of their items (PDF sequence)
+    // Sort categories by minimum sequence number (exact PDF order)
     return cats.sort((a, b) => {
-      const minPgA = Math.min(...Object.values(catalogData[line]?.[a] || {}).flatMap((items: any) => (items as CatalogItem[]).map((i: CatalogItem) => i.pg || 9999)));
-      const minPgB = Math.min(...Object.values(catalogData[line]?.[b] || {}).flatMap((items: any) => (items as CatalogItem[]).map((i: CatalogItem) => i.pg || 9999)));
-      return minPgA - minPgB;
+      const minSeqA = Math.min(...Object.values(catalogData[line]?.[a] || {}).flatMap((items: any) => (items as CatalogItem[]).map((i: CatalogItem) => i.seq ?? i.pg ?? 9999)));
+      const minSeqB = Math.min(...Object.values(catalogData[line]?.[b] || {}).flatMap((items: any) => (items as CatalogItem[]).map((i: CatalogItem) => i.seq ?? i.pg ?? 9999)));
+      return minSeqA - minSeqB;
     });
   };
 
   const getHeights = (line: string, category: string) => {
     const heights = Object.keys(catalogData[line]?.[category] || {});
-    // Sort by minimum page number within each height group (PDF sequence)
+    // Sort by minimum sequence number within each height group (exact PDF order)
     return heights.sort((a, b) => {
       const itemsA = catalogData[line]?.[category]?.[a] || [];
       const itemsB = catalogData[line]?.[category]?.[b] || [];
-      const minPgA = Math.min(...itemsA.map((i: CatalogItem) => i.pg || 9999));
-      const minPgB = Math.min(...itemsB.map((i: CatalogItem) => i.pg || 9999));
-      return minPgA - minPgB;
+      const minSeqA = Math.min(...itemsA.map((i: CatalogItem) => i.seq ?? i.pg ?? 9999));
+      const minSeqB = Math.min(...itemsB.map((i: CatalogItem) => i.seq ?? i.pg ?? 9999));
+      return minSeqA - minSeqB;
     });
   };
 
   const getItems = (line: string, category: string, height: string) => {
     const items = catalogData[line]?.[category]?.[height] || [];
-    // Sort items by page number (PDF sequence)
-    return [...items].sort((a: CatalogItem, b: CatalogItem) => (a.pg || 9999) - (b.pg || 9999));
+    // Sort items by sequence number (exact PDF order)
+    return [...items].sort((a: CatalogItem, b: CatalogItem) => (a.seq ?? a.pg ?? 9999) - (b.seq ?? b.pg ?? 9999));
   };
 
   const handleAddClick = (item: CatalogItem, line: string, category: string, height: string) => {
@@ -329,9 +330,9 @@ function PriceBookView({ items, onAddClick, category, height, line, onZoomImage 
       }
     }
 
-    // Sort groups by first SKU
+    // Sort groups by sequence number (PDF order)
     const sorted = Object.entries(byImage).sort(([, a], [, b]) =>
-      a[0].s.localeCompare(b[0].s)
+      (a[0].seq ?? a[0].pg ?? 9999) - (b[0].seq ?? b[0].pg ?? 9999)
     );
 
     return { sorted, noImage };

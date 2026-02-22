@@ -466,11 +466,8 @@ function ProductGroupCard({ imgSrc, items, onAddClick, onZoomImage }: {
           alt={items[0]?.s || 'Product group'}
           style={{
             display: 'block',
-            maxWidth: '100%',
-            maxHeight: '280px',
-            width: 'auto',
+            width: '100%',
             height: 'auto',
-            margin: '0 auto',
           }}
           loading="lazy"
         />

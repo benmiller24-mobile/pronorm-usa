@@ -169,12 +169,14 @@ CABINET ROWS — Identify each horizontal row separately:
     - U...-90 suffix = waste bin pull-out
     - U...-34 suffix = multi-drawer pull-out
     - U...-38 suffix = pull-out unit with internal drawer
-  * UPPER/WALL ROW (mounted above countertop, typically 51cm or 64cm tall): Wall-hung cabinets above the worktop.
-    - O = wall unit with door(s)
-    - OR = wall unit with flap/lift-up door(s), often glass-fronted
-    - OG = glass-door wall unit
+  * UPPER/WALL ROW (mounted above countertop): Wall-hung cabinets above the worktop.
+    - O = wall unit with door(s), typically 51cm or 76cm tall
+    - OR = open wall shelf OR wall unit with flap/lift-up door(s). Open shelves are often 38cm tall.
+    - OG = wall unit for extractor/rangehood, typically 76cm tall, sits above hob
+    - Glass-door wall units also use OR prefix with -601 variant suffix
   * TALL UNITS (floor to near ceiling, ~207-227cm tall): Full-height cabinets spanning from floor to top.
     - HP = larder/pantry with internal pull-outs (most common tall unit)
+    - HGP = larder with pull-outs (similar to HP)
     - HSP = tall housing for fridge/freezer (has appliance niche)
     - HS = tall housing for oven/appliance
     - HG = larder with shelves (no pull-outs)
@@ -190,17 +192,18 @@ CRITICAL LAYOUT RULES:
 
 DIMENSIONS — All in CENTIMETERS:
 Valid base/drawer widths: 15, 20, 27, 30, 40, 45, 50, 55, 60, 75, 80, 90, 100, 120
+Valid corner base widths: 80, 90, 100, 125 (corner units are wider due to L-shape)
 Valid wall unit widths:   20, 25, 27, 30, 35, 40, 45, 50, 55, 60, 65, 75, 80, 90, 100, 120
 Valid tall unit widths:   27, 30, 45, 55, 60, 75, 76, 80, 90, 120
 Common base height: ${intake.baseUnitHeight || 76}cm (768mm)
-Common wall unit heights: 51cm (510mm), 64cm (640mm), 72cm (720mm), 90cm (900mm)
+Common wall unit heights: 38cm (open shelf), 51cm (standard), 64cm (glass flap), 72cm, 76cm (extractor), 90cm
 Common tall heights: 207cm (2070mm), 221cm (2210mm), 227cm (2270mm)
 
-MOST COMMON WIDTHS (in order of frequency): 60, 100, 90, 50, 75, 80, 120, 45, 30
+MOST COMMON WIDTHS (in order of frequency): 60, 100, 90, 50, 55, 75, 80, 120, 45, 30
 If a dimension annotation says 600 → width is 60cm. If it says 900 → 90cm. If it says 1000 → 100cm.
 
 SKU FORMAT: PREFIX + WIDTH - HEIGHT - VARIANT
-Examples: U 60-76-01, US 100-76-01, HP 60-227-09, HSP 76-227-065, O 60-51-01, OR 120-64-601, UG 100-76-31
+Examples: U 60-76-01, US 100-76-01, UG 100-76-31, UE 125-76-02, DT 60-76-14, O 60-51-01, OR 90-38, OG 100-76-01, HP 60-227-09, HGP 60-227-601, HSP 76-227-065
 
 DOOR ORIENTATION:
 - "L" = left-hinged (opens to the left)
@@ -238,9 +241,11 @@ CRITICAL RULES:
 - Every width MUST be a valid ProLine width. If an annotation shows e.g. 575mm, round to nearest valid: 60cm.
 - For each row (base, upper, tall), the widths should sum to approximately the wall length (within 5-20cm for fillers).
 - Tall units replace both base AND upper in their section of the wall. Do NOT double-count.
-- Use these "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, tall_unit, appliance_housing, fridge_housing, larder, hob_base, pull_out_unit, waste_bin_unit.
-- UG prefix = hob/cooktop base. HP prefix = larder with pull-outs. HSP = fridge housing.
-- DT prefix = front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13).`;
+- Use these "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, open_shelf, extractor_unit, tall_unit, appliance_housing, fridge_housing, larder, hob_base, pull_out_unit, waste_bin_unit.
+- UG prefix = hob/cooktop base. HP/HGP prefix = larder with pull-outs. HSP = fridge housing.
+- DT prefix = front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13).
+- OG prefix = extractor/rangehood housing (wall unit above hob). OR can be open shelf (38cm tall) or flap door.
+- UE prefix = corner base unit, often 125cm with offset specification.`;
 
     // Build image blocks
     const contentBlocks = [];

@@ -44,13 +44,12 @@ export default async (req, context) => {
     }
 
     if (!anthropicKey) {
-      return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured. Add it in Netlify dashboard → Site settings → Environment variables.' }), {
+      return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured.' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Trim any whitespace that may have been pasted with the key
     const cleanKey = anthropicKey.trim();
 
     // 2. Parse request
@@ -72,12 +71,7 @@ export default async (req, context) => {
         const buffer = await resp.arrayBuffer();
         const base64 = Buffer.from(buffer).toString('base64');
         const mimeType = resp.headers.get('content-type') || 'image/jpeg';
-        imageContents.push({
-          base64,
-          mimeType,
-          category: imgInfo.category,
-          wallLabel: imgInfo.wallLabel,
-        });
+        imageContents.push({ base64, mimeType, category: imgInfo.category, wallLabel: imgInfo.wallLabel });
       } catch (e) {
         console.error(`Failed to fetch image: ${imgInfo.url}`, e);
       }
@@ -111,20 +105,11 @@ CRITICAL RULES:
 - Base unit heights: ${intake.baseUnitHeight || 76}cm (${intake.baseUnitHeight === 85 ? '852mm' : '768mm'})
 
 SKU PREFIX GUIDE:
-- U = Standard base unit
-- US = Sink base unit
-- UE = Corner base unit
-- UG = Base with internal fittings
-- DT = Worktop/drawer base unit
-- O = Standard wall unit
-- OR = Wall unit with flap door
-- OG = Wall with internal fittings
-- H = Standard tall unit
-- HS = Tall appliance housing
-- HSP = Tall fridge/freezer housing
-- HG = Tall larder unit
-- HGP = Tall larder with pull-outs
-- AH = Appliance housing unit
+- U = Standard base unit, US = Sink base, UE = Corner base, UG = Base with fittings
+- DT = Worktop/drawer base
+- O = Standard wall unit, OR = Wall flap door, OG = Wall with fittings
+- H = Standard tall, HS = Tall appliance housing, HSP = Tall fridge/freezer
+- HG = Tall larder, HGP = Tall larder pull-outs, AH = Appliance housing
 
 SKU FORMAT: PREFIX WIDTH-HEIGHT-VARIANT (e.g., U 60-76-01, HS 60-195-527)
 
@@ -132,20 +117,16 @@ You MUST output valid JSON only. No markdown, no explanation outside the JSON.`;
 
     const userMessage = `Analyze these kitchen drawings and identify every cabinet position.
 
-ROOM INFORMATION:
-- Room: ${intake.roomWidth}cm × ${intake.roomDepth}cm, ceiling ${intake.ceilingHeight}cm
-- Product line: ProLine
-- Base unit height code: ${intake.baseUnitHeight}cm
+ROOM: ${intake.roomWidth}cm x ${intake.roomDepth}cm, ceiling ${intake.ceilingHeight}cm
+Base unit height: ${intake.baseUnitHeight}cm
 
-WALL DEFINITIONS:
+WALLS:
 ${wallSummary}
+${intake.notes ? `NOTES: ${intake.notes}` : ''}
 
-${intake.notes ? `DESIGNER NOTES: ${intake.notes}` : ''}
+CATALOG WIDTHS: ${JSON.stringify(catalogSummary?.categories || {}, null, 0).slice(0, 6000)}
 
-CATALOG REFERENCE (ProLine available widths and SKU prefixes):
-${JSON.stringify(catalogSummary?.categories || {}, null, 0).slice(0, 8000)}
-
-For each wall, identify every cabinet position and output this EXACT JSON structure:
+Output this EXACT JSON:
 {
   "walls": [
     {
@@ -160,75 +141,39 @@ For each wall, identify every cabinet position and output this EXACT JSON struct
           "height_cm": 195,
           "x_cm": 0,
           "doorOrientation": "R",
-          "features": ["appliance housing", "oven"],
+          "features": ["appliance housing"],
           "confidence": 0.85,
-          "reasoning": "Tall unit at left edge, appears to house an oven"
+          "reasoning": "Tall unit at left edge"
         }
       ],
-      "dimensionCheck": {
-        "totalCabinets_cm": 340,
-        "wallLength_cm": 340,
-        "gap_cm": 0,
-        "valid": true
-      }
+      "dimensionCheck": { "totalCabinets_cm": 340, "wallLength_cm": 340, "gap_cm": 0, "valid": true }
     }
   ],
-  "notes": ["Wall B appears to have no cabinets - just a doorway"],
-  "warnings": ["Could not clearly see Wall C elevation - using floor plan only"]
+  "notes": [],
+  "warnings": []
 }
 
-IMPORTANT:
-- Every cabinet width MUST be a valid ProLine width from the list above
-- Cabinet widths on each wall should approximately sum to the wall length
-- If there's a gap, note it in the dimensionCheck
-- Be specific about door orientation (L, R, LR, or none for drawers)
-- Set confidence 0-1 based on how clear the drawing is for that position
-- Include reasoning for each position to help the designer verify`;
+RULES:
+- Every width MUST be a valid ProLine width
+- Widths on each wall should sum to ~wall length
+- Set confidence 0-1 based on drawing clarity
+- Include reasoning for each position`;
 
-    // Build image content blocks for Claude
+    // Build image content blocks
     const contentBlocks = [];
-
-    // Add floor plan first
     const floorplan = imageContents.find(i => i.category === 'floorplan');
     if (floorplan) {
-      contentBlocks.push({
-        type: 'text',
-        text: 'FLOOR PLAN:',
-      });
-      contentBlocks.push({
-        type: 'image',
-        source: {
-          type: 'base64',
-          media_type: floorplan.mimeType,
-          data: floorplan.base64,
-        },
-      });
+      contentBlocks.push({ type: 'text', text: 'FLOOR PLAN:' });
+      contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: floorplan.mimeType, data: floorplan.base64 } });
     }
-
-    // Add elevation images
     const elevations = imageContents.filter(i => i.category === 'elevation');
     for (const elev of elevations) {
-      contentBlocks.push({
-        type: 'text',
-        text: `ELEVATION - Wall ${elev.wallLabel}:`,
-      });
-      contentBlocks.push({
-        type: 'image',
-        source: {
-          type: 'base64',
-          media_type: elev.mimeType,
-          data: elev.base64,
-        },
-      });
+      contentBlocks.push({ type: 'text', text: `ELEVATION - Wall ${elev.wallLabel}:` });
+      contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: elev.mimeType, data: elev.base64 } });
     }
+    contentBlocks.push({ type: 'text', text: userMessage });
 
-    // Add the text prompt after images
-    contentBlocks.push({
-      type: 'text',
-      text: userMessage,
-    });
-
-    // 5. Call Claude Vision API
+    // 5. Call Claude Vision API with STREAMING to avoid inactivity timeout
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -239,99 +184,149 @@ IMPORTANT:
       body: JSON.stringify({
         model: 'claude-sonnet-4-5-20250929',
         max_tokens: 8000,
+        stream: true,
         system: systemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: contentBlocks,
-          },
-        ],
+        messages: [{ role: 'user', content: contentBlocks }],
       }),
     });
 
     if (!claudeResponse.ok) {
       const errBody = await claudeResponse.text();
       console.error('Claude API error:', claudeResponse.status, errBody);
-      const keyPrefix = cleanKey.slice(0, 10) + '...';
       return new Response(JSON.stringify({
         error: `Claude API error: ${claudeResponse.status}`,
         detail: errBody.slice(0, 500),
-        keyPrefix,
-        hint: claudeResponse.status === 401
-          ? 'The API key was rejected. Check: (1) no extra whitespace in Netlify env var, (2) key starts with "sk-ant-", (3) key is active at console.anthropic.com'
-          : undefined,
+        keyPrefix: cleanKey.slice(0, 10) + '...',
       }), {
         status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const claudeResult = await claudeResponse.json();
-    const textContent = claudeResult.content?.find(c => c.type === 'text');
-    if (!textContent) {
-      return new Response(JSON.stringify({ error: 'No text response from Claude' }), {
-        status: 502,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    // 6. Stream the response — collect text and forward SSE events to keep connection alive
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          let fullText = '';
+          const reader = claudeResponse.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
 
-    // 6. Parse the JSON response
-    let analysis;
-    try {
-      // Claude might wrap in markdown code blocks
-      let jsonStr = textContent.text.trim();
-      if (jsonStr.startsWith('```')) {
-        jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
-      }
-      analysis = JSON.parse(jsonStr);
-    } catch (parseErr) {
-      console.error('Failed to parse Claude response:', textContent.text.slice(0, 500));
-      return new Response(JSON.stringify({
-        error: 'Failed to parse AI response',
-        rawResponse: textContent.text.slice(0, 2000),
-      }), {
-        status: 502,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-    // 7. Ensure required structure
-    if (!analysis.walls) analysis.walls = [];
-    if (!analysis.notes) analysis.notes = [];
-    if (!analysis.warnings) analysis.warnings = [];
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
 
-    // Normalize field names (camelCase)
-    for (const wall of analysis.walls) {
-      if (wall.dimension_check && !wall.dimensionCheck) {
-        wall.dimensionCheck = wall.dimension_check;
-        delete wall.dimension_check;
-      }
-      if (!wall.dimensionCheck) {
-        const total = (wall.positions || []).reduce((s, p) => s + (p.width_cm || 0), 0);
-        wall.dimensionCheck = {
-          totalCabinets_cm: total,
-          wallLength_cm: wall.length_cm || 0,
-          gap_cm: (wall.length_cm || 0) - total,
-          valid: Math.abs((wall.length_cm || 0) - total) <= 10,
-        };
-      }
-      for (const pos of wall.positions || []) {
-        if (pos.sku_suggestion && !pos.skuSuggestion) {
-          pos.skuSuggestion = pos.sku_suggestion;
-          delete pos.sku_suggestion;
+            for (const line of lines) {
+              if (!line.startsWith('data: ')) continue;
+              const data = line.slice(6).trim();
+              if (data === '[DONE]') continue;
+
+              try {
+                const event = JSON.parse(data);
+
+                // Extract text deltas
+                if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+                  fullText += event.delta.text;
+                  // Send a keepalive progress event to the client
+                  controller.enqueue(encoder.encode(`data: {"type":"progress","chars":${fullText.length}}\n\n`));
+                }
+
+                // Message complete
+                if (event.type === 'message_stop') {
+                  // Parse and normalize the result
+                  let jsonStr = fullText.trim();
+                  if (jsonStr.startsWith('```')) {
+                    jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+                  }
+
+                  let analysis;
+                  try {
+                    analysis = JSON.parse(jsonStr);
+                  } catch (parseErr) {
+                    controller.enqueue(encoder.encode(`data: {"type":"error","error":"Failed to parse AI response","raw":${JSON.stringify(jsonStr.slice(0, 1000))}}\n\n`));
+                    controller.close();
+                    return;
+                  }
+
+                  // Normalize structure
+                  if (!analysis.walls) analysis.walls = [];
+                  if (!analysis.notes) analysis.notes = [];
+                  if (!analysis.warnings) analysis.warnings = [];
+
+                  for (const wall of analysis.walls) {
+                    if (wall.dimension_check && !wall.dimensionCheck) {
+                      wall.dimensionCheck = wall.dimension_check;
+                      delete wall.dimension_check;
+                    }
+                    if (!wall.dimensionCheck) {
+                      const total = (wall.positions || []).reduce((s, p) => s + (p.width_cm || 0), 0);
+                      wall.dimensionCheck = {
+                        totalCabinets_cm: total,
+                        wallLength_cm: wall.length_cm || 0,
+                        gap_cm: (wall.length_cm || 0) - total,
+                        valid: Math.abs((wall.length_cm || 0) - total) <= 10,
+                      };
+                    }
+                    for (const pos of wall.positions || []) {
+                      if (pos.sku_suggestion && !pos.skuSuggestion) {
+                        pos.skuSuggestion = pos.sku_suggestion;
+                        delete pos.sku_suggestion;
+                      }
+                      if (pos.door_orientation && !pos.doorOrientation) {
+                        pos.doorOrientation = pos.door_orientation;
+                        delete pos.door_orientation;
+                      }
+                      pos.wallLabel = wall.label;
+                    }
+                  }
+
+                  // Send final result
+                  controller.enqueue(encoder.encode(`data: {"type":"result","data":${JSON.stringify(analysis)}}\n\n`));
+                }
+              } catch (e) {
+                // Skip unparseable SSE lines
+              }
+            }
+          }
+
+          // If we got text but no message_stop event, try to parse what we have
+          if (fullText && !fullText.includes('"message_stop"')) {
+            let jsonStr = fullText.trim();
+            if (jsonStr.startsWith('```')) {
+              jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+            }
+            try {
+              const analysis = JSON.parse(jsonStr);
+              if (!analysis.walls) analysis.walls = [];
+              if (!analysis.notes) analysis.notes = [];
+              if (!analysis.warnings) analysis.warnings = [];
+              controller.enqueue(encoder.encode(`data: {"type":"result","data":${JSON.stringify(analysis)}}\n\n`));
+            } catch (e) {
+              controller.enqueue(encoder.encode(`data: {"type":"error","error":"Incomplete response from AI"}\n\n`));
+            }
+          }
+
+          controller.close();
+        } catch (err) {
+          controller.enqueue(encoder.encode(`data: {"type":"error","error":${JSON.stringify(err.message)}}\n\n`));
+          controller.close();
         }
-        if (pos.door_orientation && !pos.doorOrientation) {
-          pos.doorOrientation = pos.door_orientation;
-          delete pos.door_orientation;
-        }
-        // Ensure wallLabel is set on each position
-        pos.wallLabel = wall.label;
-      }
-    }
+      },
+    });
 
-    return new Response(JSON.stringify(analysis), {
+    return new Response(stream, {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
     });
 
   } catch (err) {

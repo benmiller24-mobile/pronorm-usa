@@ -86,10 +86,6 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
-      // Simulate phase progression (the function does all 3 passes internally)
-      const phaseTimer = setTimeout(() => setPhase('pass2'), 8000);
-      const phaseTimer2 = setTimeout(() => setPhase('pass3'), 18000);
-
       const response = await fetch('/.netlify/functions/analyze-drawing', {
         method: 'POST',
         headers: {
@@ -121,9 +117,6 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
         }),
       });
 
-      clearTimeout(phaseTimer);
-      clearTimeout(phaseTimer2);
-
       if (!response.ok) {
         let errMsg = `Analysis failed (${response.status})`;
         try {
@@ -135,7 +128,43 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
         throw new Error(errMsg);
       }
 
-      const aiAnalysis: AIAnalysis = await response.json();
+      // Handle SSE streaming response from the function
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('No response stream');
+
+      const decoder = new TextDecoder();
+      let sseBuffer = '';
+      let aiAnalysis: AIAnalysis | null = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        sseBuffer += decoder.decode(value, { stream: true });
+        const lines = sseBuffer.split('\n');
+        sseBuffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          try {
+            const event = JSON.parse(line.slice(6));
+            if (event.type === 'progress') {
+              // Update phase based on character count to show progress
+              const chars = event.chars || 0;
+              if (chars > 200) setPhase('pass2');
+              if (chars > 1000) setPhase('pass3');
+            } else if (event.type === 'result') {
+              aiAnalysis = event.data as AIAnalysis;
+            } else if (event.type === 'error') {
+              throw new Error(event.error || 'AI analysis failed');
+            }
+          } catch (e: any) {
+            if (e.message && !e.message.includes('JSON')) throw e;
+          }
+        }
+      }
+
+      if (!aiAnalysis) throw new Error('No analysis result received from AI');
 
       // 3. Match positions to SKUs
       setPhase('matching');

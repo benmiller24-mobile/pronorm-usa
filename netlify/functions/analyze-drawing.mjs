@@ -122,13 +122,18 @@ async function processAnalysisJob(jobId, supabase) {
     }
 
     const imageContents = [];
+    const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB max per image — Claude Vision limit is 20MB but smaller is faster
     for (const imgInfo of imageUrls) {
       try {
         const resp = await fetch(imgInfo.url);
         const buffer = await resp.arrayBuffer();
-        const base64 = Buffer.from(buffer).toString('base64');
         const headerType = resp.headers.get('content-type')?.split(';')[0]?.trim();
         if (headerType === 'application/pdf') continue;
+        if (buffer.byteLength > MAX_IMAGE_BYTES) {
+          console.warn(`Image too large (${(buffer.byteLength / 1024 / 1024).toFixed(1)}MB), skipping: ${imgInfo.wallLabel || imgInfo.category}`);
+          continue;
+        }
+        const base64 = Buffer.from(buffer).toString('base64');
         const mimeType = detectMime(imgInfo.url, headerType);
         imageContents.push({ base64, mimeType, category: imgInfo.category, wallLabel: imgInfo.wallLabel });
       } catch (e) {

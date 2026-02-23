@@ -17,8 +17,8 @@ type AnalysisPhase = 'uploading' | 'pass1' | 'pass2' | 'pass3' | 'matching' | 'v
 
 const PHASE_LABELS: Record<AnalysisPhase, string> = {
   uploading: 'Uploading drawings to cloud storage...',
-  pass1: 'AI is analyzing your drawings (this may take 1-3 minutes)...',
-  pass2: 'AI is identifying cabinets and positions...',
+  pass1: 'AI is analyzing your drawings (this typically takes 2-4 minutes)...',
+  pass2: 'AI is identifying cabinets and reading dimensions...',
   pass3: 'Cross-validating dimensions and layout (almost done)...',
   matching: 'Matching cabinet positions to ProLine SKUs...',
   validating: 'Running constraint validation...',
@@ -26,7 +26,55 @@ const PHASE_LABELS: Record<AnalysisPhase, string> = {
 };
 
 const POLL_INTERVAL_MS = 3000;
-const MAX_POLL_TIME_MS = 300000; // 5 minutes — large drawings with many images need more time
+const MAX_POLL_TIME_MS = 480000; // 8 minutes — large drawings with many images need more time
+
+// Claude Vision recommends max 1568px on longest side — larger images get downscaled internally
+// but still cost more tokens and processing time. Resizing client-side saves significant time.
+const MAX_IMAGE_DIMENSION = 1568;
+
+async function resizeImage(file: File): Promise<File> {
+  // Only resize image files
+  if (!file.type.startsWith('image/')) return file;
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const { width, height } = img;
+
+      // Skip if already within bounds
+      if (width <= MAX_IMAGE_DIMENSION && height <= MAX_IMAGE_DIMENSION) {
+        resolve(file);
+        return;
+      }
+
+      // Calculate new dimensions maintaining aspect ratio
+      const scale = MAX_IMAGE_DIMENSION / Math.max(width, height);
+      const newW = Math.round(width * scale);
+      const newH = Math.round(height * scale);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = newW;
+      canvas.height = newH;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, newW, newH);
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+        } else {
+          resolve(file); // fallback to original
+        }
+      }, 'image/jpeg', 0.85);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file); // fallback to original on error
+    };
+    img.src = url;
+  });
+}
 
 export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, onComplete, onError }: AnalysisProgressProps) {
   const [phase, setPhase] = useState<AnalysisPhase>('uploading');
@@ -57,8 +105,8 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
 
       // Update phase based on elapsed time for visual feedback
       const elapsed = Date.now() - startTimeRef.current;
-      if (elapsed > 30000) setPhase('pass2');
-      if (elapsed > 90000) setPhase('pass3');
+      if (elapsed > 45000) setPhase('pass2');
+      if (elapsed > 120000) setPhase('pass3');
 
       const resp = await fetch(`/.netlify/functions/analysis-status?jobId=${jobId}`);
       if (!resp.ok) {
@@ -78,7 +126,7 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
       // data.status === 'processing' — keep polling
     }
 
-    throw new Error('Analysis timed out after 5 minutes. Please try again with fewer or smaller drawings.');
+    throw new Error('Analysis timed out after 8 minutes. Please try again with fewer or smaller drawings.');
   }
 
   async function runAnalysis() {
@@ -88,10 +136,12 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
       const imageUrls: Array<{ url: string; category: string; wallLabel?: string }> = [];
 
       for (const uf of uploadedFiles) {
+        // Resize large images to max 1568px — saves significant Claude API processing time
+        const optimizedFile = await resizeImage(uf.file);
         const path = `design-engine/${dealer.id}/${Date.now()}-${uf.file.name}`;
         const { error: uploadErr } = await supabase.storage
           .from('project-files')
-          .upload(path, uf.file);
+          .upload(path, optimizedFile);
 
         if (uploadErr) {
           console.error('Upload error:', uploadErr);

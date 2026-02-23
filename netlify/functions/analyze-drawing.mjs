@@ -223,23 +223,68 @@ RULES:
       });
     }
 
-    // 6. Stream the response — collect text and forward SSE events to keep connection alive
+    // 6. Collect the streamed response from Claude, then return as JSON
+    //    We use streaming from Claude to avoid THEIR timeout, then
+    //    send keepalive chunks to avoid the proxy inactivity timeout.
     const encoder = new TextEncoder();
+    let fullText = '';
+    let resultSent = false;
+
+    function normalizeAnalysis(analysis) {
+      if (!analysis.walls) analysis.walls = [];
+      if (!analysis.notes) analysis.notes = [];
+      if (!analysis.warnings) analysis.warnings = [];
+      for (const wall of analysis.walls) {
+        if (wall.dimension_check && !wall.dimensionCheck) {
+          wall.dimensionCheck = wall.dimension_check;
+          delete wall.dimension_check;
+        }
+        if (!wall.dimensionCheck) {
+          const total = (wall.positions || []).reduce((s, p) => s + (p.width_cm || 0), 0);
+          wall.dimensionCheck = {
+            totalCabinets_cm: total,
+            wallLength_cm: wall.length_cm || 0,
+            gap_cm: (wall.length_cm || 0) - total,
+            valid: Math.abs((wall.length_cm || 0) - total) <= 10,
+          };
+        }
+        for (const pos of wall.positions || []) {
+          if (pos.sku_suggestion && !pos.skuSuggestion) {
+            pos.skuSuggestion = pos.sku_suggestion;
+            delete pos.sku_suggestion;
+          }
+          if (pos.door_orientation && !pos.doorOrientation) {
+            pos.doorOrientation = pos.door_orientation;
+            delete pos.door_orientation;
+          }
+          pos.wallLabel = wall.label;
+        }
+      }
+      return analysis;
+    }
+
+    function parseClaudeText(text) {
+      let jsonStr = text.trim();
+      if (jsonStr.startsWith('```')) {
+        jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+      }
+      return normalizeAnalysis(JSON.parse(jsonStr));
+    }
+
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          let fullText = '';
           const reader = claudeResponse.body.getReader();
           const decoder = new TextDecoder();
-          let buffer = '';
+          let sseBuffer = '';
 
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop() || '';
+            sseBuffer += decoder.decode(value, { stream: true });
+            const lines = sseBuffer.split('\n');
+            sseBuffer = lines.pop() || '';
 
             for (const line of lines) {
               if (!line.startsWith('data: ')) continue;
@@ -248,92 +293,43 @@ RULES:
 
               try {
                 const event = JSON.parse(data);
-
-                // Extract text deltas
                 if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
                   fullText += event.delta.text;
-                  // Send a keepalive progress event to the client
                   controller.enqueue(encoder.encode(`data: {"type":"progress","chars":${fullText.length}}\n\n`));
                 }
-
-                // Message complete
-                if (event.type === 'message_stop') {
-                  // Parse and normalize the result
-                  let jsonStr = fullText.trim();
-                  if (jsonStr.startsWith('```')) {
-                    jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
-                  }
-
-                  let analysis;
-                  try {
-                    analysis = JSON.parse(jsonStr);
-                  } catch (parseErr) {
-                    controller.enqueue(encoder.encode(`data: {"type":"error","error":"Failed to parse AI response","raw":${JSON.stringify(jsonStr.slice(0, 1000))}}\n\n`));
-                    controller.close();
-                    return;
-                  }
-
-                  // Normalize structure
-                  if (!analysis.walls) analysis.walls = [];
-                  if (!analysis.notes) analysis.notes = [];
-                  if (!analysis.warnings) analysis.warnings = [];
-
-                  for (const wall of analysis.walls) {
-                    if (wall.dimension_check && !wall.dimensionCheck) {
-                      wall.dimensionCheck = wall.dimension_check;
-                      delete wall.dimension_check;
-                    }
-                    if (!wall.dimensionCheck) {
-                      const total = (wall.positions || []).reduce((s, p) => s + (p.width_cm || 0), 0);
-                      wall.dimensionCheck = {
-                        totalCabinets_cm: total,
-                        wallLength_cm: wall.length_cm || 0,
-                        gap_cm: (wall.length_cm || 0) - total,
-                        valid: Math.abs((wall.length_cm || 0) - total) <= 10,
-                      };
-                    }
-                    for (const pos of wall.positions || []) {
-                      if (pos.sku_suggestion && !pos.skuSuggestion) {
-                        pos.skuSuggestion = pos.sku_suggestion;
-                        delete pos.sku_suggestion;
-                      }
-                      if (pos.door_orientation && !pos.doorOrientation) {
-                        pos.doorOrientation = pos.door_orientation;
-                        delete pos.door_orientation;
-                      }
-                      pos.wallLabel = wall.label;
-                    }
-                  }
-
-                  // Send final result
-                  controller.enqueue(encoder.encode(`data: {"type":"result","data":${JSON.stringify(analysis)}}\n\n`));
-                }
               } catch (e) {
-                // Skip unparseable SSE lines
+                // Skip unparseable SSE lines from Claude
               }
             }
           }
 
-          // If we got text but no message_stop event, try to parse what we have
-          if (fullText && !fullText.includes('"message_stop"')) {
-            let jsonStr = fullText.trim();
-            if (jsonStr.startsWith('```')) {
-              jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
-            }
+          // Stream is done — parse the accumulated text
+          if (fullText.trim()) {
             try {
-              const analysis = JSON.parse(jsonStr);
-              if (!analysis.walls) analysis.walls = [];
-              if (!analysis.notes) analysis.notes = [];
-              if (!analysis.warnings) analysis.warnings = [];
+              const analysis = parseClaudeText(fullText);
               controller.enqueue(encoder.encode(`data: {"type":"result","data":${JSON.stringify(analysis)}}\n\n`));
-            } catch (e) {
-              controller.enqueue(encoder.encode(`data: {"type":"error","error":"Incomplete response from AI"}\n\n`));
+              resultSent = true;
+            } catch (parseErr) {
+              controller.enqueue(encoder.encode(`data: {"type":"error","error":"Failed to parse AI response","raw":${JSON.stringify(fullText.slice(0, 500))}}\n\n`));
             }
+          } else {
+            controller.enqueue(encoder.encode(`data: {"type":"error","error":"No text received from AI"}\n\n`));
           }
 
           controller.close();
         } catch (err) {
-          controller.enqueue(encoder.encode(`data: {"type":"error","error":${JSON.stringify(err.message)}}\n\n`));
+          console.error('Stream processing error:', err);
+          // Try to salvage whatever text we collected
+          if (fullText.trim() && !resultSent) {
+            try {
+              const analysis = parseClaudeText(fullText);
+              controller.enqueue(encoder.encode(`data: {"type":"result","data":${JSON.stringify(analysis)}}\n\n`));
+            } catch (e) {
+              controller.enqueue(encoder.encode(`data: {"type":"error","error":${JSON.stringify(err.message || 'Stream error')}}\n\n`));
+            }
+          } else {
+            controller.enqueue(encoder.encode(`data: {"type":"error","error":${JSON.stringify(err.message || 'Stream error')}}\n\n`));
+          }
           controller.close();
         }
       },

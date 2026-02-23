@@ -32,6 +32,7 @@ const TYPE_TO_CATEGORY: Record<string, string[]> = {
   'waste_bin_unit': ['Base units'],
   'bottle_unit': ['Base units'],
   'island_base': ['Base units'],
+  'towel_rail_unit': ['Base units'],
   'wall_unit': ['Wall units'],
   'wall': ['Wall units'],
   'wall_flap': ['Wall units'],

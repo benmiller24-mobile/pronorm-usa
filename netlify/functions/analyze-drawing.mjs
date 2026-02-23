@@ -162,7 +162,7 @@ HOW TO READ KITCHEN ELEVATION DRAWINGS:
 - If no dimension annotations are visible, estimate from the total wall length and the proportional widths of each cabinet.
 
 CABINET ROWS — Identify each horizontal row separately:
-  * BASE ROW (bottom ~76cm): These sit on the floor behind the plinth. Look for door fronts, drawer fronts, appliance panels.
+  * BASE ROW (bottom, usually 76cm but can be 38cm for bench/shallow units): These sit on the floor behind the plinth. Look for door fronts, drawer fronts, appliance panels.
     - U = standard base unit (1 or 2 doors, or with shelves)
     - US = sink base (usually under the sink, identified by pipe symbols or sink outline)
     - UG = base for hob/cooktop OR built-in oven (60-100cm wide). Suffix -31/-38=hob, -45=oven
@@ -171,12 +171,12 @@ CABINET ROWS — Identify each horizontal row separately:
     - UV = base-height larder/bottle pull-out (narrow, 30cm wide)
     - UF = island base unit (profiled end piece, often 38cm wide)
     - DT = drawer/front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13)
-    - Variant suffixes: -00=basic/oven, -01=standard doors, -03=diagonal corner, -04=155° hinge, -15=lifting door, -22=flap door, -31=hob with controls, -32=2 drawers, -34=multi-drawer, -37=2 pull-outs (no drawer), -38=pull-out with internal drawer, -41=bottle/larder pull-out, -45=oven housing, -48=single panel sink, -53=crockery unit with shelves, -90=waste bin, -501/-601=glass door
+    - Variant suffixes: -00=basic/oven, -01=standard doors, -03=diagonal corner, -04=155° hinge, -15=lifting door, -22=flap door, -30=single front pull-out, -31=hob with drawer+pull-outs, -32=2 drawers, -34=multi-drawer, -37=2 pull-outs (no drawer), -38=pull-out with internal drawer, -41=bottle/larder pull-out, -45=oven housing, -48=single panel sink, -53=crockery unit with shelves, -56=special wall unit variant, -81=narrow larder pull-out, -82=towel rail pull-out, -90=waste bin, -501/-601=glass door
   * UPPER/WALL ROW (mounted above countertop): Wall-hung cabinets above the worktop.
     - O = wall unit with door(s). Heights: 38cm, 51cm (most common), 64cm, 76cm, 89cm, 90cm. Variant -22=flap door
     - OE = corner wall unit (90° configuration, 81cm wide)
     - OR = open wall shelf (often 38cm tall) OR wall unit with flap/lift-up door(s)
-    - OG = wall unit for extractor/rangehood, typically 76cm tall, sits directly above hob
+    - OG = wall unit for extractor/rangehood, typically 76cm or 51cm tall, sits directly above hob
     - Glass-door wall units use OR prefix with -501 or -601 variant suffix
     - 38cm height flap units (O...-38-22) are common above tall units/utility areas
   * TALL UNITS (floor to near ceiling, ~207-227cm tall): Full-height cabinets spanning from floor to top.
@@ -204,7 +204,7 @@ Valid corner base widths: 80, 91, 100, 105, 110, 115, 125 (L-shaped) or 91 (diag
 Valid wall unit widths:   20, 25, 27, 30, 35, 40, 45, 50, 55, 60, 65, 75, 80, 81, 90, 100, 120
 Valid corner wall widths: 65, 66, 80, 81, 90 (corner wall units)
 Valid tall unit widths:   27, 30, 45, 55, 60, 75, 76, 80, 90, 120
-Common base height: ${intake.baseUnitHeight || 76}cm (768mm)
+Common base heights: ${intake.baseUnitHeight || 76}cm (standard) or 38cm (bench/shallow pull-out units)
 Common wall unit heights: 38cm (open shelf), 51cm (standard), 64cm (glass flap), 72cm, 76cm (extractor/tall wall), 89cm, 90cm
 Common tall heights: 144cm (mid-height HR), 195cm, 207cm, 221cm, 227cm
 
@@ -212,7 +212,7 @@ MOST COMMON WIDTHS (by frequency across real kitchens): 60, 40, 90, 100, 80, 50,
 If a dimension annotation says 600 → width is 60cm. If it says 400 → 40cm. If it says 900 → 90cm. If it says 1000 → 100cm.
 
 SKU FORMAT: PREFIX + WIDTH - HEIGHT - VARIANT
-Examples: U 60-76-01, U 80-76-32, US 90-76-01, UG 60-76-31, UI 100-76-34, UE 125-76-07, UE 115-76-07-H, UE 91-76-03, UV 30-76-41, UF 38-76-00, DT 60-76-14, O 60-51-01, O 40-89-01, O 45-38-22, OE 66-89-01, OE 81-89-12, OR 90-38, OR 60-89-501, OG 100-76-01, H 60-195-08, HP 45-227-53, HP 60-227-09, HR 60-144-501, HG 60-195-181, HGP 60-227-601, HSP 76-227-065
+Examples: U 60-76-01, U 80-76-32, U 15-76-81, U 15-76-82, U 60-38-30, US 90-76-01, UG 60-76-31, UG 60-76-45, UI 100-76-34, UE 125-76-07, UE 115-76-07-H, UE 91-76-03, UV 30-76-41, UF 38-76-00, DT 60-76-14, O 60-51-01, O 40-89-01, O 45-38-22, O 45-64-56-01, OE 66-89-01, OE 81-89-12, OR 90-38, OR 60-89-501, OG 100-76-01, OG 90-51-01, H 60-195-08, HP 45-227-53, HP 60-227-09, HR 60-144-501, HG 60-195-181, HGP 60-227-601, HSP 76-227-065
 
 DOOR ORIENTATION:
 - "L" = left-hinged (opens to the left)
@@ -251,7 +251,7 @@ CRITICAL RULES:
 - Every width MUST be a valid ProLine width. If an annotation shows e.g. 575mm, round to nearest valid: 60cm.
 - For each row (base, upper, tall), the widths should sum to approximately the wall length (within 5-20cm for fillers).
 - Tall units replace both base AND upper in their section of the wall. Do NOT double-count.
-- Use these "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, open_shelf, extractor_unit, tall_unit, mid_height_unit, appliance_housing, fridge_housing, larder, crockery_unit, hob_base, pull_out_unit, waste_bin_unit.
+- Use these "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, open_shelf, extractor_unit, tall_unit, mid_height_unit, appliance_housing, fridge_housing, larder, crockery_unit, hob_base, oven_base, pull_out_unit, towel_rail_unit, waste_bin_unit, bottle_unit, island_base.
 - HR prefix = mid-height crockery/display unit (~144cm). Not full tall height — these are shorter display cabinets often with glass doors.
 - UG prefix = hob/cooktop base. HP/HGP prefix = larder with pull-outs. HSP = fridge housing.
 - DT prefix = front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13).

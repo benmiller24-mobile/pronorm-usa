@@ -95,11 +95,13 @@ export function validateLayout(items: MappedItem[], intakeData: IntakeData): Val
     });
     if (baseItems.length > 1) {
       const heights = new Set(baseItems.map(i => i.height_cm));
-      if (heights.size > 1) {
+      // Filter out 38cm bench units — mixed 38+76 is valid (bench units beside standard bases)
+      const standardHeights = new Set([...heights].filter(h => h !== 38));
+      if (standardHeights.size > 1) {
         issues.push({
           wallLabel: wallDef.label,
           severity: 'warning',
-          message: `Mixed base unit heights on Wall ${wallDef.label}: ${[...heights].join(', ')}cm. Base units should typically be the same height.`,
+          message: `Mixed base unit heights on Wall ${wallDef.label}: ${[...heights].join(', ')}cm. Standard base units should typically be the same height.`,
           positionIds: baseItems.map(i => i.positionId),
         });
       }

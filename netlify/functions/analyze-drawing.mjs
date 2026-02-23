@@ -156,9 +156,12 @@ HOW TO READ KITCHEN ELEVATION DRAWINGS:
 - An elevation drawing shows a wall from the FRONT, as if you are standing in front of it looking straight at it.
 - Cabinets are arranged in HORIZONTAL ROWS stacked vertically on the wall.
 - READ THE DIMENSION ANNOTATIONS carefully. Drawings have dimension lines with numbers showing widths/heights. ALWAYS use these annotated dimensions — do NOT guess widths from visual proportions.
-- Dimensions may be in MILLIMETERS or INCHES. Identify which system is used:
-  * If numbers are large (300-1200+): they are millimeters. Convert: 300mm=30cm, 400=40, 450=45, 500=50, 550=55, 600=60, 750=75, 800=80, 900=90, 1000=100, 1100=110, 1200=120.
-  * If numbers are small with fractions (11 13/16", 23 5/8", 35 7/16"): they are inches. Convert: 11 13/16"≈30cm, 15 3/4"≈40cm, 19 11/16"≈50cm, 21 5/8"≈55cm, 23 5/8"≈60cm, 29 1/2"≈75cm, 30"≈76cm, 31 1/2"≈80cm, 35 7/16"≈90cm, 39 3/8"≈100cm, 47 1/4"≈120cm.
+- Dimensions may be in MILLIMETERS or INCHES. FIRST determine which system the drawing uses, then convert ALL dimensions to centimeters:
+  * MILLIMETERS (numbers are large, 300-1200+): 300mm=30cm, 400=40, 450=45, 500=50, 550=55, 600=60, 750=75, 800=80, 900=90, 1000=100, 1100=110, 1200=120.
+  * INCHES (numbers are small, often with fractions like 23 5/8"): Use this conversion table:
+    11 13/16"=30cm, 13 3/16"=33.5cm, 15 3/4"=40cm, 17 3/4"=45cm, 19 11/16"=50cm, 21 5/8"=55cm, 23 5/8"=60cm, 29 1/2"=75cm, 30"=76cm, 31 1/2"=80cm, 35 7/16"=90cm, 39 3/8"=100cm, 43 5/16"=110cm, 47 1/4"=120cm.
+    For HEIGHT conversions in inches: 14 15/16"=38cm, 20 1/16"=51cm, 25 3/16"=64cm, 30"=76cm, 35"=89cm, 76 13/16"=195cm, 81 1/2"=207cm, 87"=221cm, 89 3/8"=227cm.
+    IMPORTANT: When you see inch dimensions, ALWAYS convert to the nearest valid Pronorm cm width BEFORE outputting. Never output inch values.
 - If no dimension annotations are visible, estimate from the total wall length and the proportional widths of each cabinet.
 
 CABINET ROWS — Identify each horizontal row separately:
@@ -191,8 +194,12 @@ CABINET ROWS — Identify each horizontal row separately:
     - AH = appliance housing
 
 CRITICAL LAYOUT RULES:
+- FIRST determine if a cabinet spans floor to ceiling (~195-227cm). If YES, it is a TALL unit (H/HP/HSP/HG/HGP/HS/AH prefix), NOT a base unit. Tall units are much taller than base units (227cm vs 76cm).
 - Tall units occupy the SAME horizontal wall space as base+upper would. Where you see a tall unit, there are NO base or wall units behind it.
-- A wall commonly has: tall unit(s) on one or both ends, with base+upper cabinets in the middle section.
+- A wall can be: (a) ALL tall units across the entire wall, (b) tall unit(s) on one or both ends with base+upper cabinets in the middle, or (c) all base+upper with no tall units.
+- COMMON PATTERN: A "tall wall" has ALL tall units (e.g., fridge housing + larders) with optional wall units mounted ABOVE the tall units. In this case there are ZERO base units — do NOT create base_unit positions for tall cabinets.
+- If a cabinet runs from floor to near-ceiling, it is ALWAYS a tall unit even if the drawing doesn't show a clear visual separation from cabinets above it.
+- Wall units (O prefix) can sit ABOVE tall units when the tall unit is shorter than ceiling height. These wall units are typically 38cm flaps or small cabinets filling the gap between the tall unit top and the ceiling.
 - Fillers (narrow panels 2-10cm) appear at ends of runs or between cabinets. Note them in "notes" but do NOT create positions for fillers, panels, or plinths.
 - Side panels (16mm or 25mm decorative panels on exposed cabinet sides) are NOT cabinets — skip them.
 - Corner filler panels (PHX, POE, POEX) are NOT cabinets — skip them.
@@ -229,13 +236,14 @@ Walls:\n${wallSummary}
 ${intake.notes ? `Notes: ${intake.notes}` : ''}
 
 STEP-BY-STEP PROCESS:
-1. For each elevation drawing, first READ ALL DIMENSION ANNOTATIONS (numbers on dimension lines). These tell you exact widths in mm.
-2. Identify the horizontal rows: which sections are tall units (floor to ceiling), which are base+upper.
-3. For each cabinet in each row, determine: width (from annotations), type (from visual appearance), door orientation.
-4. Cross-check: row widths should sum to approximately the wall length.
-5. Assign SKU suggestions using the PREFIX WIDTH-HEIGHT-VARIANT format.
+1. For each elevation drawing, first DETERMINE THE MEASUREMENT SYSTEM (mm or inches) by looking at the dimension annotations. Then READ ALL DIMENSION ANNOTATIONS and convert them to centimeters using the conversion tables in the system prompt.
+2. BEFORE identifying rows, look at the HEIGHTS of cabinets. Any cabinet that spans from floor to near-ceiling (~195-227cm or ~77-89 inches) is a TALL unit, NOT a base unit. A wall can be entirely tall units with zero base units.
+3. For sections that are NOT tall units, identify base row (floor level, ~76cm) and wall/upper row (above countertop).
+4. For each cabinet, determine: width (from converted annotations in cm), type (from visual appearance and height), door orientation.
+5. Cross-check: each row's widths should sum to approximately the wall length (within 5-20cm for fillers). Tall unit widths + base unit widths should NOT exceed wall length — they share the same horizontal space.
+6. Assign SKU suggestions using the PREFIX WIDTH-HEIGHT-VARIANT format. All widths and heights MUST be in centimeters.
 
-EXAMPLE OUTPUT for a wall with 2 larders flanking base+upper cabinets:
+EXAMPLE 1 — Wall with tall units on ends flanking base+upper cabinets:
 {"walls":[{"label":"A","length_cm":369,"positions":[
   {"id":"A_1","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":0,"doorOrientation":"L","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder with internal pull-outs, leftmost position"},
   {"id":"A_2","type":"wall_unit","skuSuggestion":"O 60-51-01","width_cm":60,"height_cm":51,"x_cm":60,"doorOrientation":"L","features":[],"confidence":0.80,"reasoning":"Wall unit above base section"},
@@ -243,8 +251,16 @@ EXAMPLE OUTPUT for a wall with 2 larders flanking base+upper cabinets:
   {"id":"A_4","type":"base_unit","skuSuggestion":"UG 100-76-31","width_cm":100,"height_cm":76,"x_cm":150,"doorOrientation":"","features":["hob"],"confidence":0.85,"reasoning":"Hob/cooktop base unit, wider unit in center"},
   {"id":"A_5","type":"fridge_housing","skuSuggestion":"HSP 76-227-065","width_cm":76,"height_cm":227,"x_cm":293,"doorOrientation":"L","features":["fridge"],"confidence":0.80,"reasoning":"Tall fridge housing, right side"},
   {"id":"A_6","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":309,"doorOrientation":"R","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder, rightmost position"}
-],"dimensionCheck":{"baseRow_cm":190,"upperRow_cm":60,"tallRow_cm":196,"wallLength_cm":369,"valid":true}}],
-"notes":["Side panels on exposed ends not included as positions"],
+],"dimensionCheck":{"baseRow_cm":190,"upperRow_cm":60,"tallRow_cm":196,"wallLength_cm":369,"valid":true}}]}
+
+EXAMPLE 2 — Wall that is ALL tall units (no base units at all). Note: baseRow_cm is 0:
+{"walls":[{"label":"B","length_cm":250,"positions":[
+  {"id":"B_1","type":"fridge_housing","skuSuggestion":"HSP 76-227-065","width_cm":76,"height_cm":227,"x_cm":0,"doorOrientation":"L","features":["fridge"],"confidence":0.85,"reasoning":"Tall fridge housing on left, floor to ceiling"},
+  {"id":"B_2","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":76,"doorOrientation":"L","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder, floor to ceiling"},
+  {"id":"B_3","type":"larder","skuSuggestion":"HP 55-227-12","width_cm":55,"height_cm":227,"x_cm":136,"doorOrientation":"R","features":["larder"],"confidence":0.85,"reasoning":"Crockery larder, floor to ceiling"},
+  {"id":"B_4","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":191,"doorOrientation":"R","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder on right, floor to ceiling"}
+],"dimensionCheck":{"baseRow_cm":0,"upperRow_cm":0,"tallRow_cm":251,"wallLength_cm":250,"valid":true}}],
+"notes":["All-tall wall with no base or wall units — every cabinet spans floor to ceiling"],
 "warnings":[]}
 
 CRITICAL RULES:

@@ -64,13 +64,33 @@ export default async (req, context) => {
     }
 
     // 3. Fetch images as base64
+    const VALID_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    function detectMimeType(url, headerType) {
+      // If the header gives a valid type, use it
+      if (headerType && VALID_MIME_TYPES.includes(headerType)) return headerType;
+      // Try to detect from URL/filename
+      const urlLower = (url || '').toLowerCase().split('?')[0];
+      if (urlLower.endsWith('.png')) return 'image/png';
+      if (urlLower.endsWith('.gif')) return 'image/gif';
+      if (urlLower.endsWith('.webp')) return 'image/webp';
+      if (urlLower.endsWith('.jpg') || urlLower.endsWith('.jpeg')) return 'image/jpeg';
+      // Default to jpeg
+      return 'image/jpeg';
+    }
+
     const imageContents = [];
     for (const imgInfo of imageUrls) {
       try {
         const resp = await fetch(imgInfo.url);
         const buffer = await resp.arrayBuffer();
         const base64 = Buffer.from(buffer).toString('base64');
-        const mimeType = resp.headers.get('content-type') || 'image/jpeg';
+        const headerType = resp.headers.get('content-type')?.split(';')[0]?.trim();
+        const mimeType = detectMimeType(imgInfo.url, headerType);
+        // Skip PDFs — Claude Vision only accepts images
+        if (headerType === 'application/pdf') {
+          console.warn(`Skipping PDF file: ${imgInfo.url}`);
+          continue;
+        }
         imageContents.push({ base64, mimeType, category: imgInfo.category, wallLabel: imgInfo.wallLabel });
       } catch (e) {
         console.error(`Failed to fetch image: ${imgInfo.url}`, e);

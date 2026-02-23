@@ -169,6 +169,19 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
       // 3. Poll for the result
       const aiAnalysis = await pollForResult(jobId);
 
+      // Validate the analysis structure
+      if (!aiAnalysis || typeof aiAnalysis !== 'object') {
+        throw new Error('AI returned an invalid response. Please try again.');
+      }
+      if (!Array.isArray(aiAnalysis.walls)) {
+        // Try to salvage if walls exists but isn't an array
+        if (aiAnalysis.walls && typeof aiAnalysis.walls === 'object') {
+          (aiAnalysis as any).walls = Object.values(aiAnalysis.walls);
+        } else {
+          throw new Error('AI did not return wall analysis data. Please try again with clearer drawings.');
+        }
+      }
+
       // 4. Match positions to SKUs
       setPhase('matching');
       const catalogResp = await fetch('/data/pricing-catalog.json');

@@ -66,8 +66,10 @@ export async function matchPositionsToSKUs(
   const prolineCatalog = catalog.proline || catalog['proline'] || {};
   const mappedItems: MappedItem[] = [];
 
-  for (const wall of analysis.walls) {
-    for (const pos of wall.positions) {
+  const walls = Array.isArray(analysis.walls) ? analysis.walls : [];
+  for (const wall of walls) {
+    const positions = Array.isArray(wall.positions) ? wall.positions : [];
+    for (const pos of positions) {
       const mapped = matchSinglePosition(pos, wall.label, prolineCatalog, intakeData);
       mappedItems.push(mapped);
     }

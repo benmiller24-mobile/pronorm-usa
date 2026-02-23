@@ -174,21 +174,33 @@ Every width MUST be valid ProLine width. Widths per wall should sum to ~wall len
       return new Response('', { status: 200 });
     }
 
-    // 7. Normalize
-    if (!analysis.walls) analysis.walls = [];
-    if (!analysis.notes) analysis.notes = [];
-    if (!analysis.warnings) analysis.warnings = [];
+    // 7. Normalize — ensure walls is always an array
+    if (!Array.isArray(analysis.walls)) {
+      // Claude sometimes returns walls as an object or wraps it differently
+      if (analysis.walls && typeof analysis.walls === 'object' && !Array.isArray(analysis.walls)) {
+        // Try to extract array from object values
+        analysis.walls = Object.values(analysis.walls);
+      } else {
+        analysis.walls = [];
+      }
+    }
+    if (!Array.isArray(analysis.notes)) analysis.notes = [];
+    if (!Array.isArray(analysis.warnings)) analysis.warnings = [];
 
     for (const wall of analysis.walls) {
+      // Ensure positions is always an array
+      if (!Array.isArray(wall.positions)) {
+        wall.positions = Array.isArray(wall.positions) ? wall.positions : [];
+      }
       if (wall.dimension_check && !wall.dimensionCheck) {
         wall.dimensionCheck = wall.dimension_check;
         delete wall.dimension_check;
       }
       if (!wall.dimensionCheck) {
-        const total = (wall.positions || []).reduce((s, p) => s + (p.width_cm || 0), 0);
+        const total = wall.positions.reduce((s, p) => s + (p.width_cm || 0), 0);
         wall.dimensionCheck = { totalCabinets_cm: total, wallLength_cm: wall.length_cm || 0, gap_cm: (wall.length_cm || 0) - total, valid: Math.abs((wall.length_cm || 0) - total) <= 10 };
       }
-      for (const pos of wall.positions || []) {
+      for (const pos of wall.positions) {
         if (pos.sku_suggestion && !pos.skuSuggestion) { pos.skuSuggestion = pos.sku_suggestion; delete pos.sku_suggestion; }
         if (pos.door_orientation && !pos.doorOrientation) { pos.doorOrientation = pos.door_orientation; delete pos.door_orientation; }
         pos.wallLabel = wall.label;

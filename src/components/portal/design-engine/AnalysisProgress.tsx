@@ -17,16 +17,16 @@ type AnalysisPhase = 'uploading' | 'pass1' | 'pass2' | 'pass3' | 'matching' | 'v
 
 const PHASE_LABELS: Record<AnalysisPhase, string> = {
   uploading: 'Uploading drawings to cloud storage...',
-  pass1: 'AI is analyzing your drawings (this may take 30-60 seconds)...',
+  pass1: 'AI is analyzing your drawings (this may take 1-3 minutes)...',
   pass2: 'AI is identifying cabinets and positions...',
-  pass3: 'Cross-validating dimensions and layout...',
+  pass3: 'Cross-validating dimensions and layout (almost done)...',
   matching: 'Matching cabinet positions to ProLine SKUs...',
   validating: 'Running constraint validation...',
   done: 'Analysis complete!',
 };
 
 const POLL_INTERVAL_MS = 3000;
-const MAX_POLL_TIME_MS = 180000; // 3 minutes
+const MAX_POLL_TIME_MS = 300000; // 5 minutes — large drawings with many images need more time
 
 export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, onComplete, onError }: AnalysisProgressProps) {
   const [phase, setPhase] = useState<AnalysisPhase>('uploading');
@@ -57,8 +57,8 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
 
       // Update phase based on elapsed time for visual feedback
       const elapsed = Date.now() - startTimeRef.current;
-      if (elapsed > 20000) setPhase('pass2');
-      if (elapsed > 40000) setPhase('pass3');
+      if (elapsed > 30000) setPhase('pass2');
+      if (elapsed > 90000) setPhase('pass3');
 
       const resp = await fetch(`/.netlify/functions/analysis-status?jobId=${jobId}`);
       if (!resp.ok) {
@@ -78,7 +78,7 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
       // data.status === 'processing' — keep polling
     }
 
-    throw new Error('Analysis timed out after 3 minutes. Please try again with fewer or smaller drawings.');
+    throw new Error('Analysis timed out after 5 minutes. Please try again with fewer or smaller drawings.');
   }
 
   async function runAnalysis() {

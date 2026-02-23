@@ -46,6 +46,8 @@ const TYPE_TO_CATEGORY: Record<string, string[]> = {
   'fridge_tall': ['Tall units'],
   'fridge_housing': ['Tall units'],
   'appliance_housing': ['Tall units'],
+  'crockery_unit': ['Tall units'],
+  'mid_height_unit': ['Tall units'],
   'countertop_unit': ['Countertop units'],
   'countertop': ['Countertop units'],
 };
@@ -70,6 +72,7 @@ const PREFIX_HINTS: Record<string, string[]> = {
   'HG': ['tall_unit', 'larder', 'tall larder'],
   'HGP': ['tall_unit', 'larder', 'tall larder with pull-outs'],
   'HP': ['pantry', 'larder', 'tall_unit', 'tall unit with pull-outs'],
+  'HR': ['crockery_unit', 'mid_height_unit', 'tall_unit', 'crockery display unit', 'glass door'],
   'AH': ['tall_unit', 'appliance housing'],
   'DT': ['drawer_base', 'base_unit', 'appliance front', 'dishwasher', 'fridge front'],
 };

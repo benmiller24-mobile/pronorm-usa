@@ -146,16 +146,349 @@ async function processAnalysisJob(jobId, supabase) {
       return;
     }
 
-    // 3. Build prompt
-    const wallSummary = (intake.walls || []).map(w => {
-      let d = `Wall ${w.label}: ${w.length}cm`;
-      if (w.hasWindow) d += `, window ${w.windowWidth || '?'}cm at sill ${w.windowSillHeight || '?'}cm`;
-      if (w.hasDoor) d += `, door ${w.doorWidth || '?'}cm`;
-      if (w.notes) d += ` (${w.notes})`;
-      return d;
-    }).join('\n');
+    // 3. Build system prompt (shared across all per-wall calls)
+    const systemPrompt = buildSystemPrompt(intake);
 
-    const systemPrompt = `You are an expert kitchen designer analyzing elevation and floor plan drawings for Pronorm kitchens (ProLine, X-Line, Y-Line ranges). Your task is to identify every cabinet position and map each to a Pronorm SKU pattern.
+    // 4. Group elevation images by wall label for parallel analysis
+    const floorplanImages = imageContents.filter(i => i.category === 'floorplan');
+    const elevationImages = imageContents.filter(i => i.category === 'elevation');
+
+    // Group elevations by wall label
+    const wallGroups = new Map();
+    for (const elev of elevationImages) {
+      const label = elev.wallLabel || 'unknown';
+      if (!wallGroups.has(label)) wallGroups.set(label, []);
+      wallGroups.get(label).push(elev);
+    }
+
+    // Build wall info lookup
+    const wallInfoMap = new Map();
+    for (const w of (intake.walls || [])) {
+      wallInfoMap.set(w.label, w);
+    }
+
+    const wallLabels = [...wallGroups.keys()];
+    console.log(`Per-wall parallel analysis: ${wallLabels.length} walls [${wallLabels.join(', ')}], ${floorplanImages.length} floor plan(s), ${elevationImages.length} total elevations`);
+
+    // 5. Launch parallel Claude API calls — one per wall
+    const cleanKey = anthropicKey.trim();
+
+    const wallPromises = wallLabels.map(async (wallLabel) => {
+      const wallElevations = wallGroups.get(wallLabel);
+      const wallInfo = wallInfoMap.get(wallLabel);
+
+      try {
+        const result = await analyzeOneWall({
+          wallLabel,
+          wallElevations,
+          floorplanImages,
+          wallInfo,
+          intake,
+          systemPrompt,
+          apiKey: cleanKey,
+        });
+        console.log(`Wall ${wallLabel}: ${result.positions?.length || 0} positions found`);
+        return { wallLabel, result, error: null };
+      } catch (err) {
+        console.error(`Wall ${wallLabel} analysis failed:`, err.message);
+        return { wallLabel, result: null, error: err.message };
+      }
+    });
+
+    const wallResults = await Promise.all(wallPromises);
+
+    // 6. Merge per-wall results into a single analysis object
+    const analysis = mergeWallResults(wallResults, intake);
+
+    // 7. Normalize the merged analysis
+    normalizeAnalysis(analysis);
+
+    // 8. Store successful result
+    await storeResult(supabase, jobId, analysis);
+
+    // 9. Clean up the request payload
+    await supabase.storage.from('project-files').remove([`analysis-jobs/${jobId}/request.json`]);
+
+  } catch (err) {
+    console.error('processAnalysisJob error:', err);
+    await storeResult(supabase, jobId, { error: err.message || 'Background processing failed' });
+  }
+}
+
+// --- Per-wall analysis ---
+
+async function analyzeOneWall({ wallLabel, wallElevations, floorplanImages, wallInfo, intake, systemPrompt, apiKey }) {
+  // Build wall-specific user message
+  let wallDesc = `Wall ${wallLabel}`;
+  if (wallInfo) {
+    wallDesc += `: ${wallInfo.length}cm`;
+    if (wallInfo.hasWindow) wallDesc += `, window ${wallInfo.windowWidth || '?'}cm at sill ${wallInfo.windowSillHeight || '?'}cm`;
+    if (wallInfo.hasDoor) wallDesc += `, door ${wallInfo.doorWidth || '?'}cm`;
+    if (wallInfo.notes) wallDesc += ` (${wallInfo.notes})`;
+  }
+
+  const userMsg = `Analyze Wall ${wallLabel} ONLY. Room: ${intake.roomWidth}x${intake.roomDepth}cm, ceiling ${intake.ceilingHeight}cm.
+${wallDesc}
+${intake.notes ? `Notes: ${intake.notes}` : ''}
+
+You are analyzing ONLY Wall ${wallLabel}. Output positions for this wall only.
+
+STEP-BY-STEP PROCESS:
+1. DETERMINE THE MEASUREMENT SYSTEM (mm or inches) by looking at the dimension annotations. Then READ ALL DIMENSION ANNOTATIONS and convert them to centimeters.
+2. BEFORE identifying rows, look at the HEIGHTS of cabinets. Any cabinet that spans from floor to near-ceiling (~195-227cm or ~77-89 inches) is a TALL unit, NOT a base unit. A wall can be entirely tall units with zero base units.
+3. For sections that are NOT tall units, identify base row (floor level, ~76cm) and wall/upper row (above countertop).
+4. For each cabinet, determine: width (from converted annotations in cm), type (from visual appearance and height), door orientation.
+5. Cross-check: each row's widths should sum to approximately the wall length (within 5-20cm for fillers). Tall unit widths + base unit widths should NOT exceed wall length — they share the same horizontal space.
+6. Assign SKU suggestions using the PREFIX WIDTH-HEIGHT-VARIANT format. All widths and heights MUST be in centimeters.
+
+CRITICAL RULES:
+- READ dimension annotations from the drawing — do NOT guess widths from visual proportions alone.
+- Every width MUST be a valid ProLine width. If an annotation shows e.g. 575mm, round to nearest valid: 60cm.
+- For each row (base, upper, tall), the widths should sum to approximately the wall length (within 5-20cm for fillers).
+- Tall units replace both base AND upper in their section of the wall. Do NOT double-count.
+- Use these "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, open_shelf, extractor_unit, tall_unit, mid_height_unit, appliance_housing, fridge_housing, larder, crockery_unit, hob_base, oven_base, pull_out_unit, towel_rail_unit, waste_bin_unit, bottle_unit, island_base.
+
+Output ONLY valid JSON in this exact format (single wall):
+{"label":"${wallLabel}","length_cm":${wallInfo?.length || 0},"positions":[...],"dimensionCheck":{"baseRow_cm":0,"upperRow_cm":0,"tallRow_cm":0,"wallLength_cm":${wallInfo?.length || 0},"valid":true},"notes":[]}`;
+
+  // Build content blocks: floor plan (for context) + this wall's elevations
+  const contentBlocks = [];
+
+  // Include floor plan for spatial context (helps AI understand wall relationships)
+  if (floorplanImages.length > 0) {
+    contentBlocks.push({ type: 'text', text: `FLOOR PLAN (for context — you are analyzing Wall ${wallLabel} only):` });
+    contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: floorplanImages[0].mimeType, data: floorplanImages[0].base64 } });
+  }
+
+  // Add this wall's elevation images
+  for (const elev of wallElevations) {
+    contentBlocks.push({ type: 'text', text: `ELEVATION Wall ${wallLabel}:` });
+    contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: elev.mimeType, data: elev.base64 } });
+  }
+
+  contentBlocks.push({ type: 'text', text: userMsg });
+
+  // Call Claude API
+  const claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 4000, // single wall needs fewer tokens than all walls
+      stream: true,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: contentBlocks }],
+    }),
+  });
+
+  if (!claudeResp.ok) {
+    const errBody = await claudeResp.text();
+    throw new Error(`Claude API error ${claudeResp.status}: ${errBody.slice(0, 300)}`);
+  }
+
+  // Read SSE stream
+  let fullText = '';
+  const reader = claudeResp.body.getReader();
+  const decoder = new TextDecoder();
+  let sseBuffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    sseBuffer += decoder.decode(value, { stream: true });
+    const lines = sseBuffer.split('\n');
+    sseBuffer = lines.pop() || '';
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const d = line.slice(6).trim();
+      if (d === '[DONE]') continue;
+      try {
+        const ev = JSON.parse(d);
+        if (ev.type === 'content_block_delta' && ev.delta?.type === 'text_delta') {
+          fullText += ev.delta.text;
+        }
+      } catch {}
+    }
+  }
+
+  if (!fullText.trim()) {
+    throw new Error('No text received from AI');
+  }
+
+  // Parse JSON
+  let jsonStr = fullText.trim();
+  if (jsonStr.startsWith('```')) {
+    jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(jsonStr);
+  } catch (e) {
+    throw new Error(`Failed to parse AI response for wall ${wallLabel}: ${fullText.slice(0, 300)}`);
+  }
+
+  // The AI might return { walls: [{ ... }] } or just { label, positions, ... }
+  // Normalize to a single wall object
+  if (parsed.walls && Array.isArray(parsed.walls) && parsed.walls.length > 0) {
+    return parsed.walls[0];
+  }
+  return parsed;
+}
+
+// --- Merge per-wall results ---
+
+function mergeWallResults(wallResults, intake) {
+  const walls = [];
+  const notes = [];
+  const warnings = [];
+
+  for (const wr of wallResults) {
+    if (wr.error) {
+      warnings.push(`Wall ${wr.wallLabel} analysis failed: ${wr.error}`);
+      // Create an empty wall entry so the user can see something
+      walls.push({
+        label: wr.wallLabel,
+        length_cm: 0,
+        positions: [],
+        dimensionCheck: { baseRow_cm: 0, upperRow_cm: 0, tallRow_cm: 0, wallLength_cm: 0, valid: false },
+      });
+      continue;
+    }
+
+    const wallData = wr.result;
+    if (!wallData) continue;
+
+    // Ensure the label is set correctly
+    wallData.label = wallData.label || wr.wallLabel;
+
+    walls.push(wallData);
+
+    // Collect any notes/warnings from the per-wall analysis
+    if (Array.isArray(wallData.notes)) {
+      notes.push(...wallData.notes);
+      delete wallData.notes; // move to top-level
+    }
+    if (Array.isArray(wallData.warnings)) {
+      warnings.push(...wallData.warnings);
+      delete wallData.warnings;
+    }
+  }
+
+  // Sort walls by label for consistent ordering
+  walls.sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+
+  const successCount = wallResults.filter(r => !r.error).length;
+  const totalCount = wallResults.length;
+  console.log(`Merge complete: ${successCount}/${totalCount} walls succeeded, ${walls.reduce((s, w) => s + (w.positions?.length || 0), 0)} total positions`);
+
+  return { walls, notes, warnings };
+}
+
+// --- Normalization (same logic as before, applied to merged result) ---
+
+function normalizeAnalysis(analysis) {
+  // Log the raw structure for debugging
+  console.log('Merged analysis structure:', JSON.stringify({
+    wallCount: Array.isArray(analysis.walls) ? analysis.walls.length : 0,
+    topLevelKeys: Object.keys(analysis),
+    wallPositionCounts: Array.isArray(analysis.walls) ? analysis.walls.map(w => `${w.label}:${w.positions?.length || 0}`) : [],
+  }));
+
+  if (!Array.isArray(analysis.walls)) {
+    if (analysis.walls && typeof analysis.walls === 'object') {
+      analysis.walls = Object.values(analysis.walls);
+    } else {
+      analysis.walls = [];
+    }
+  }
+  if (!Array.isArray(analysis.notes)) analysis.notes = [];
+  if (!Array.isArray(analysis.warnings)) analysis.warnings = [];
+
+  for (const wall of analysis.walls) {
+    // Normalize wall-level fields
+    if (!wall.label && wall.wall_label) { wall.label = wall.wall_label; }
+    if (!wall.label && wall.wallLabel) { wall.label = wall.wallLabel; }
+    if (!wall.label && wall.name) { wall.label = wall.name; }
+    if (!wall.length_cm && wall.lengthCm) { wall.length_cm = wall.lengthCm; }
+    if (!wall.length_cm && wall.length) { wall.length_cm = wall.length; }
+    if (!wall.length_cm && wall.wall_length_cm) { wall.length_cm = wall.wall_length_cm; }
+
+    // Robust normalization: AI may use different field names for positions
+    if (!Array.isArray(wall.positions)) {
+      // Try common alternative field names
+      const altPositions = wall.items || wall.cabinets || wall.cabinet_positions || wall.cabinetPositions || wall.units;
+      if (Array.isArray(altPositions)) {
+        wall.positions = altPositions;
+      } else if (altPositions && typeof altPositions === 'object') {
+        wall.positions = Object.values(altPositions);
+      } else {
+        wall.positions = [];
+      }
+    }
+    if (wall.dimension_check && !wall.dimensionCheck) {
+      wall.dimensionCheck = wall.dimension_check;
+      delete wall.dimension_check;
+    }
+    if (!wall.dimensionCheck) {
+      // Build per-row dimension check
+      const wl = wall.length_cm || 0;
+      const base = wall.positions.filter(p => {
+        const t = (p.type || '').toLowerCase();
+        return t.includes('base') || t.includes('sink') || t.includes('drawer') || t.includes('corner');
+      });
+      const upper = wall.positions.filter(p => {
+        const t = (p.type || '').toLowerCase();
+        return t.includes('wall') || t.includes('flap');
+      });
+      const tall = wall.positions.filter(p => {
+        const t = (p.type || '').toLowerCase();
+        return t.includes('tall') || t.includes('larder') || t.includes('housing') || t.includes('pantry') || t.includes('fridge');
+      });
+      const baseTotal = base.reduce((s, p) => s + (p.width_cm || 0), 0);
+      const upperTotal = upper.reduce((s, p) => s + (p.width_cm || 0), 0);
+      const tallTotal = tall.reduce((s, p) => s + (p.width_cm || 0), 0);
+      wall.dimensionCheck = {
+        baseRow_cm: baseTotal,
+        upperRow_cm: upperTotal,
+        tallRow_cm: tallTotal,
+        wallLength_cm: wl,
+        valid: (baseTotal === 0 || Math.abs(wl - baseTotal) <= 20) &&
+               (upperTotal === 0 || Math.abs(wl - upperTotal) <= 20) &&
+               (tallTotal === 0 || Math.abs(wl - tallTotal) <= 20),
+      };
+    }
+    for (const pos of wall.positions) {
+      // Normalize all common field name variations (camelCase vs snake_case)
+      if (pos.sku_suggestion && !pos.skuSuggestion) { pos.skuSuggestion = pos.sku_suggestion; delete pos.sku_suggestion; }
+      if (pos.skusuggestion && !pos.skuSuggestion) { pos.skuSuggestion = pos.skusuggestion; delete pos.skusuggestion; }
+      if (pos.sku && !pos.skuSuggestion) { pos.skuSuggestion = pos.sku; }
+      if (pos.door_orientation && !pos.doorOrientation) { pos.doorOrientation = pos.door_orientation; delete pos.door_orientation; }
+      if (pos.doororientation && !pos.doorOrientation) { pos.doorOrientation = pos.doororientation; delete pos.doororientation; }
+      if (pos.hinge && !pos.doorOrientation) { pos.doorOrientation = pos.hinge; }
+      if (pos.width && !pos.width_cm) { pos.width_cm = pos.width; }
+      if (pos.widthCm && !pos.width_cm) { pos.width_cm = pos.widthCm; }
+      if (pos.height && !pos.height_cm) { pos.height_cm = pos.height; }
+      if (pos.heightCm && !pos.height_cm) { pos.height_cm = pos.heightCm; }
+      if (pos.x && pos.x_cm === undefined) { pos.x_cm = pos.x; }
+      if (pos.xCm && pos.x_cm === undefined) { pos.x_cm = pos.xCm; }
+      if (!Array.isArray(pos.features)) pos.features = pos.features ? [pos.features] : [];
+      if (!pos.id && pos.position_id) { pos.id = pos.position_id; }
+      if (!pos.id && pos.positionId) { pos.id = pos.positionId; }
+      if (!pos.id) { pos.id = `${wall.label}_${wall.positions.indexOf(pos) + 1}`; }
+      pos.wallLabel = wall.label;
+    }
+  }
+}
+
+// --- System prompt builder ---
+
+function buildSystemPrompt(intake) {
+  return `You are an expert kitchen designer analyzing elevation and floor plan drawings for Pronorm kitchens (ProLine, X-Line, Y-Line ranges). Your task is to identify every cabinet position on a SINGLE WALL and map each to a Pronorm SKU pattern.
 
 HOW TO READ KITCHEN ELEVATION DRAWINGS:
 - An elevation drawing shows a wall from the FRONT, as if you are standing in front of it looking straight at it.
@@ -209,7 +542,6 @@ CRITICAL LAYOUT RULES:
 - Side panels (16mm or 25mm decorative panels on exposed cabinet sides) are NOT cabinets — skip them.
 - Corner filler panels (PHX, POE, POEX) are NOT cabinets — skip them.
 - The sum of cabinet widths in EACH ROW should approximately equal the wall length (minus fillers/gaps).
-- A kitchen can have multiple wall unit heights on different walls (e.g., 89cm on one wall, 51cm on another).
 
 DIMENSIONS — All in CENTIMETERS:
 Valid base/drawer widths: 15, 20, 27, 30, 40, 45, 50, 55, 60, 75, 80, 90, 100, 120
@@ -235,235 +567,4 @@ DOOR ORIENTATION:
 - 1-door base/wall units always have a hinge direction. 2-door units usually don't need one.
 
 Output ONLY valid JSON. No markdown, no explanation.`;
-
-    const userMsg = `Analyze these kitchen drawings carefully. Room: ${intake.roomWidth}x${intake.roomDepth}cm, ceiling ${intake.ceilingHeight}cm.
-Walls:\n${wallSummary}
-${intake.notes ? `Notes: ${intake.notes}` : ''}
-
-STEP-BY-STEP PROCESS:
-1. For each elevation drawing, first DETERMINE THE MEASUREMENT SYSTEM (mm or inches) by looking at the dimension annotations. Then READ ALL DIMENSION ANNOTATIONS and convert them to centimeters using the conversion tables in the system prompt.
-2. BEFORE identifying rows, look at the HEIGHTS of cabinets. Any cabinet that spans from floor to near-ceiling (~195-227cm or ~77-89 inches) is a TALL unit, NOT a base unit. A wall can be entirely tall units with zero base units.
-3. For sections that are NOT tall units, identify base row (floor level, ~76cm) and wall/upper row (above countertop).
-4. For each cabinet, determine: width (from converted annotations in cm), type (from visual appearance and height), door orientation.
-5. Cross-check: each row's widths should sum to approximately the wall length (within 5-20cm for fillers). Tall unit widths + base unit widths should NOT exceed wall length — they share the same horizontal space.
-6. Assign SKU suggestions using the PREFIX WIDTH-HEIGHT-VARIANT format. All widths and heights MUST be in centimeters.
-
-EXAMPLE 1 — Wall with tall units on ends flanking base+upper cabinets:
-{"walls":[{"label":"A","length_cm":369,"positions":[
-  {"id":"A_1","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":0,"doorOrientation":"L","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder with internal pull-outs, leftmost position"},
-  {"id":"A_2","type":"wall_unit","skuSuggestion":"O 60-51-01","width_cm":60,"height_cm":51,"x_cm":60,"doorOrientation":"L","features":[],"confidence":0.80,"reasoning":"Wall unit above base section"},
-  {"id":"A_3","type":"base_unit","skuSuggestion":"U 90-76-38","width_cm":90,"height_cm":76,"x_cm":60,"doorOrientation":"","features":["pull-out"],"confidence":0.80,"reasoning":"Pull-out base unit below wall cabinet"},
-  {"id":"A_4","type":"base_unit","skuSuggestion":"UG 100-76-31","width_cm":100,"height_cm":76,"x_cm":150,"doorOrientation":"","features":["hob"],"confidence":0.85,"reasoning":"Hob/cooktop base unit, wider unit in center"},
-  {"id":"A_5","type":"fridge_housing","skuSuggestion":"HSP 76-227-065","width_cm":76,"height_cm":227,"x_cm":293,"doorOrientation":"L","features":["fridge"],"confidence":0.80,"reasoning":"Tall fridge housing, right side"},
-  {"id":"A_6","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":309,"doorOrientation":"R","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder, rightmost position"}
-],"dimensionCheck":{"baseRow_cm":190,"upperRow_cm":60,"tallRow_cm":196,"wallLength_cm":369,"valid":true}}]}
-
-EXAMPLE 2 — Wall that is ALL tall units (no base units at all). Note: baseRow_cm is 0:
-{"walls":[{"label":"B","length_cm":250,"positions":[
-  {"id":"B_1","type":"fridge_housing","skuSuggestion":"HSP 76-227-065","width_cm":76,"height_cm":227,"x_cm":0,"doorOrientation":"L","features":["fridge"],"confidence":0.85,"reasoning":"Tall fridge housing on left, floor to ceiling"},
-  {"id":"B_2","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":76,"doorOrientation":"L","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder, floor to ceiling"},
-  {"id":"B_3","type":"larder","skuSuggestion":"HP 55-227-12","width_cm":55,"height_cm":227,"x_cm":136,"doorOrientation":"R","features":["larder"],"confidence":0.85,"reasoning":"Crockery larder, floor to ceiling"},
-  {"id":"B_4","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":191,"doorOrientation":"R","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder on right, floor to ceiling"}
-],"dimensionCheck":{"baseRow_cm":0,"upperRow_cm":0,"tallRow_cm":251,"wallLength_cm":250,"valid":true}}],
-"notes":["All-tall wall with no base or wall units — every cabinet spans floor to ceiling"],
-"warnings":[]}
-
-CRITICAL RULES:
-- READ dimension annotations from the drawing — do NOT guess widths from visual proportions alone.
-- Every width MUST be a valid ProLine width. If an annotation shows e.g. 575mm, round to nearest valid: 60cm.
-- For each row (base, upper, tall), the widths should sum to approximately the wall length (within 5-20cm for fillers).
-- Tall units replace both base AND upper in their section of the wall. Do NOT double-count.
-- Use these "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, open_shelf, extractor_unit, tall_unit, mid_height_unit, appliance_housing, fridge_housing, larder, crockery_unit, hob_base, oven_base, pull_out_unit, towel_rail_unit, waste_bin_unit, bottle_unit, island_base.
-- HR prefix = mid-height crockery/display unit (~144cm). Not full tall height — these are shorter display cabinets often with glass doors.
-- UG prefix = hob/cooktop base. HP/HGP prefix = larder with pull-outs. HSP = fridge housing.
-- DT prefix = front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13).
-- OG prefix = extractor/rangehood housing (wall unit above hob). OR can be open shelf (38cm tall) or flap door.
-- UE prefix = corner base unit, often 125cm with offset specification.`;
-
-    // Build image blocks
-    const contentBlocks = [];
-    const fp = imageContents.find(i => i.category === 'floorplan');
-    if (fp) {
-      contentBlocks.push({ type: 'text', text: 'FLOOR PLAN:' });
-      contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: fp.mimeType, data: fp.base64 } });
-    }
-    for (const elev of imageContents.filter(i => i.category === 'elevation')) {
-      contentBlocks.push({ type: 'text', text: `ELEVATION Wall ${elev.wallLabel}:` });
-      contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: elev.mimeType, data: elev.base64 } });
-    }
-    contentBlocks.push({ type: 'text', text: userMsg });
-
-    // 4. Call Claude with streaming to collect text
-    const cleanKey = anthropicKey.trim();
-    const claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': cleanKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20250929',
-        max_tokens: 8000,
-        stream: true,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: contentBlocks }],
-      }),
-    });
-
-    if (!claudeResp.ok) {
-      const errBody = await claudeResp.text();
-      await storeResult(supabase, jobId, { error: `Claude API error: ${claudeResp.status}`, detail: errBody.slice(0, 500) });
-      return;
-    }
-
-    // 5. Read the stream and collect all text
-    let fullText = '';
-    const reader = claudeResp.body.getReader();
-    const decoder = new TextDecoder();
-    let sseBuffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      sseBuffer += decoder.decode(value, { stream: true });
-      const lines = sseBuffer.split('\n');
-      sseBuffer = lines.pop() || '';
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const d = line.slice(6).trim();
-        if (d === '[DONE]') continue;
-        try {
-          const ev = JSON.parse(d);
-          if (ev.type === 'content_block_delta' && ev.delta?.type === 'text_delta') {
-            fullText += ev.delta.text;
-          }
-        } catch {}
-      }
-    }
-
-    if (!fullText.trim()) {
-      await storeResult(supabase, jobId, { error: 'No text received from AI' });
-      return;
-    }
-
-    // 6. Parse Claude's JSON response
-    let jsonStr = fullText.trim();
-    if (jsonStr.startsWith('```')) {
-      jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
-    }
-
-    let analysis;
-    try {
-      analysis = JSON.parse(jsonStr);
-    } catch (e) {
-      await storeResult(supabase, jobId, { error: 'Failed to parse AI response', raw: fullText.slice(0, 1000) });
-      return;
-    }
-
-    // 7. Normalize — ensure walls is always an array
-    // Log the raw structure for debugging
-    console.log('AI response structure:', JSON.stringify({
-      hasWalls: !!analysis.walls,
-      wallsIsArray: Array.isArray(analysis.walls),
-      wallCount: Array.isArray(analysis.walls) ? analysis.walls.length : 0,
-      topLevelKeys: Object.keys(analysis),
-      firstWallKeys: Array.isArray(analysis.walls) && analysis.walls[0] ? Object.keys(analysis.walls[0]) : [],
-      firstWallPositionCount: Array.isArray(analysis.walls) && analysis.walls[0] ? (Array.isArray(analysis.walls[0].positions) ? analysis.walls[0].positions.length : 'not array: ' + typeof analysis.walls[0].positions) : 'no wall',
-    }));
-    if (!Array.isArray(analysis.walls)) {
-      if (analysis.walls && typeof analysis.walls === 'object') {
-        analysis.walls = Object.values(analysis.walls);
-      } else {
-        analysis.walls = [];
-      }
-    }
-    if (!Array.isArray(analysis.notes)) analysis.notes = [];
-    if (!Array.isArray(analysis.warnings)) analysis.warnings = [];
-
-    for (const wall of analysis.walls) {
-      // Normalize wall-level fields
-      if (!wall.label && wall.wall_label) { wall.label = wall.wall_label; }
-      if (!wall.label && wall.wallLabel) { wall.label = wall.wallLabel; }
-      if (!wall.label && wall.name) { wall.label = wall.name; }
-      if (!wall.length_cm && wall.lengthCm) { wall.length_cm = wall.lengthCm; }
-      if (!wall.length_cm && wall.length) { wall.length_cm = wall.length; }
-      if (!wall.length_cm && wall.wall_length_cm) { wall.length_cm = wall.wall_length_cm; }
-
-      // Robust normalization: AI may use different field names for positions
-      if (!Array.isArray(wall.positions)) {
-        // Try common alternative field names
-        const altPositions = wall.items || wall.cabinets || wall.cabinet_positions || wall.cabinetPositions || wall.units;
-        if (Array.isArray(altPositions)) {
-          wall.positions = altPositions;
-        } else if (altPositions && typeof altPositions === 'object') {
-          wall.positions = Object.values(altPositions);
-        } else {
-          wall.positions = [];
-        }
-      }
-      if (wall.dimension_check && !wall.dimensionCheck) {
-        wall.dimensionCheck = wall.dimension_check;
-        delete wall.dimension_check;
-      }
-      if (!wall.dimensionCheck) {
-        // Build per-row dimension check
-        const wl = wall.length_cm || 0;
-        const base = wall.positions.filter(p => {
-          const t = (p.type || '').toLowerCase();
-          return t.includes('base') || t.includes('sink') || t.includes('drawer') || t.includes('corner');
-        });
-        const upper = wall.positions.filter(p => {
-          const t = (p.type || '').toLowerCase();
-          return t.includes('wall') || t.includes('flap');
-        });
-        const tall = wall.positions.filter(p => {
-          const t = (p.type || '').toLowerCase();
-          return t.includes('tall') || t.includes('larder') || t.includes('housing') || t.includes('pantry') || t.includes('fridge');
-        });
-        const baseTotal = base.reduce((s, p) => s + (p.width_cm || 0), 0);
-        const upperTotal = upper.reduce((s, p) => s + (p.width_cm || 0), 0);
-        const tallTotal = tall.reduce((s, p) => s + (p.width_cm || 0), 0);
-        wall.dimensionCheck = {
-          baseRow_cm: baseTotal,
-          upperRow_cm: upperTotal,
-          tallRow_cm: tallTotal,
-          wallLength_cm: wl,
-          valid: (baseTotal === 0 || Math.abs(wl - baseTotal) <= 20) &&
-                 (upperTotal === 0 || Math.abs(wl - upperTotal) <= 20) &&
-                 (tallTotal === 0 || Math.abs(wl - tallTotal) <= 20),
-        };
-      }
-      for (const pos of wall.positions) {
-        // Normalize all common field name variations (camelCase vs snake_case)
-        if (pos.sku_suggestion && !pos.skuSuggestion) { pos.skuSuggestion = pos.sku_suggestion; delete pos.sku_suggestion; }
-        if (pos.skusuggestion && !pos.skuSuggestion) { pos.skuSuggestion = pos.skusuggestion; delete pos.skusuggestion; }
-        if (pos.sku && !pos.skuSuggestion) { pos.skuSuggestion = pos.sku; }
-        if (pos.door_orientation && !pos.doorOrientation) { pos.doorOrientation = pos.door_orientation; delete pos.door_orientation; }
-        if (pos.doororientation && !pos.doorOrientation) { pos.doorOrientation = pos.doororientation; delete pos.doororientation; }
-        if (pos.hinge && !pos.doorOrientation) { pos.doorOrientation = pos.hinge; }
-        if (pos.width && !pos.width_cm) { pos.width_cm = pos.width; }
-        if (pos.widthCm && !pos.width_cm) { pos.width_cm = pos.widthCm; }
-        if (pos.height && !pos.height_cm) { pos.height_cm = pos.height; }
-        if (pos.heightCm && !pos.height_cm) { pos.height_cm = pos.heightCm; }
-        if (pos.x && pos.x_cm === undefined) { pos.x_cm = pos.x; }
-        if (pos.xCm && pos.x_cm === undefined) { pos.x_cm = pos.xCm; }
-        if (!Array.isArray(pos.features)) pos.features = pos.features ? [pos.features] : [];
-        if (!pos.id && pos.position_id) { pos.id = pos.position_id; }
-        if (!pos.id && pos.positionId) { pos.id = pos.positionId; }
-        if (!pos.id) { pos.id = `${wall.label}_${wall.positions.indexOf(pos) + 1}`; }
-        pos.wallLabel = wall.label;
-      }
-    }
-
-    // 8. Store successful result
-    await storeResult(supabase, jobId, analysis);
-
-    // 9. Clean up the request payload
-    await supabase.storage.from('project-files').remove([`analysis-jobs/${jobId}/request.json`]);
-
-  } catch (err) {
-    console.error('processAnalysisJob error:', err);
-    await storeResult(supabase, jobId, { error: err.message || 'Background processing failed' });
-  }
 }

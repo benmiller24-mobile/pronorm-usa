@@ -165,7 +165,12 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
         }
       }
 
-      if (!aiAnalysis) throw new Error('No analysis result received from AI');
+      if (!aiAnalysis) {
+        // Debug: show what we actually received
+        const preview = responseText.slice(0, 300);
+        const dataLines = responseText.split('\n').filter(l => l.startsWith('data: ')).length;
+        throw new Error(`No result event found. Content-Type: ${contentType}. Response length: ${responseText.length}. Data lines: ${dataLines}. Preview: ${preview}`);
+      }
 
       // 3. Match positions to SKUs
       setPhase('matching');

@@ -362,6 +362,15 @@ CRITICAL RULES:
     }
 
     // 7. Normalize — ensure walls is always an array
+    // Log the raw structure for debugging
+    console.log('AI response structure:', JSON.stringify({
+      hasWalls: !!analysis.walls,
+      wallsIsArray: Array.isArray(analysis.walls),
+      wallCount: Array.isArray(analysis.walls) ? analysis.walls.length : 0,
+      topLevelKeys: Object.keys(analysis),
+      firstWallKeys: Array.isArray(analysis.walls) && analysis.walls[0] ? Object.keys(analysis.walls[0]) : [],
+      firstWallPositionCount: Array.isArray(analysis.walls) && analysis.walls[0] ? (Array.isArray(analysis.walls[0].positions) ? analysis.walls[0].positions.length : 'not array: ' + typeof analysis.walls[0].positions) : 'no wall',
+    }));
     if (!Array.isArray(analysis.walls)) {
       if (analysis.walls && typeof analysis.walls === 'object') {
         analysis.walls = Object.values(analysis.walls);
@@ -373,8 +382,25 @@ CRITICAL RULES:
     if (!Array.isArray(analysis.warnings)) analysis.warnings = [];
 
     for (const wall of analysis.walls) {
+      // Normalize wall-level fields
+      if (!wall.label && wall.wall_label) { wall.label = wall.wall_label; }
+      if (!wall.label && wall.wallLabel) { wall.label = wall.wallLabel; }
+      if (!wall.label && wall.name) { wall.label = wall.name; }
+      if (!wall.length_cm && wall.lengthCm) { wall.length_cm = wall.lengthCm; }
+      if (!wall.length_cm && wall.length) { wall.length_cm = wall.length; }
+      if (!wall.length_cm && wall.wall_length_cm) { wall.length_cm = wall.wall_length_cm; }
+
+      // Robust normalization: AI may use different field names for positions
       if (!Array.isArray(wall.positions)) {
-        wall.positions = [];
+        // Try common alternative field names
+        const altPositions = wall.items || wall.cabinets || wall.cabinet_positions || wall.cabinetPositions || wall.units;
+        if (Array.isArray(altPositions)) {
+          wall.positions = altPositions;
+        } else if (altPositions && typeof altPositions === 'object') {
+          wall.positions = Object.values(altPositions);
+        } else {
+          wall.positions = [];
+        }
       }
       if (wall.dimension_check && !wall.dimensionCheck) {
         wall.dimensionCheck = wall.dimension_check;
@@ -409,9 +435,23 @@ CRITICAL RULES:
         };
       }
       for (const pos of wall.positions) {
+        // Normalize all common field name variations (camelCase vs snake_case)
         if (pos.sku_suggestion && !pos.skuSuggestion) { pos.skuSuggestion = pos.sku_suggestion; delete pos.sku_suggestion; }
+        if (pos.skusuggestion && !pos.skuSuggestion) { pos.skuSuggestion = pos.skusuggestion; delete pos.skusuggestion; }
+        if (pos.sku && !pos.skuSuggestion) { pos.skuSuggestion = pos.sku; }
         if (pos.door_orientation && !pos.doorOrientation) { pos.doorOrientation = pos.door_orientation; delete pos.door_orientation; }
-        if (!Array.isArray(pos.features)) pos.features = [];
+        if (pos.doororientation && !pos.doorOrientation) { pos.doorOrientation = pos.doororientation; delete pos.doororientation; }
+        if (pos.hinge && !pos.doorOrientation) { pos.doorOrientation = pos.hinge; }
+        if (pos.width && !pos.width_cm) { pos.width_cm = pos.width; }
+        if (pos.widthCm && !pos.width_cm) { pos.width_cm = pos.widthCm; }
+        if (pos.height && !pos.height_cm) { pos.height_cm = pos.height; }
+        if (pos.heightCm && !pos.height_cm) { pos.height_cm = pos.heightCm; }
+        if (pos.x && pos.x_cm === undefined) { pos.x_cm = pos.x; }
+        if (pos.xCm && pos.x_cm === undefined) { pos.x_cm = pos.xCm; }
+        if (!Array.isArray(pos.features)) pos.features = pos.features ? [pos.features] : [];
+        if (!pos.id && pos.position_id) { pos.id = pos.position_id; }
+        if (!pos.id && pos.positionId) { pos.id = pos.positionId; }
+        if (!pos.id) { pos.id = `${wall.label}_${wall.positions.indexOf(pos) + 1}`; }
         pos.wallLabel = wall.label;
       }
     }

@@ -152,39 +152,95 @@ async function processAnalysisJob(jobId, supabase) {
 
     const systemPrompt = `You are an expert kitchen designer analyzing elevation and floor plan drawings for Pronorm ProLine kitchens. Your task is to identify every cabinet position and map each to a ProLine SKU pattern.
 
-CRITICAL ELEVATION READING RULES:
-- An elevation drawing shows a wall from the FRONT. Cabinets are arranged in HORIZONTAL ROWS stacked vertically.
-- IDENTIFY each horizontal row separately:
-  * BASE ROW (bottom ~76-87cm): base units (U), sink bases (US), drawer bases (DT), corner bases (UE)
-  * UPPER ROW (mounted above countertop, ~60-90cm tall): wall units (O), flap doors (OR)
-  * TALL UNITS (floor to near ceiling, ~200-230cm): larders (HG), appliance housings (HS/AH), fridge housings (HSP), tall units (H)
-- IMPORTANT: Tall units occupy the SAME wall space as base+upper would. A wall may have ONLY tall units, or a MIX of tall units plus base+upper sections. Do NOT double-count tall units as base units.
-- Fillers are narrow panels (usually 2-10cm) at the ends of runs or between cabinets. Note them in "notes" but do NOT create positions for fillers.
-- The sum of widths within EACH ROW should approximately equal the wall length (minus fillers and appliance gaps).
-- If a wall has only tall units, there should be NO base or wall unit positions on that wall segment.
+HOW TO READ KITCHEN ELEVATION DRAWINGS:
+- An elevation drawing shows a wall from the FRONT, as if you are standing in front of it looking straight at it.
+- Cabinets are arranged in HORIZONTAL ROWS stacked vertically on the wall.
+- READ THE DIMENSION ANNOTATIONS carefully. Drawings typically have dimension lines with numbers showing widths and heights in millimeters. ALWAYS use these annotated dimensions — do NOT guess widths from visual proportions.
+- Convert mm annotations to cm: 600mm = 60cm, 900mm = 90cm, 1000mm = 100cm, etc.
+- If no dimension annotations are visible, estimate from the total wall length and the proportional widths.
 
-DIMENSIONS: All in CENTIMETERS. Width 60 = 600mm, height 76 = 768mm.
-Valid base widths: 15,20,27,30,40,45,50,55,60,75,80,90,100,120cm
-Valid wall widths: 20,25,27,30,35,40,45,50,55,60,65,75,80,90,100,120cm
-Valid tall widths: 27,30,45,55,60,75,80,90,120cm
-Base height: ${intake.baseUnitHeight || 76}cm
+CABINET ROWS — Identify each horizontal row separately:
+  * BASE ROW (bottom ~76cm): These sit on the floor behind the plinth. Look for door fronts, drawer fronts, appliance panels.
+    - U = standard base unit (1 or 2 doors, or with shelves)
+    - US = sink base (usually under the sink, 2 doors)
+    - UG = base for hob/cooktop (has cutout for appliance)
+    - UE = corner base unit (L-shaped or diagonal)
+    - DT = drawer/front panel for integrated appliance (dishwasher, under-counter fridge)
+    - U...-90 suffix = waste bin pull-out
+    - U...-34 suffix = multi-drawer pull-out
+    - U...-38 suffix = pull-out unit with internal drawer
+  * UPPER/WALL ROW (mounted above countertop, typically 51cm or 64cm tall): Wall-hung cabinets above the worktop.
+    - O = wall unit with door(s)
+    - OR = wall unit with flap/lift-up door(s), often glass-fronted
+    - OG = glass-door wall unit
+  * TALL UNITS (floor to near ceiling, ~207-227cm tall): Full-height cabinets spanning from floor to top.
+    - HP = larder/pantry with internal pull-outs (most common tall unit)
+    - HSP = tall housing for fridge/freezer (has appliance niche)
+    - HS = tall housing for oven/appliance
+    - HG = larder with shelves (no pull-outs)
+    - H = generic tall unit
+    - AH = appliance housing
 
-SKU PREFIXES: U=base, US=sink base, UE=corner base, DT=drawer base, O=wall unit, OR=wall flap, H=tall, HS=tall appliance, HSP=fridge housing, HG=larder, AH=appliance housing
-FORMAT: PREFIX WIDTH-HEIGHT-VARIANT (e.g. U 60-76-01, H 60-207-01)
+CRITICAL LAYOUT RULES:
+- Tall units occupy the SAME horizontal wall space as base+upper would. Where you see a tall unit, there are NO base or wall units behind it.
+- A wall commonly has: tall unit(s) on one or both ends, with base+upper cabinets in the middle section.
+- Fillers (narrow panels 2-10cm) appear at ends of runs or between cabinets. Note them in "notes" but do NOT create positions for fillers or panels.
+- Side panels (25mm thick decorative panels on exposed cabinet sides) are NOT cabinets — skip them.
+- The sum of cabinet widths in EACH ROW should approximately equal the wall length (minus fillers/gaps).
+
+DIMENSIONS — All in CENTIMETERS:
+Valid base/drawer widths: 15, 20, 27, 30, 40, 45, 50, 55, 60, 75, 80, 90, 100, 120
+Valid wall unit widths:   20, 25, 27, 30, 35, 40, 45, 50, 55, 60, 65, 75, 80, 90, 100, 120
+Valid tall unit widths:   27, 30, 45, 55, 60, 75, 76, 80, 90, 120
+Common base height: ${intake.baseUnitHeight || 76}cm (768mm)
+Common wall unit heights: 51cm (510mm), 64cm (640mm), 72cm (720mm), 90cm (900mm)
+Common tall heights: 207cm (2070mm), 221cm (2210mm), 227cm (2270mm)
+
+MOST COMMON WIDTHS (in order of frequency): 60, 100, 90, 50, 75, 80, 120, 45, 30
+If a dimension annotation says 600 → width is 60cm. If it says 900 → 90cm. If it says 1000 → 100cm.
+
+SKU FORMAT: PREFIX + WIDTH - HEIGHT - VARIANT
+Examples: U 60-76-01, US 100-76-01, HP 60-227-09, HSP 76-227-065, O 60-51-01, OR 120-64-601, UG 100-76-31
+
+DOOR ORIENTATION:
+- "L" = left-hinged (opens to the left)
+- "R" = right-hinged (opens to the right)
+- Drawers/pull-outs typically have no hinge direction
+- On paired tall units (e.g., two larders flanking a section), the left one is usually "L" and the right one "R"
 
 Output ONLY valid JSON. No markdown, no explanation.`;
 
-    const userMsg = `Analyze these drawings. Room: ${intake.roomWidth}x${intake.roomDepth}cm, ceiling ${intake.ceilingHeight}cm.
+    const userMsg = `Analyze these kitchen drawings carefully. Room: ${intake.roomWidth}x${intake.roomDepth}cm, ceiling ${intake.ceilingHeight}cm.
 Walls:\n${wallSummary}
 ${intake.notes ? `Notes: ${intake.notes}` : ''}
 
-Output JSON: {"walls":[{"label":"A","length_cm":340,"positions":[{"id":"A_1","type":"tall_unit","skuSuggestion":"HG 60-207-01","width_cm":60,"height_cm":207,"x_cm":0,"doorOrientation":"R","features":["larder"],"confidence":0.85,"reasoning":"Full-height pantry unit, leftmost position"}],"dimensionCheck":{"baseRow_cm":0,"upperRow_cm":0,"tallRow_cm":340,"wallLength_cm":340,"valid":true}}],"notes":["2cm filler panel on left end"],"warnings":[]}
+STEP-BY-STEP PROCESS:
+1. For each elevation drawing, first READ ALL DIMENSION ANNOTATIONS (numbers on dimension lines). These tell you exact widths in mm.
+2. Identify the horizontal rows: which sections are tall units (floor to ceiling), which are base+upper.
+3. For each cabinet in each row, determine: width (from annotations), type (from visual appearance), door orientation.
+4. Cross-check: row widths should sum to approximately the wall length.
+5. Assign SKU suggestions using the PREFIX WIDTH-HEIGHT-VARIANT format.
 
-IMPORTANT:
-- Every width MUST be a valid ProLine width from the lists above.
-- For each row (base, upper, tall), the widths should sum to approximately the wall length.
-- Do NOT add base units where you see tall units — tall units go floor to ceiling and replace both base and upper.
-- Use "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, tall_unit, appliance_housing, fridge_housing, larder.`;
+EXAMPLE OUTPUT for a wall with 2 larders flanking base+upper cabinets:
+{"walls":[{"label":"A","length_cm":369,"positions":[
+  {"id":"A_1","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":0,"doorOrientation":"L","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder with internal pull-outs, leftmost position"},
+  {"id":"A_2","type":"wall_unit","skuSuggestion":"O 60-51-01","width_cm":60,"height_cm":51,"x_cm":60,"doorOrientation":"L","features":[],"confidence":0.80,"reasoning":"Wall unit above base section"},
+  {"id":"A_3","type":"base_unit","skuSuggestion":"U 90-76-38","width_cm":90,"height_cm":76,"x_cm":60,"doorOrientation":"","features":["pull-out"],"confidence":0.80,"reasoning":"Pull-out base unit below wall cabinet"},
+  {"id":"A_4","type":"base_unit","skuSuggestion":"UG 100-76-31","width_cm":100,"height_cm":76,"x_cm":150,"doorOrientation":"","features":["hob"],"confidence":0.85,"reasoning":"Hob/cooktop base unit, wider unit in center"},
+  {"id":"A_5","type":"fridge_housing","skuSuggestion":"HSP 76-227-065","width_cm":76,"height_cm":227,"x_cm":293,"doorOrientation":"L","features":["fridge"],"confidence":0.80,"reasoning":"Tall fridge housing, right side"},
+  {"id":"A_6","type":"larder","skuSuggestion":"HP 60-227-09","width_cm":60,"height_cm":227,"x_cm":309,"doorOrientation":"R","features":["larder","pull-outs"],"confidence":0.85,"reasoning":"Full-height larder, rightmost position"}
+],"dimensionCheck":{"baseRow_cm":190,"upperRow_cm":60,"tallRow_cm":196,"wallLength_cm":369,"valid":true}}],
+"notes":["Side panels on exposed ends not included as positions"],
+"warnings":[]}
+
+CRITICAL RULES:
+- READ dimension annotations from the drawing — do NOT guess widths from visual proportions alone.
+- Every width MUST be a valid ProLine width. If an annotation shows e.g. 575mm, round to nearest valid: 60cm.
+- For each row (base, upper, tall), the widths should sum to approximately the wall length (within 5-20cm for fillers).
+- Tall units replace both base AND upper in their section of the wall. Do NOT double-count.
+- Use these "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, tall_unit, appliance_housing, fridge_housing, larder, hob_base, pull_out_unit, waste_bin_unit.
+- UG prefix = hob/cooktop base. HP prefix = larder with pull-outs. HSP = fridge housing.
+- DT prefix = front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13).`;
 
     // Build image blocks
     const contentBlocks = [];

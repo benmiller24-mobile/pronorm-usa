@@ -18,9 +18,9 @@ export function validateLayout(items: MappedItem[], intakeData: IntakeData): Val
   // Helper to classify cabinet row by SKU prefix
   function getCabinetRow(sku: string): 'base' | 'wall' | 'tall' {
     const s = sku.toUpperCase();
-    if (s.startsWith('O')) return 'wall';
-    if (s.startsWith('H') || s.startsWith('AH')) return 'tall';
-    return 'base';
+    if (s.startsWith('OR') || s.startsWith('OG') || s.startsWith('O')) return 'wall';
+    if (s.startsWith('HP') || s.startsWith('HSP') || s.startsWith('HS') || s.startsWith('HG') || s.startsWith('HGP') || s.startsWith('H') || s.startsWith('AH')) return 'tall';
+    return 'base'; // U, US, UE, UG, DT, etc.
   }
 
   for (const wallDef of intakeData.walls) {
@@ -63,7 +63,7 @@ export function validateLayout(items: MappedItem[], intakeData: IntakeData): Val
     // 2. Width validation: check each item uses a valid ProLine width
     const VALID_BASE_WIDTHS = [15, 20, 27, 30, 40, 45, 50, 55, 60, 75, 80, 90, 100, 120];
     const VALID_WALL_WIDTHS = [20, 25, 27, 30, 35, 40, 45, 50, 55, 60, 65, 75, 80, 90, 100, 120];
-    const VALID_TALL_WIDTHS = [27, 30, 45, 55, 60, 75, 80, 90, 120];
+    const VALID_TALL_WIDTHS = [27, 30, 45, 55, 60, 75, 76, 80, 90, 120];
 
     for (const item of wallItems) {
       const sku = item.sku.toUpperCase();

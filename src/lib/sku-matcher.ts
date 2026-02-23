@@ -26,14 +26,21 @@ const TYPE_TO_CATEGORY: Record<string, string[]> = {
   'sink_base': ['Base units'],
   'corner_base': ['Base units'],
   'drawer_base': ['Base units'],
+  'hob_base': ['Base units'],
+  'pull_out_unit': ['Base units'],
+  'waste_bin_unit': ['Base units'],
   'wall_unit': ['Wall units'],
   'wall': ['Wall units'],
+  'wall_flap': ['Wall units'],
   'corner_wall': ['Wall units'],
   'tall_unit': ['Tall units'],
   'tall': ['Tall units'],
   'pantry': ['Tall units'],
+  'larder': ['Tall units'],
   'oven_tall': ['Tall units'],
   'fridge_tall': ['Tall units'],
+  'fridge_housing': ['Tall units'],
+  'appliance_housing': ['Tall units'],
   'countertop_unit': ['Countertop units'],
   'countertop': ['Countertop units'],
 };
@@ -43,7 +50,7 @@ const PREFIX_HINTS: Record<string, string[]> = {
   'U': ['base', 'base_unit', 'standard base'],
   'US': ['sink_base', 'sink base unit'],
   'UE': ['corner_base', 'corner base'],
-  'UG': ['base_unit', 'base with internal fittings'],
+  'UG': ['base_unit', 'hob_base', 'base with internal fittings', 'hob', 'cooktop'],
   'UR': ['base_unit', 'base shelf unit'],
   'O': ['wall', 'wall_unit', 'standard wall'],
   'OR': ['wall_unit', 'wall with flap door'],
@@ -53,9 +60,9 @@ const PREFIX_HINTS: Record<string, string[]> = {
   'HSP': ['fridge_tall', 'tall fridge/freezer housing'],
   'HG': ['tall_unit', 'tall larder'],
   'HGP': ['tall_unit', 'tall larder with pull-outs'],
-  'HP': ['pantry', 'tall unit'],
+  'HP': ['pantry', 'larder', 'tall_unit', 'tall unit with pull-outs'],
   'AH': ['tall_unit', 'appliance housing'],
-  'DT': ['base_unit', 'worktop unit'],
+  'DT': ['drawer_base', 'base_unit', 'appliance front', 'dishwasher', 'fridge front'],
 };
 
 export async function matchPositionsToSKUs(
@@ -218,9 +225,12 @@ function scoreMatch(item: CatalogItem, pos: CabinetPosition, intakeData: IntakeD
     if (feat.includes('pull-out') && desc.includes('pull-out')) featureScore += 0.3;
     if (feat.includes('glass') && desc.includes('glass')) featureScore += 0.3;
     if (feat.includes('sink') && (skuPrefix === 'US' || desc.includes('sink'))) featureScore += 0.4;
-    if (feat.includes('pantry') && (skuPrefix.startsWith('HG') || desc.includes('pantry') || desc.includes('larder'))) featureScore += 0.4;
+    if (feat.includes('larder') && (skuPrefix === 'HP' || skuPrefix === 'HG' || skuPrefix === 'HGP' || desc.includes('larder'))) featureScore += 0.4;
+    if (feat.includes('pantry') && (skuPrefix === 'HP' || skuPrefix.startsWith('HG') || desc.includes('pantry') || desc.includes('larder'))) featureScore += 0.4;
     if (feat.includes('oven') && (skuPrefix === 'HS' || desc.includes('appliance'))) featureScore += 0.4;
     if (feat.includes('fridge') && (skuPrefix === 'HSP' || desc.includes('fridge') || desc.includes('freezer'))) featureScore += 0.4;
+    if (feat.includes('hob') && (skuPrefix === 'UG' || desc.includes('hob') || desc.includes('cooktop'))) featureScore += 0.4;
+    if (feat.includes('waste') && desc.includes('waste')) featureScore += 0.3;
   }
   score += Math.min(featureScore, 1) * 0.15;
 

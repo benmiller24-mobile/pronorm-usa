@@ -17,13 +17,16 @@ type AnalysisPhase = 'uploading' | 'pass1' | 'pass2' | 'pass3' | 'matching' | 'v
 
 const PHASE_LABELS: Record<AnalysisPhase, string> = {
   uploading: 'Uploading drawings to cloud storage...',
-  pass1: 'Pass 1: Extracting room layout from floor plan...',
-  pass2: 'Pass 2: Identifying cabinets from elevations...',
-  pass3: 'Pass 3: Cross-validating dimensions and layout...',
+  pass1: 'AI is analyzing your drawings (this may take 30-60 seconds)...',
+  pass2: 'AI is identifying cabinets and positions...',
+  pass3: 'Cross-validating dimensions and layout...',
   matching: 'Matching cabinet positions to ProLine SKUs...',
   validating: 'Running constraint validation...',
   done: 'Analysis complete!',
 };
+
+const POLL_INTERVAL_MS = 3000;
+const MAX_POLL_TIME_MS = 180000; // 3 minutes
 
 export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, onComplete, onError }: AnalysisProgressProps) {
   const [phase, setPhase] = useState<AnalysisPhase>('uploading');
@@ -46,6 +49,38 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
     runAnalysis();
   }, []);
 
+  async function pollForResult(jobId: string): Promise<AIAnalysis> {
+    const deadline = Date.now() + MAX_POLL_TIME_MS;
+
+    while (Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, POLL_INTERVAL_MS));
+
+      // Update phase based on elapsed time for visual feedback
+      const elapsed = Date.now() - startTimeRef.current;
+      if (elapsed > 20000) setPhase('pass2');
+      if (elapsed > 40000) setPhase('pass3');
+
+      const resp = await fetch(`/.netlify/functions/analysis-status?jobId=${jobId}`);
+      if (!resp.ok) {
+        throw new Error(`Status check failed (${resp.status})`);
+      }
+
+      const data = await resp.json();
+
+      if (data.status === 'complete') {
+        return data.result as AIAnalysis;
+      }
+
+      if (data.status === 'error') {
+        throw new Error(data.error || 'AI analysis failed');
+      }
+
+      // data.status === 'processing' — keep polling
+    }
+
+    throw new Error('Analysis timed out after 3 minutes. Please try again with fewer or smaller drawings.');
+  }
+
   async function runAnalysis() {
     try {
       // 1. Upload files to Supabase storage and get signed URLs
@@ -65,7 +100,7 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
 
         const { data: urlData } = await supabase.storage
           .from('project-files')
-          .createSignedUrl(path, 3600); // 1 hour
+          .createSignedUrl(path, 3600);
 
         if (urlData?.signedUrl) {
           imageUrls.push({
@@ -76,17 +111,16 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
         }
       }
 
-      // 2. Call the Netlify Function for AI analysis
+      // 2. Submit job to the Netlify Function (returns immediately with jobId)
       setPhase('pass1');
 
-      // Load catalog summary for the AI prompt
       const summaryResp = await fetch('/data/proline-catalog-summary.json');
       const catalogSummary = await summaryResp.json();
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
-      const response = await fetch('/.netlify/functions/analyze-drawing', {
+      const submitResp = await fetch('/.netlify/functions/analyze-drawing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,33 +151,35 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
         }),
       });
 
-      if (!response.ok) {
-        const errText = await response.text();
-        let errMsg = `Analysis failed (${response.status})`;
+      if (!submitResp.ok) {
+        const errText = await submitResp.text();
+        let errMsg = `Failed to submit analysis (${submitResp.status})`;
         try {
           const errJson = JSON.parse(errText);
-          errMsg = errJson.hint || errJson.detail || errJson.error || errMsg;
+          errMsg = errJson.error || errMsg;
         } catch {
           errMsg += ': ' + errText.slice(0, 300);
         }
         throw new Error(errMsg);
       }
 
-      setPhase('pass2');
-      const aiAnalysis = await response.json() as AIAnalysis;
-      setPhase('pass3');
+      const { jobId } = await submitResp.json();
+      if (!jobId) throw new Error('No job ID returned from server');
 
-      // 3. Match positions to SKUs
+      // 3. Poll for the result
+      const aiAnalysis = await pollForResult(jobId);
+
+      // 4. Match positions to SKUs
       setPhase('matching');
       const catalogResp = await fetch('/data/pricing-catalog.json');
       const fullCatalog = await catalogResp.json();
       const mappedItems = await matchPositionsToSKUs(aiAnalysis, fullCatalog, intakeData);
 
-      // 4. Validate layout
+      // 5. Validate layout
       setPhase('validating');
       const validationIssues = validateLayout(mappedItems, intakeData);
 
-      // 5. Done
+      // 6. Done
       setPhase('done');
       setTimeout(() => {
         onComplete(aiAnalysis, mappedItems, validationIssues);

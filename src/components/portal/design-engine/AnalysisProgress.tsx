@@ -117,60 +117,21 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
         }),
       });
 
-      // Read the full response body as text first
-      const responseText = await response.text();
-
       if (!response.ok) {
+        const errText = await response.text();
         let errMsg = `Analysis failed (${response.status})`;
         try {
-          const errJson = JSON.parse(responseText);
+          const errJson = JSON.parse(errText);
           errMsg = errJson.hint || errJson.detail || errJson.error || errMsg;
         } catch {
-          errMsg += ': ' + responseText.slice(0, 300);
+          errMsg += ': ' + errText.slice(0, 300);
         }
         throw new Error(errMsg);
       }
 
-      // Parse response — could be SSE stream data or plain JSON
-      let aiAnalysis: AIAnalysis | null = null;
-
-      const contentType = response.headers.get('content-type') || '';
-      if (contentType.includes('text/event-stream') || responseText.trimStart().startsWith('data: ')) {
-        // SSE format: parse line by line
-        const lines = responseText.split('\n');
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          try {
-            const event = JSON.parse(line.slice(6));
-            if (event.type === 'progress') {
-              const chars = event.chars || 0;
-              if (chars > 200) setPhase('pass2');
-              if (chars > 1000) setPhase('pass3');
-            } else if (event.type === 'result') {
-              aiAnalysis = event.data as AIAnalysis;
-            } else if (event.type === 'error') {
-              throw new Error(event.error || 'AI analysis failed');
-            }
-          } catch (e: any) {
-            // Only re-throw non-JSON-parse errors
-            if (e.message && !e.message.includes('JSON') && !e.message.includes('Unexpected token')) throw e;
-          }
-        }
-      } else {
-        // Plain JSON response (legacy / fallback)
-        try {
-          aiAnalysis = JSON.parse(responseText) as AIAnalysis;
-        } catch {
-          throw new Error('Invalid response format: ' + responseText.slice(0, 200));
-        }
-      }
-
-      if (!aiAnalysis) {
-        // Debug: show what we actually received
-        const preview = responseText.slice(0, 300);
-        const dataLines = responseText.split('\n').filter(l => l.startsWith('data: ')).length;
-        throw new Error(`No result event found. Content-Type: ${contentType}. Response length: ${responseText.length}. Data lines: ${dataLines}. Preview: ${preview}`);
-      }
+      setPhase('pass2');
+      const aiAnalysis = await response.json() as AIAnalysis;
+      setPhase('pass3');
 
       // 3. Match positions to SKUs
       setPhase('matching');

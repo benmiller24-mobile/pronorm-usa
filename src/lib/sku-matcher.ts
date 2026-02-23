@@ -56,6 +56,7 @@ const PREFIX_HINTS: Record<string, string[]> = {
   'US': ['sink_base', 'sink base unit'],
   'UE': ['corner_base', 'corner base'],
   'UG': ['base_unit', 'hob_base', 'oven_base', 'base with internal fittings', 'hob', 'cooktop', 'oven'],
+  'UI': ['base_unit', 'hob_base', 'induction hob base', 'induction', 'cooktop'],
   'UV': ['base_unit', 'bottle_unit', 'base larder pull-out'],
   'UF': ['base_unit', 'island base', 'island end unit'],
   'UR': ['base_unit', 'base shelf unit'],

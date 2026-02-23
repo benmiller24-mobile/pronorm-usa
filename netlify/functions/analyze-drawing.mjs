@@ -166,7 +166,8 @@ CABINET ROWS — Identify each horizontal row separately:
     - U = standard base unit (1 or 2 doors, or with shelves)
     - US = sink base (usually under the sink, identified by pipe symbols or sink outline)
     - UG = base for hob/cooktop OR built-in oven (60-100cm wide). Suffix -31/-38=hob, -45=oven
-    - UE = corner base unit. Two types: L-shaped (-01, 105-125cm) or diagonal/pentagon (-03-P, 91cm)
+    - UI = base for induction hob (similar to UG but specifically for induction)
+    - UE = corner base unit. Two types: L-shaped (-01/-07, 105-125cm) or diagonal/pentagon (-03-P, 91cm)
     - UV = base-height larder/bottle pull-out (narrow, 30cm wide)
     - UF = island base unit (profiled end piece, often 38cm wide)
     - DT = drawer/front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13)
@@ -200,7 +201,7 @@ DIMENSIONS — All in CENTIMETERS:
 Valid base/drawer widths: 15, 20, 27, 30, 40, 45, 50, 55, 60, 75, 80, 90, 100, 120
 Valid corner base widths: 80, 91, 100, 105, 110, 125 (L-shaped) or 91 (diagonal/pentagon)
 Valid wall unit widths:   20, 25, 27, 30, 35, 40, 45, 50, 55, 60, 65, 75, 80, 81, 90, 100, 120
-Valid corner wall widths: 65, 80, 81, 90 (corner wall units)
+Valid corner wall widths: 65, 66, 80, 81, 90 (corner wall units)
 Valid tall unit widths:   27, 30, 45, 55, 60, 75, 76, 80, 90, 120
 Common base height: ${intake.baseUnitHeight || 76}cm (768mm)
 Common wall unit heights: 38cm (open shelf), 51cm (standard), 64cm (glass flap), 72cm, 76cm (extractor/tall wall), 89cm, 90cm
@@ -210,7 +211,7 @@ MOST COMMON WIDTHS (by frequency across real kitchens): 60, 40, 90, 100, 80, 50,
 If a dimension annotation says 600 → width is 60cm. If it says 400 → 40cm. If it says 900 → 90cm. If it says 1000 → 100cm.
 
 SKU FORMAT: PREFIX + WIDTH - HEIGHT - VARIANT
-Examples: U 60-76-01, US 80-76-01, UG 60-76-45, UE 105-76-01, UE 91-76-03, UV 30-76-41, DT 60-76-14, O 60-51-01, O 40-89-01, O 60-38-22, OE 81-89-12, OR 90-38, OG 100-76-01, H 60-195-08, HP 60-227-09, HG 60-195-181, HGP 60-227-601, HSP 76-227-065
+Examples: U 60-76-01, U 80-76-32, US 90-76-01, UG 60-76-31, UI 100-76-34, UE 125-76-07, UE 91-76-03, UV 30-76-41, UF 38-76-00, DT 60-76-14, O 60-51-01, O 40-89-01, O 45-38-22, OE 66-89-01, OE 81-89-12, OR 90-38, OG 100-76-01, H 60-195-08, HP 60-227-09, HG 60-195-181, HGP 60-227-601, HSP 76-227-065
 
 DOOR ORIENTATION:
 - "L" = left-hinged (opens to the left)

@@ -111,10 +111,22 @@ export default function AnalysisReview({
     onValidationIssuesChange(newIssues);
   };
 
-  // Dimension bar
-  const totalCabinetsWidth = wallItems.reduce((sum, i) => sum + i.width_cm, 0);
+  // Classify items into rows by SKU prefix
+  function getCabinetRow(sku: string): 'base' | 'wall' | 'tall' {
+    const s = sku.toUpperCase();
+    if (s.startsWith('O')) return 'wall';  // O, OR, OG = wall/upper units
+    if (s.startsWith('H') || s.startsWith('AH')) return 'tall'; // H, HS, HSP, HG, HP, AH
+    return 'base'; // U, US, UE, UG, UR, DT and anything else
+  }
+
   const wallLength = wallDef?.length_cm || 0;
-  const gapWidth = wallLength - totalCabinetsWidth;
+  const baseItems = wallItems.filter(i => getCabinetRow(i.sku) === 'base');
+  const upperItems = wallItems.filter(i => getCabinetRow(i.sku) === 'wall');
+  const tallItems = wallItems.filter(i => getCabinetRow(i.sku) === 'tall');
+
+  const baseTotal = baseItems.reduce((sum, i) => sum + i.width_cm, 0);
+  const upperTotal = upperItems.reduce((sum, i) => sum + i.width_cm, 0);
+  const tallTotal = tallItems.reduce((sum, i) => sum + i.width_cm, 0);
 
   const getConfidenceColor = (score: number) => {
     if (score >= 0.8) return '#4a7c59';
@@ -242,7 +254,7 @@ export default function AnalysisReview({
           </div>
         )}
 
-        {/* Dimension bar */}
+        {/* Dimension bars — one per cabinet row */}
         {wallLength > 0 && (
           <div style={{ marginBottom: '1.5rem' }}>
             <div style={{
@@ -251,72 +263,80 @@ export default function AnalysisReview({
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
               color: '#4a4a4a',
-              marginBottom: '0.5rem',
+              marginBottom: '0.75rem',
             }}>
               Dimension Check — Wall {activeWall} ({wallLength}cm)
             </div>
-            <div style={{
-              display: 'flex',
-              height: '32px',
-              background: '#f0ebe4',
-              borderRadius: '3px',
-              overflow: 'hidden',
-              border: '1px solid rgba(26,26,26,0.06)',
-            }}>
-              {wallItems.map((item, i) => (
-                <div
-                  key={item.positionId}
-                  style={{
-                    width: `${(item.width_cm / wallLength) * 100}%`,
-                    background: getConfidenceColor(item.matchScore) + '30',
-                    borderRight: '1px solid rgba(26,26,26,0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.62rem',
+
+            {/* Render a dimension bar for each row type that has items */}
+            {[
+              { label: 'Upper Cabinets', items: upperItems, total: upperTotal, color: '#5b8db8' },
+              { label: 'Tall Units', items: tallItems, total: tallTotal, color: '#8a6b94' },
+              { label: 'Base Cabinets', items: baseItems, total: baseTotal, color: '#b87333' },
+            ].filter(row => row.items.length > 0).map(row => {
+              const gap = wallLength - row.total;
+              return (
+                <div key={row.label} style={{ marginBottom: '0.75rem' }}>
+                  <div style={{
+                    fontSize: '0.68rem',
                     fontWeight: 600,
-                    color: '#4a4a4a',
+                    color: row.color,
+                    marginBottom: '0.3rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}>
+                    <span>{row.label} ({row.items.length})</span>
+                    <span style={{
+                      color: gap === 0 ? '#4a7c59' : gap > 0 ? '#8a8279' : '#c44536',
+                    }}>
+                      {row.total}cm / {wallLength}cm
+                      {gap === 0 && ' ✓'}
+                      {gap > 0 && gap <= 10 && ' ✓'}
+                      {gap > 10 && ` (${gap}cm gap)`}
+                      {gap < 0 && ` (${Math.abs(gap)}cm over!)`}
+                    </span>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    height: '26px',
+                    background: '#f0ebe4',
+                    borderRadius: '3px',
                     overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    cursor: 'pointer',
-                  }}
-                  title={`${item.sku} — ${item.width_cm}cm`}
-                  onClick={() => setEditingItem(item.positionId === editingItem ? null : item.positionId)}
-                >
-                  {item.width_cm}
+                    border: '1px solid rgba(26,26,26,0.06)',
+                  }}>
+                    {row.items.map(item => (
+                      <div
+                        key={item.positionId}
+                        style={{
+                          width: `${(item.width_cm / wallLength) * 100}%`,
+                          background: row.color + '30',
+                          borderRight: '1px solid rgba(26,26,26,0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.6rem',
+                          fontWeight: 600,
+                          color: '#4a4a4a',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          cursor: 'pointer',
+                        }}
+                        title={`${item.sku} — ${item.width_cm}cm`}
+                        onClick={() => setEditingItem(item.positionId === editingItem ? null : item.positionId)}
+                      >
+                        {item.width_cm}
+                      </div>
+                    ))}
+                    {gap > 0 && (
+                      <div style={{
+                        width: `${(gap / wallLength) * 100}%`,
+                        background: 'repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 6px)',
+                      }} />
+                    )}
+                  </div>
                 </div>
-              ))}
-              {gapWidth > 0 && (
-                <div style={{
-                  width: `${(gapWidth / wallLength) * 100}%`,
-                  background: 'repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(196,69,54,0.1) 3px, rgba(196,69,54,0.1) 6px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.6rem',
-                  color: '#c44536',
-                  fontWeight: 600,
-                }}>
-                  {gapWidth > 5 ? `${gapWidth}cm gap` : ''}
-                </div>
-              )}
-            </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '0.7rem',
-              color: gapWidth === 0 ? '#4a7c59' : gapWidth > 0 ? '#b87333' : '#c44536',
-              marginTop: '0.35rem',
-              fontWeight: 600,
-            }}>
-              <span>Total: {totalCabinetsWidth}cm</span>
-              <span>
-                {gapWidth === 0 && '✓ Perfect fit'}
-                {gapWidth > 0 && gapWidth <= 5 && '✓ Close fit'}
-                {gapWidth > 5 && `${gapWidth}cm gap`}
-                {gapWidth < 0 && `${Math.abs(gapWidth)}cm over!`}
-              </span>
-            </div>
+              );
+            })}
           </div>
         )}
 

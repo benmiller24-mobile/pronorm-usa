@@ -15,33 +15,49 @@ export function validateLayout(items: MappedItem[], intakeData: IntakeData): Val
     byWall.get(item.wallLabel)!.push(item);
   }
 
+  // Helper to classify cabinet row by SKU prefix
+  function getCabinetRow(sku: string): 'base' | 'wall' | 'tall' {
+    const s = sku.toUpperCase();
+    if (s.startsWith('O')) return 'wall';
+    if (s.startsWith('H') || s.startsWith('AH')) return 'tall';
+    return 'base';
+  }
+
   for (const wallDef of intakeData.walls) {
     const wallItems = byWall.get(wallDef.label) || [];
     if (wallItems.length === 0) continue;
 
-    // 1. Wall fit: sum of item widths vs. wall length
-    const totalWidth = wallItems.reduce((sum, i) => sum + i.width_cm, 0);
     const wallLength = wallDef.length_cm;
-    const gap = wallLength - totalWidth;
 
-    if (gap < -5) {
-      // Cabinets exceed wall length
-      issues.push({
-        wallLabel: wallDef.label,
-        severity: 'error',
-        message: `Cabinets total ${totalWidth}cm but Wall ${wallDef.label} is only ${wallLength}cm (${Math.abs(gap)}cm over).`,
-        positionIds: wallItems.map(i => i.positionId),
-        suggestedFix: 'Reduce cabinet widths or remove an item.',
-      });
-    } else if (gap > 10) {
-      // Notable gap
-      issues.push({
-        wallLabel: wallDef.label,
-        severity: 'warning',
-        message: `Cabinets total ${totalWidth}cm on a ${wallLength}cm wall. Gap of ${gap}cm — consider a filler panel.`,
-        positionIds: wallItems.map(i => i.positionId),
-        suggestedFix: `Add a ${gap}cm filler or adjust cabinet widths.`,
-      });
+    // 1. Wall fit: check each cabinet row separately (base, wall, tall)
+    const rows: { label: string; items: MappedItem[] }[] = [
+      { label: 'Base cabinets', items: wallItems.filter(i => getCabinetRow(i.sku) === 'base') },
+      { label: 'Upper cabinets', items: wallItems.filter(i => getCabinetRow(i.sku) === 'wall') },
+      { label: 'Tall units', items: wallItems.filter(i => getCabinetRow(i.sku) === 'tall') },
+    ];
+
+    for (const row of rows) {
+      if (row.items.length === 0) continue;
+      const totalWidth = row.items.reduce((sum, i) => sum + i.width_cm, 0);
+      const gap = wallLength - totalWidth;
+
+      if (gap < -5) {
+        issues.push({
+          wallLabel: wallDef.label,
+          severity: 'error',
+          message: `${row.label} total ${totalWidth}cm but Wall ${wallDef.label} is only ${wallLength}cm (${Math.abs(gap)}cm over).`,
+          positionIds: row.items.map(i => i.positionId),
+          suggestedFix: 'Reduce cabinet widths or remove an item.',
+        });
+      } else if (gap > 30) {
+        issues.push({
+          wallLabel: wallDef.label,
+          severity: 'warning',
+          message: `${row.label} total ${totalWidth}cm on a ${wallLength}cm wall. Gap of ${gap}cm — consider additional cabinets or filler panels.`,
+          positionIds: row.items.map(i => i.positionId),
+          suggestedFix: `Add cabinets or a ${gap}cm filler.`,
+        });
+      }
     }
 
     // 2. Width validation: check each item uses a valid ProLine width

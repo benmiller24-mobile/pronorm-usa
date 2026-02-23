@@ -210,7 +210,7 @@ function scoreMatch(item: CatalogItem, pos: CabinetPosition, intakeData: IntakeD
 
   // Features bonus (15% weight)
   const desc = (item.d || '').toLowerCase();
-  const features = pos.features.map(f => f.toLowerCase());
+  const features = Array.isArray(pos.features) ? pos.features.map(f => f.toLowerCase()) : [];
 
   let featureScore = 0;
   for (const feat of features) {

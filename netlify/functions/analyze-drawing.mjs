@@ -155,8 +155,10 @@ async function processAnalysisJob(jobId, supabase) {
 HOW TO READ KITCHEN ELEVATION DRAWINGS:
 - An elevation drawing shows a wall from the FRONT, as if you are standing in front of it looking straight at it.
 - Cabinets are arranged in HORIZONTAL ROWS stacked vertically on the wall.
-- READ THE DIMENSION ANNOTATIONS carefully. Drawings typically have dimension lines with numbers showing widths and heights in millimeters. ALWAYS use these annotated dimensions — do NOT guess widths from visual proportions.
-- Convert mm annotations to cm: 300mm=30cm, 400mm=40cm, 450mm=45cm, 550mm=55cm, 600mm=60cm, 800mm=80cm, 900mm=90cm, 1000mm=100cm, 1100mm=110cm, 1200mm=120cm.
+- READ THE DIMENSION ANNOTATIONS carefully. Drawings have dimension lines with numbers showing widths/heights. ALWAYS use these annotated dimensions — do NOT guess widths from visual proportions.
+- Dimensions may be in MILLIMETERS or INCHES. Identify which system is used:
+  * If numbers are large (300-1200+): they are millimeters. Convert: 300mm=30cm, 400=40, 450=45, 500=50, 550=55, 600=60, 750=75, 800=80, 900=90, 1000=100, 1100=110, 1200=120.
+  * If numbers are small with fractions (11 13/16", 23 5/8", 35 7/16"): they are inches. Convert: 11 13/16"≈30cm, 15 3/4"≈40cm, 19 11/16"≈50cm, 21 5/8"≈55cm, 23 5/8"≈60cm, 29 1/2"≈75cm, 30"≈76cm, 31 1/2"≈80cm, 35 7/16"≈90cm, 39 3/8"≈100cm, 47 1/4"≈120cm.
 - If no dimension annotations are visible, estimate from the total wall length and the proportional widths of each cabinet.
 
 CABINET ROWS — Identify each horizontal row separately:
@@ -166,8 +168,9 @@ CABINET ROWS — Identify each horizontal row separately:
     - UG = base for hob/cooktop OR built-in oven (60-100cm wide). Suffix -31/-38=hob, -45=oven
     - UE = corner base unit. Two types: L-shaped (-01, 105-125cm) or diagonal/pentagon (-03-P, 91cm)
     - UV = base-height larder/bottle pull-out (narrow, 30cm wide)
+    - UF = island base unit (profiled end piece, often 38cm wide)
     - DT = drawer/front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13)
-    - Variant suffixes: -01=standard doors, -03=diagonal corner, -04=155° hinge, -22=flap door, -32=2 drawers, -34=multi-drawer, -38=pull-out with internal drawer, -41=bottle/larder pull-out, -45=oven housing, -48=single panel sink, -90=waste bin
+    - Variant suffixes: -00=basic/oven, -01=standard doors, -03=diagonal corner, -04=155° hinge, -15=lifting door, -22=flap door, -31=hob with controls, -32=2 drawers, -34=multi-drawer, -38=pull-out with internal drawer, -41=bottle/larder pull-out, -45=oven housing, -48=single panel sink, -90=waste bin
   * UPPER/WALL ROW (mounted above countertop): Wall-hung cabinets above the worktop.
     - O = wall unit with door(s). Heights: 38cm, 51cm (most common), 64cm, 76cm, 89cm, 90cm. Variant -22=flap door
     - OE = corner wall unit (90° configuration, 81cm wide)

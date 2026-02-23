@@ -163,24 +163,25 @@ CABINET ROWS — Identify each horizontal row separately:
   * BASE ROW (bottom ~76cm): These sit on the floor behind the plinth. Look for door fronts, drawer fronts, appliance panels.
     - U = standard base unit (1 or 2 doors, or with shelves)
     - US = sink base (usually under the sink, identified by pipe symbols or sink outline)
-    - UG = base for hob/cooktop (has cutout for appliance, often 100cm wide)
-    - UE = corner base unit (L-shaped or diagonal, 80-125cm wide)
+    - UG = base for hob/cooktop OR built-in oven (60-100cm wide). Suffix -31/-38=hob, -45=oven
+    - UE = corner base unit. Two types: L-shaped (-01, 105-125cm) or diagonal/pentagon (-03-P, 91cm)
     - UV = base-height larder/bottle pull-out (narrow, 30cm wide)
     - DT = drawer/front panel for integrated appliance (dishwasher DT...-14, under-counter fridge DT...-13)
-    - Variant suffixes: -01=standard doors, -04=155° hinge, -32=2 drawers, -34=multi-drawer, -38=pull-out with internal drawer, -41=bottle/larder pull-out, -48=single panel sink, -90=waste bin
+    - Variant suffixes: -01=standard doors, -03=diagonal corner, -04=155° hinge, -22=flap door, -32=2 drawers, -34=multi-drawer, -38=pull-out with internal drawer, -41=bottle/larder pull-out, -45=oven housing, -48=single panel sink, -90=waste bin
   * UPPER/WALL ROW (mounted above countertop): Wall-hung cabinets above the worktop.
-    - O = wall unit with door(s). Heights: 38cm, 51cm (most common), 64cm, 76cm, 89cm, 90cm
+    - O = wall unit with door(s). Heights: 38cm, 51cm (most common), 64cm, 76cm, 89cm, 90cm. Variant -22=flap door
     - OE = corner wall unit (90° configuration, 81cm wide)
     - OR = open wall shelf (often 38cm tall) OR wall unit with flap/lift-up door(s)
     - OG = wall unit for extractor/rangehood, typically 76cm tall, sits directly above hob
     - Glass-door wall units use OR prefix with -601 variant suffix
+    - 38cm height flap units (O...-38-22) are common above tall units/utility areas
   * TALL UNITS (floor to near ceiling, ~207-227cm tall): Full-height cabinets spanning from floor to top.
     - HP = larder/pantry with internal pull-outs (most common tall unit)
     - HGP = larder with pull-outs (similar to HP)
     - HSP = tall housing for fridge/freezer (has appliance niche)
     - HS = tall housing for oven/appliance
-    - HG = larder with shelves (no pull-outs)
-    - H = generic tall unit
+    - HG = larder with shelves (no pull-outs), also used for integrated fridge housings (HG...-181)
+    - H = standard larder/tall unit (with shelves, 155° hinges common)
     - AH = appliance housing
 
 CRITICAL LAYOUT RULES:
@@ -194,19 +195,19 @@ CRITICAL LAYOUT RULES:
 
 DIMENSIONS — All in CENTIMETERS:
 Valid base/drawer widths: 15, 20, 27, 30, 40, 45, 50, 55, 60, 75, 80, 90, 100, 120
-Valid corner base widths: 80, 90, 100, 110, 125 (corner units are wider due to L-shape)
+Valid corner base widths: 80, 91, 100, 105, 110, 125 (L-shaped) or 91 (diagonal/pentagon)
 Valid wall unit widths:   20, 25, 27, 30, 35, 40, 45, 50, 55, 60, 65, 75, 80, 81, 90, 100, 120
 Valid corner wall widths: 65, 80, 81, 90 (corner wall units)
 Valid tall unit widths:   27, 30, 45, 55, 60, 75, 76, 80, 90, 120
 Common base height: ${intake.baseUnitHeight || 76}cm (768mm)
 Common wall unit heights: 38cm (open shelf), 51cm (standard), 64cm (glass flap), 72cm, 76cm (extractor/tall wall), 89cm, 90cm
-Common tall heights: 207cm, 221cm, 227cm
+Common tall heights: 195cm, 207cm, 221cm, 227cm
 
 MOST COMMON WIDTHS (by frequency across real kitchens): 60, 40, 90, 100, 80, 50, 55, 120, 45, 30
 If a dimension annotation says 600 → width is 60cm. If it says 400 → 40cm. If it says 900 → 90cm. If it says 1000 → 100cm.
 
 SKU FORMAT: PREFIX + WIDTH - HEIGHT - VARIANT
-Examples: U 60-76-01, US 100-76-01, UG 100-76-31, UE 110-76-01, UV 30-76-41, DT 60-76-14, O 60-51-01, O 40-89-01, OE 81-89-12, OR 90-38, OG 100-76-01, HP 60-227-09, HGP 60-227-601, HSP 76-227-065
+Examples: U 60-76-01, US 80-76-01, UG 60-76-45, UE 105-76-01, UE 91-76-03, UV 30-76-41, DT 60-76-14, O 60-51-01, O 40-89-01, O 60-38-22, OE 81-89-12, OR 90-38, OG 100-76-01, H 60-195-08, HP 60-227-09, HG 60-195-181, HGP 60-227-601, HSP 76-227-065
 
 DOOR ORIENTATION:
 - "L" = left-hinged (opens to the left)

@@ -61,7 +61,7 @@ export function validateLayout(items: MappedItem[], intakeData: IntakeData): Val
     }
 
     // 2. Width validation: check each item uses a valid ProLine width
-    const VALID_BASE_WIDTHS = [15, 20, 27, 30, 40, 45, 50, 55, 60, 75, 80, 90, 100, 110, 120, 125];
+    const VALID_BASE_WIDTHS = [15, 20, 27, 30, 40, 45, 50, 55, 60, 75, 80, 91, 90, 100, 105, 110, 120, 125];
     const VALID_WALL_WIDTHS = [20, 25, 27, 30, 35, 40, 45, 50, 55, 60, 65, 75, 80, 81, 90, 100, 120];
     const VALID_TALL_WIDTHS = [27, 30, 45, 55, 60, 75, 76, 80, 90, 120];
 

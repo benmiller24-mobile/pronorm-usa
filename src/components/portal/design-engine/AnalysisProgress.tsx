@@ -17,9 +17,9 @@ type AnalysisPhase = 'uploading' | 'pass1' | 'pass2' | 'pass3' | 'matching' | 'v
 
 const PHASE_LABELS: Record<AnalysisPhase, string> = {
   uploading: 'Uploading drawings to cloud storage...',
-  pass1: 'AI is analyzing each wall in parallel...',
-  pass2: 'Reading dimensions and identifying cabinets...',
-  pass3: 'Merging results and cross-validating layout...',
+  pass1: 'Pass 1: Analyzing floor plan for spatial context...',
+  pass2: 'Pass 2: AI analyzing each wall in parallel (with extended thinking)...',
+  pass3: 'Quality check — retrying any low-confidence walls...',
   matching: 'Matching cabinet positions to ProLine SKUs...',
   validating: 'Running constraint validation...',
   done: 'Analysis complete!',

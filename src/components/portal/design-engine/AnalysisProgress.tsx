@@ -117,39 +117,32 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
         }),
       });
 
+      // Read the full response body as text first
+      const responseText = await response.text();
+
       if (!response.ok) {
         let errMsg = `Analysis failed (${response.status})`;
         try {
-          const errJson = await response.json();
+          const errJson = JSON.parse(responseText);
           errMsg = errJson.hint || errJson.detail || errJson.error || errMsg;
         } catch {
-          errMsg += ': ' + (await response.text()).slice(0, 300);
+          errMsg += ': ' + responseText.slice(0, 300);
         }
         throw new Error(errMsg);
       }
 
-      // Handle SSE streaming response from the function
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error('No response stream');
-
-      const decoder = new TextDecoder();
-      let sseBuffer = '';
+      // Parse response — could be SSE stream data or plain JSON
       let aiAnalysis: AIAnalysis | null = null;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        sseBuffer += decoder.decode(value, { stream: true });
-        const lines = sseBuffer.split('\n');
-        sseBuffer = lines.pop() || '';
-
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('text/event-stream') || responseText.trimStart().startsWith('data: ')) {
+        // SSE format: parse line by line
+        const lines = responseText.split('\n');
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
           try {
             const event = JSON.parse(line.slice(6));
             if (event.type === 'progress') {
-              // Update phase based on character count to show progress
               const chars = event.chars || 0;
               if (chars > 200) setPhase('pass2');
               if (chars > 1000) setPhase('pass3');
@@ -159,8 +152,16 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
               throw new Error(event.error || 'AI analysis failed');
             }
           } catch (e: any) {
-            if (e.message && !e.message.includes('JSON')) throw e;
+            // Only re-throw non-JSON-parse errors
+            if (e.message && !e.message.includes('JSON') && !e.message.includes('Unexpected token')) throw e;
           }
+        }
+      } else {
+        // Plain JSON response (legacy / fallback)
+        try {
+          aiAnalysis = JSON.parse(responseText) as AIAnalysis;
+        } catch {
+          throw new Error('Invalid response format: ' + responseText.slice(0, 200));
         }
       }
 

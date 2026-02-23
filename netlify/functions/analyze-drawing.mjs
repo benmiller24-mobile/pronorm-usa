@@ -150,17 +150,27 @@ async function processAnalysisJob(jobId, supabase) {
       return d;
     }).join('\n');
 
-    const systemPrompt = `You are an expert kitchen designer analyzing drawings for Pronorm ProLine kitchens.
-Identify every cabinet position and map to ProLine SKU patterns.
+    const systemPrompt = `You are an expert kitchen designer analyzing elevation and floor plan drawings for Pronorm ProLine kitchens. Your task is to identify every cabinet position and map each to a ProLine SKU pattern.
 
-RULES: All dimensions in CENTIMETERS. Width 60 = 600mm, height 76 = 768mm.
+CRITICAL ELEVATION READING RULES:
+- An elevation drawing shows a wall from the FRONT. Cabinets are arranged in HORIZONTAL ROWS stacked vertically.
+- IDENTIFY each horizontal row separately:
+  * BASE ROW (bottom ~76-87cm): base units (U), sink bases (US), drawer bases (DT), corner bases (UE)
+  * UPPER ROW (mounted above countertop, ~60-90cm tall): wall units (O), flap doors (OR)
+  * TALL UNITS (floor to near ceiling, ~200-230cm): larders (HG), appliance housings (HS/AH), fridge housings (HSP), tall units (H)
+- IMPORTANT: Tall units occupy the SAME wall space as base+upper would. A wall may have ONLY tall units, or a MIX of tall units plus base+upper sections. Do NOT double-count tall units as base units.
+- Fillers are narrow panels (usually 2-10cm) at the ends of runs or between cabinets. Note them in "notes" but do NOT create positions for fillers.
+- The sum of widths within EACH ROW should approximately equal the wall length (minus fillers and appliance gaps).
+- If a wall has only tall units, there should be NO base or wall unit positions on that wall segment.
+
+DIMENSIONS: All in CENTIMETERS. Width 60 = 600mm, height 76 = 768mm.
 Valid base widths: 15,20,27,30,40,45,50,55,60,75,80,90,100,120cm
 Valid wall widths: 20,25,27,30,35,40,45,50,55,60,65,75,80,90,100,120cm
 Valid tall widths: 27,30,45,55,60,75,80,90,120cm
 Base height: ${intake.baseUnitHeight || 76}cm
 
 SKU PREFIXES: U=base, US=sink base, UE=corner base, DT=drawer base, O=wall unit, OR=wall flap, H=tall, HS=tall appliance, HSP=fridge housing, HG=larder, AH=appliance housing
-FORMAT: PREFIX WIDTH-HEIGHT-VARIANT (e.g. U 60-76-01)
+FORMAT: PREFIX WIDTH-HEIGHT-VARIANT (e.g. U 60-76-01, H 60-207-01)
 
 Output ONLY valid JSON. No markdown, no explanation.`;
 
@@ -168,9 +178,13 @@ Output ONLY valid JSON. No markdown, no explanation.`;
 Walls:\n${wallSummary}
 ${intake.notes ? `Notes: ${intake.notes}` : ''}
 
-Output JSON: {"walls":[{"label":"A","length_cm":340,"positions":[{"id":"A_1","type":"base_unit","skuSuggestion":"U 60-76-01","width_cm":60,"height_cm":76,"x_cm":0,"doorOrientation":"R","features":[],"confidence":0.85,"reasoning":"..."}],"dimensionCheck":{"totalCabinets_cm":340,"wallLength_cm":340,"gap_cm":0,"valid":true}}],"notes":[],"warnings":[]}
+Output JSON: {"walls":[{"label":"A","length_cm":340,"positions":[{"id":"A_1","type":"tall_unit","skuSuggestion":"HG 60-207-01","width_cm":60,"height_cm":207,"x_cm":0,"doorOrientation":"R","features":["larder"],"confidence":0.85,"reasoning":"Full-height pantry unit, leftmost position"}],"dimensionCheck":{"baseRow_cm":0,"upperRow_cm":0,"tallRow_cm":340,"wallLength_cm":340,"valid":true}}],"notes":["2cm filler panel on left end"],"warnings":[]}
 
-Every width MUST be valid ProLine width. Widths per wall should sum to ~wall length.`;
+IMPORTANT:
+- Every width MUST be a valid ProLine width from the lists above.
+- For each row (base, upper, tall), the widths should sum to approximately the wall length.
+- Do NOT add base units where you see tall units — tall units go floor to ceiling and replace both base and upper.
+- Use "type" values: base_unit, sink_base, corner_base, drawer_base, wall_unit, wall_flap, tall_unit, appliance_housing, fridge_housing, larder.`;
 
     // Build image blocks
     const contentBlocks = [];
@@ -273,12 +287,31 @@ Every width MUST be valid ProLine width. Widths per wall should sum to ~wall len
         delete wall.dimension_check;
       }
       if (!wall.dimensionCheck) {
-        const total = wall.positions.reduce((s, p) => s + (p.width_cm || 0), 0);
+        // Build per-row dimension check
+        const wl = wall.length_cm || 0;
+        const base = wall.positions.filter(p => {
+          const t = (p.type || '').toLowerCase();
+          return t.includes('base') || t.includes('sink') || t.includes('drawer') || t.includes('corner');
+        });
+        const upper = wall.positions.filter(p => {
+          const t = (p.type || '').toLowerCase();
+          return t.includes('wall') || t.includes('flap');
+        });
+        const tall = wall.positions.filter(p => {
+          const t = (p.type || '').toLowerCase();
+          return t.includes('tall') || t.includes('larder') || t.includes('housing') || t.includes('pantry') || t.includes('fridge');
+        });
+        const baseTotal = base.reduce((s, p) => s + (p.width_cm || 0), 0);
+        const upperTotal = upper.reduce((s, p) => s + (p.width_cm || 0), 0);
+        const tallTotal = tall.reduce((s, p) => s + (p.width_cm || 0), 0);
         wall.dimensionCheck = {
-          totalCabinets_cm: total,
-          wallLength_cm: wall.length_cm || 0,
-          gap_cm: (wall.length_cm || 0) - total,
-          valid: Math.abs((wall.length_cm || 0) - total) <= 10,
+          baseRow_cm: baseTotal,
+          upperRow_cm: upperTotal,
+          tallRow_cm: tallTotal,
+          wallLength_cm: wl,
+          valid: (baseTotal === 0 || Math.abs(wl - baseTotal) <= 20) &&
+                 (upperTotal === 0 || Math.abs(wl - upperTotal) <= 20) &&
+                 (tallTotal === 0 || Math.abs(wl - tallTotal) <= 20),
         };
       }
       for (const pos of wall.positions) {

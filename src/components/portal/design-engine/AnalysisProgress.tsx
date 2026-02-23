@@ -125,6 +125,7 @@ export default function AnalysisProgress({ intakeData, uploadedFiles, dealer, on
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`,
+          'X-Async': 'true',
         },
         body: JSON.stringify({
           imageUrls,

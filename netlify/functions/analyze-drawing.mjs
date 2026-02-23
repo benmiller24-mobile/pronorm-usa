@@ -7,7 +7,7 @@ const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Async',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
@@ -43,6 +43,15 @@ export default async (req, context) => {
 
     if (!imageUrls || !imageUrls.length) {
       return jsonResponse({ error: 'No images provided' }, 400);
+    }
+
+    // Check if the client supports async polling (new client sends X-Async header)
+    const isAsyncClient = req.headers.get('x-async') === 'true';
+    if (!isAsyncClient) {
+      // Old cached client — tell user to refresh
+      return jsonResponse({
+        error: 'Your browser is running an outdated version. Please hard-refresh the page (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows) and try again.',
+      }, 426); // 426 Upgrade Required
     }
 
     // 2. Generate job ID and store request payload in Supabase storage

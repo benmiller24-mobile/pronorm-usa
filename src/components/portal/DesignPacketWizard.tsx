@@ -27,6 +27,8 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
 
   // Auto-fill dealer info on first load
   useEffect(() => {
@@ -84,6 +86,33 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
     setErrors([]);
     setCurrentStep(prev => Math.max(prev - 1, 0));
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+
+  const handleSaveDraft = async () => {
+    setSavingDraft(true);
+    setSubmitError('');
+    try {
+      const { data: project, error: projErr } = await supabase
+        .from('projects')
+        .insert({
+          dealer_id: dealer.id,
+          job_name: formData.generalInfo.jobName.trim() || 'Untitled Draft',
+          client_name: formData.generalInfo.clientName.trim() || 'Draft',
+          message: 'DRAFT - ' + (formData.generalInfo.room || 'No room specified'),
+          design_packet_data: formData as any,
+          status: 'draft',
+        })
+        .select()
+        .single();
+      if (projErr || !project) throw projErr || new Error('Failed to save draft');
+      try { sessionStorage.removeItem(STORAGE_KEY_PREFIX + dealer.id); } catch { /* ok */ }
+      setDraftSaved(true);
+      setTimeout(() => onNavigate('/dealer-portal/projects'), 1500);
+    } catch (err: any) {
+      setSubmitError(err.message || 'Failed to save draft. Please try again.');
+    }
+    setSavingDraft(false);
   };
 
   const handleSubmit = async () => {
@@ -203,6 +232,7 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
               Next &rarr;
             </button>
           )}
+          </div>
         </div>
       </div>
     </div>

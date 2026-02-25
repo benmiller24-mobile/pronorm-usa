@@ -240,7 +240,6 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
             </div>
           </div>
         </div>
-      </div>
   );
 }
 

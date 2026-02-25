@@ -221,7 +221,11 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
             </button>
           ) : <div />}
 
-          {isLastStep ? (
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <button type="button" onClick={handleSaveDraft} disabled={savingDraft || draftSaved} style={{ ...btnSecondary, borderColor: '#b87333', color: draftSaved ? '#5a9e4b' : '#b87333' }}>
+                {draftSaved ? 'Draft Saved!' : savingDraft ? 'Saving...' : 'Save Draft'}
+              </button>
+              {isLastStep ? (
             <button type="button" onClick={handleSubmit} disabled={submitting} style={{
               ...btnPrimary, background: submitting ? '#d4cdc5' : '#b87333', cursor: submitting ? 'wait' : 'pointer',
             }}>
@@ -232,10 +236,11 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
               Next &rarr;
             </button>
           )}
+            </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

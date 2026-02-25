@@ -15,6 +15,8 @@ import AccountSettings from './AccountSettings';
 import TeamManagement from './TeamManagement';
 import PricingTool from './PricingTool';
 import DesignEngine from './design-engine/DesignEngine';
+import Messages from './Messages';
+import ResourceLibrary from './ResourceLibrary';
 
 export default function PortalApp() {
   const [session, setSession] = useState<any>(null);
@@ -179,6 +181,12 @@ export default function PortalApp() {
       // Designers don't manage anyone — redirect to dashboard
       if (isDesigner) return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
       return <TeamManagement dealer={scopedDealer} isAdmin={isAdmin} isDesigner={isDesigner} />;
+    }
+    if (path === '/dealer-portal/messages') {
+      return <Messages dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    }
+    if (path === '/dealer-portal/resources') {
+      return <ResourceLibrary dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
     }
     if (path === '/dealer-portal/account') {
       return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;

@@ -12,6 +12,35 @@
   status = 200
   force = true
 
+# --- 301 Redirects for broken links (audit fix) ---
+
+[[redirects]]
+  from = "/equipment"
+  to = "/product-lines/equipment"
+  status = 301
+
+[[redirects]]
+  from = "/magazine/handleless-kitchen-design"
+  to = "/magazine"
+  status = 301
+
+[[redirects]]
+  from = "/magazine/kitchen-island-design-guide"
+  to = "/magazine"
+  status = 301
+
+[[redirects]]
+  from = "/terms"
+  to = "/privacy"
+  status = 301
+
+[[redirects]]
+  from = "/why-pronorm/german-vs-american"
+  to = "/magazine/german-vs-american-kitchens"
+  status = 301
+
+# --- Catch-all 404 (must be last) ---
+
 [[redirects]]
   from = "/*"
   to = "/404"
@@ -36,13 +65,3 @@
   for = "/_astro/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/fonts/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/images/*"
-  [headers.values]
-    Cache-Control = "public, max-age=2592000"

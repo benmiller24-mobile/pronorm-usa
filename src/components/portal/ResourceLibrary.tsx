@@ -29,19 +29,26 @@ const CATEGORIES = [
   { key: 'ordering', label: 'Ordering Guides' },
 ];
 
+const CATEGORY_ORDER: Record<string, number> = {
+  catalogs: 0,
+  training: 1,
+  ordering: 2,
+  marketing: 3,
+};
+
 const FILE_ICONS: Record<string, string> = {
-  pdf: 'ð',
-  doc: 'ð',
-  docx: 'ð',
-  xls: 'ð',
-  xlsx: 'ð',
-  ppt: 'ð',
-  pptx: 'ð',
-  jpg: 'ð¼',
-  jpeg: 'ð¼',
-  png: 'ð¼',
-  mp4: 'ð¬',
-  zip: 'ð¦',
+  pdf: '📄',
+  doc: '📝',
+  docx: '📝',
+  xls: '📊',
+  xlsx: '📊',
+  ppt: '📑',
+  pptx: '📑',
+  jpg: '🖼',
+  jpeg: '🖼',
+  png: '🖼',
+  mp4: '🎬',
+  zip: '📦',
 };
 
 export default function ResourceLibrary({ dealer, onNavigate, isAdmin }: Props) {
@@ -123,14 +130,20 @@ export default function ResourceLibrary({ dealer, onNavigate, isAdmin }: Props) 
     return (bytes / 1048576).toFixed(1) + ' MB';
   };
 
-  const getFileIcon = (type: string) => FILE_ICONS[type.toLowerCase()] || 'ð';
+  const getFileIcon = (type: string) => FILE_ICONS[type.toLowerCase()] || '📎';
 
   const filtered = resources
     .filter(r => activeCategory === 'all' || r.category === activeCategory)
     .filter(r => !searchQuery || r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.description?.toLowerCase().includes(searchQuery.toLowerCase()));
+      r.description?.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => {
+      const orderA = CATEGORY_ORDER[a.category] ?? 99;
+      const orderB = CATEGORY_ORDER[b.category] ?? 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
 
-  // ââ Styles ââ
+  // -- Styles --
   const copper = '#b87333';
   const dark = '#2d2d2d';
   const sand = '#f5f0eb';
@@ -236,7 +249,7 @@ export default function ResourceLibrary({ dealer, onNavigate, isAdmin }: Props) 
         <div style={{ padding: 60, textAlign: 'center', color: '#999', fontFamily: 'DM Sans, sans-serif' }}>Loading resources...</div>
       ) : filtered.length === 0 ? (
         <div style={{ padding: 60, textAlign: 'center', color: '#999', fontFamily: 'DM Sans, sans-serif' }}>
-          <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>ð</div>
+          <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>{'📂'}</div>
           <p style={{ fontSize: 16 }}>No resources found</p>
           <p style={{ fontSize: 14 }}>
             {searchQuery ? 'Try a different search term' : 'Resources will appear here once uploaded by your Pronorm representative'}

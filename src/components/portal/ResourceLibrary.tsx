@@ -33,18 +33,18 @@ const CATEGORIES = [
 ];
 
 const FILE_ICONS: Record<string, string> = {
-  pdf: '\u{1F4C4}',
-  doc: '\u{1F4DD}',
-  docx: '\u{1F4DD}',
-  xls: '\u{1F4CA}',
-  xlsx: '\u{1F4CA}',
-  ppt: '\u{1F4CA}',
-  pptx: '\u{1F4CA}',
-  jpg: '\u{1F5BC}',
-  jpeg: '\u{1F5BC}',
-  png: '\u{1F5BC}',
-  mp4: '\u{1F3AC}',
-  zip: '\u{1F4E6}',
+  pdf: '📄',
+  doc: '📝',
+  docx: '📝',
+  xls: '📊',
+  xlsx: '📊',
+  ppt: '📊',
+  pptx: '📊',
+  jpg: '🖼',
+  jpeg: '🖼',
+  png: '🖼',
+  mp4: '🎬',
+  zip: '📦',
 };
 
 export default function ResourceLibrary({ dealer, onNavigate, isAdmin }: Props) {
@@ -126,7 +126,7 @@ export default function ResourceLibrary({ dealer, onNavigate, isAdmin }: Props) 
     return (bytes / 1048576).toFixed(1) + ' MB';
   };
 
-  const getFileIcon = (type: string) => FILE_ICONS[type.toLowerCase()] || '\u{1F4CE}';
+  const getFileIcon = (type: string) => FILE_ICONS[type.toLowerCase()] || '📎';
 
   const filtered = resources
     .filter(r => activeCategory === 'all' || r.category === activeCategory)
@@ -239,7 +239,7 @@ export default function ResourceLibrary({ dealer, onNavigate, isAdmin }: Props) 
         <div style={{ padding: 60, textAlign: 'center', color: '#999', fontFamily: 'DM Sans, sans-serif' }}>Loading resources...</div>
       ) : filtered.length === 0 ? (
         <div style={{ padding: 60, textAlign: 'center', color: '#999', fontFamily: 'DM Sans, sans-serif' }}>
-          <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>\u{1F4DA}</div>
+          <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>📚</div>
           <p style={{ fontSize: 16 }}>No resources found</p>
           <p style={{ fontSize: 14 }}>
             {searchQuery ? 'Try a different search term' : 'Resources will appear here once uploaded by your Pronorm representative'}

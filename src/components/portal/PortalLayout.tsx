@@ -17,6 +17,8 @@ const DEALER_NAV_ITEMS = [
   { path: '/dealer-portal/projects', label: 'Projects', icon: '\u2637' },
   { path: '/dealer-portal/orders', label: 'Orders', icon: '\u2750' },
   { path: '/dealer-portal/warranty', label: 'Warranty', icon: '\u2696' },
+  { path: '/dealer-portal/messages', label: 'Messages', icon: '\u2709' },
+  { path: '/dealer-portal/resources', label: 'Resources', icon: '\u2630' },
   { path: '/dealer-portal/team', label: 'Team', icon: '\u2302' },
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
@@ -29,6 +31,8 @@ const ADMIN_NAV_ITEMS = [
   { path: '/dealer-portal/projects', label: 'All Projects', icon: '\u2637' },
   { path: '/dealer-portal/orders', label: 'All Orders', icon: '\u2750' },
   { path: '/dealer-portal/warranty', label: 'Warranty Claims', icon: '\u2696' },
+  { path: '/dealer-portal/messages', label: 'Messages', icon: '\u2709' },
+  { path: '/dealer-portal/resources', label: 'Resources', icon: '\u2630' },
   { path: '/dealer-portal/team', label: 'Team', icon: '\u2302' },
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
@@ -38,6 +42,8 @@ const DESIGNER_NAV_ITEMS = [
   { path: '/dealer-portal/projects', label: 'Projects', icon: '\u2637' },
   { path: '/dealer-portal/orders', label: 'Orders', icon: '\u2750' },
   { path: '/dealer-portal/warranty', label: 'Warranty', icon: '\u2696' },
+  { path: '/dealer-portal/messages', label: 'Messages', icon: '\u2709' },
+  { path: '/dealer-portal/resources', label: 'Resources', icon: '\u2630' },
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
 export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout, isAdmin, isDesigner, dealerEmail, children }: PortalLayoutProps) {

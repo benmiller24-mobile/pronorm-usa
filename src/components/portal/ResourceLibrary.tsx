@@ -130,7 +130,17 @@ export default function ResourceLibrary({ dealer, onNavigate, isAdmin }: Props) 
     return (bytes / 1048576).toFixed(1) + ' MB';
   };
 
-  const getFileIcon = (type: string) => FILE_ICONS[type.toLowerCase()] || '📎';
+  const getFileIcon = (type: string) => {
+    const t = type?.toLowerCase() || '';
+    // Handle MIME types (e.g. 'image/jpeg' → 'jpeg')
+    const ext = t.includes('/') ? t.split('/').pop() || '' : t;
+    return FILE_ICONS[ext] || '📎';
+  };
+
+  const getFileExt = (type: string) => {
+    const t = type?.toLowerCase() || '';
+    return t.includes('/') ? t.split('/').pop() || t : t;
+  };
 
   const filtered = resources
     .filter(r => activeCategory === 'all' || r.category === activeCategory)
@@ -259,7 +269,11 @@ export default function ResourceLibrary({ dealer, onNavigate, isAdmin }: Props) 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {filtered.map(r => (
             <div key={r.id} style={cardStyle}>
-              <div style={{ fontSize: 32, lineHeight: 1 }}>{getFileIcon(r.file_type)}</div>
+              {['jpg', 'jpeg', 'png', 'webp', 'image/jpeg', 'image/png', 'image/webp'].includes(r.file_type?.toLowerCase()) ? (
+                <img src={r.file_url} alt={r.title} style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, flexShrink: 0, background: '#f0ebe4' }} loading="lazy" />
+              ) : (
+                <div style={{ fontSize: 32, lineHeight: 1 }}>{getFileIcon(r.file_type)}</div>
+              )}
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>

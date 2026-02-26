@@ -72,7 +72,7 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigne
   const pendingWarranties = warranties.filter(w => !['resolved', 'denied'].includes(w.status));
 
   const cardStyle: React.CSSProperties = { padding: '1.5rem', background: '#fdfcfa', border: '1px solid rgba(26,26,26,0.08)', borderRadius: '4px' };
-  const statStyle: React.CSSProperties = { fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '2.5rem', fontWeight: 300, color: '#b87333', lineHeight: 1 };
+  const statStyle: React.CSSProperties = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif", fontSize: '2.5rem', fontWeight: 300, color: '#b87333', lineHeight: 1, fontVariantNumeric: 'lining-nums tabular-nums' };
   const thStyle: React.CSSProperties = { textAlign: 'left', padding: '0.5rem 0', fontWeight: 600, color: '#4a4a4a', fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase' as const };
 
   if (loading) return <div style={{ padding: '3rem', textAlign: 'center', color: '#8a8279' }}>Loading dashboard...</div>;

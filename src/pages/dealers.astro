@@ -1,0 +1,562 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const dealers = [
+  {
+    name: '27 Diamonds',
+    address: '625 North Shephard St',
+    city: 'Anaheim',
+    state: 'CA',
+    zip: '92806',
+    phone: '714-901-9100',
+    website: 'https://27diamonds.com',
+    lat: 33.8466,
+    lng: -117.9012,
+  },
+  {
+    name: 'Distinctive Cabinetry',
+    address: '2225 North Main St',
+    city: 'Walnut Creek',
+    state: 'CA',
+    zip: '',
+    phone: '925-588-2411',
+    website: 'https://distinctivecabinetry.us',
+    lat: 37.9101,
+    lng: -122.0652,
+  },
+  {
+    name: 'Axiom Interiors',
+    address: '4280 West Windmill Lane Ste 103',
+    city: 'Las Vegas',
+    state: 'NV',
+    zip: '89139',
+    phone: '702-550-2310',
+    website: 'https://aiglv.com',
+    lat: 36.0420,
+    lng: -115.2080,
+  },
+  {
+    name: 'Better Home Cabinets and Stone',
+    address: '14100 NE 20th St Ste #101',
+    city: 'Bellevue',
+    state: 'WA',
+    zip: '98007',
+    phone: '425-502-7010',
+    website: 'https://www.betterhomecabinetandstone.com',
+    lat: 47.6253,
+    lng: -122.1466,
+  },
+  {
+    name: 'Cabinets and Beyond Design Studio',
+    address: '1219 Harrison St',
+    city: 'San Francisco',
+    state: 'CA',
+    zip: '94103',
+    phone: '415-863-5550',
+    website: 'https://www.cabinetsandbeyond.com',
+    lat: 37.7701,
+    lng: -122.4124,
+  },
+  {
+    name: 'Colorado Modern Kitchens',
+    address: '5885 W 38th Ave',
+    city: 'Wheat Ridge',
+    state: 'CO',
+    zip: '80212',
+    phone: '720-409-7990',
+    website: 'https://coloradomodernkitchen.com',
+    lat: 39.7691,
+    lng: -105.0754,
+  },
+  {
+    name: 'DSI Building Supply',
+    address: '600 South 56th St Suite A11',
+    city: 'Chandler',
+    state: 'AZ',
+    zip: '85226',
+    phone: '480-716-2442',
+    website: 'https://dsibuildersupply.com',
+    lat: 33.2990,
+    lng: -111.9613,
+  },
+  {
+    name: 'The Kitchen CO',
+    address: '1717 State St',
+    city: 'Santa Barbara',
+    state: 'CA',
+    zip: '93101',
+    phone: '805-682-4003',
+    website: 'https://thekitchencosb.com',
+    lat: 34.4280,
+    lng: -119.7104,
+  },
+  {
+    name: 'HB Kitchen and Bath',
+    address: '2424 Whipple Rd',
+    city: 'Hayward',
+    state: 'CA',
+    zip: '94544',
+    phone: '510-755-8868',
+    website: 'https://hbkb.us',
+    lat: 37.6224,
+    lng: -122.0715,
+  },
+  {
+    name: 'Interior Design Solutions',
+    address: '3647 Atlantic Ave',
+    city: 'Long Beach',
+    state: 'CA',
+    zip: '90807',
+    phone: '562-989-5553',
+    website: 'https://www.idslbc.com',
+    lat: 33.8372,
+    lng: -118.1830,
+  },
+  {
+    name: 'MJ Interiors',
+    address: '191 North Robertson Blvd',
+    city: 'Beverly Hills',
+    state: 'CA',
+    zip: '90211',
+    phone: '310-493-7001',
+    website: 'https://interiordesignermj.com',
+    lat: 34.0722,
+    lng: -118.3838,
+  },
+];
+
+const states = [...new Set(dealers.map(d => d.state))].sort();
+
+// Build SEO schema — LocalBusiness for each dealer
+const dealerSchemas = dealers.map(d => ({
+  "@type": "LocalBusiness",
+  "name": d.name,
+  "description": `Authorized Pronorm German kitchen dealer in ${d.city}, ${d.state}.`,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": d.address,
+    "addressLocality": d.city,
+    "addressRegion": d.state,
+    "postalCode": d.zip,
+    "addressCountry": "US",
+  },
+  "telephone": d.phone,
+  "url": d.website,
+  "geo": { "@type": "GeoCoordinates", "latitude": d.lat, "longitude": d.lng },
+  "brand": { "@type": "Brand", "name": "Pronorm" },
+}));
+
+const pageSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Authorized Pronorm Kitchen Dealers",
+  "description": "Find an authorized Pronorm German fitted kitchen dealer near you. Showrooms across California, Nevada, Arizona, Colorado, and Washington.",
+  "numberOfItems": dealers.length,
+  "itemListElement": dealerSchemas.map((d, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "item": d,
+  })),
+};
+---
+
+<BaseLayout
+  title="Authorized Dealers — Find a Pronorm Kitchen Showroom Near You"
+  description="Browse all authorized Pronorm German kitchen dealers across the US. Visit a showroom in California, Nevada, Arizona, Colorado, or Washington to experience precision-engineered German cabinetry."
+  schema={pageSchema}
+>
+
+  <!-- Hero -->
+  <section class="page-hero" style="position:relative; overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:url('/images/hero/hero-bright-handleless-island.jpg');background-size:cover;background-position:center;opacity:0.1;"></div>
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="overline animate-in">Dealer Directory</span>
+      <h1 class="animate-in animate-in-delay-1">Authorized Pronorm<br/>Dealers</h1>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 60ch;">
+        Visit an authorized showroom to experience Pronorm German fitted kitchens in person. Our dealer network spans {states.length} states with {dealers.length} locations.
+      </p>
+    </div>
+  </section>
+
+  <!-- State Filter -->
+  <section class="section" style="padding-bottom: 0;">
+    <div class="container">
+      <div class="filter-bar reveal">
+        <span class="filter-label">Filter by state:</span>
+        <div class="filter-chips" id="stateFilters">
+          <button class="chip active" data-state="all">All ({dealers.length})</button>
+          {states.map(s => {
+            const count = dealers.filter(d => d.state === s).length;
+            return <button class="chip" data-state={s}>{s} ({count})</button>;
+          })}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dealer Cards -->
+  <section class="section">
+    <div class="container">
+      <div class="dealer-grid" id="dealerGrid">
+        {dealers.map(d => (
+          <article class="dealer-card reveal" data-state={d.state}>
+            <div class="card-header">
+              <h2 class="dealer-name">{d.name}</h2>
+              <span class="state-tag">{d.state}</span>
+            </div>
+
+            <div class="card-body">
+              <div class="card-detail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <div>
+                  <span>{d.address}</span><br/>
+                  <span>{d.city}, {d.state} {d.zip}</span>
+                </div>
+              </div>
+
+              <div class="card-detail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <a href={`tel:${d.phone.replace(/-/g, '')}`}>{d.phone}</a>
+              </div>
+
+              <div class="card-detail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                <a href={d.website} target="_blank" rel="noopener">{d.website.replace(/^https?:\/\/(www\.)?/, '')}</a>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(d.address + ', ' + d.city + ', ' + d.state + ' ' + d.zip)}`} target="_blank" rel="noopener" class="btn-card btn-directions">
+                Get Directions
+              </a>
+              <a href="#dealer-inquiry" class="btn-card btn-connect" data-dealer={d.name}>
+                Request Introduction
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Lead Capture Form -->
+  <section class="section bg-ivory" id="dealer-inquiry">
+    <div class="container">
+      <div class="inquiry-grid">
+
+        <div class="inquiry-info reveal">
+          <span class="overline">Connect With a Dealer</span>
+          <h2 style="margin-top: 0.5rem;">Don't See a Dealer<br/>Near You?</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p style="color: var(--color-graphite); line-height: 1.7;">
+            Our dealer network is growing across the United States. Submit your information below and we'll connect you with the closest authorized Pronorm dealer — or let you know when a showroom opens in your area.
+          </p>
+
+          <div class="info-note" style="margin-top: var(--space-2xl);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-copper)" stroke-width="1.5" style="flex-shrink:0;margin-top:2px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <p>Prefer to talk? Call us directly at <a href="tel:+12394044568" style="color:var(--color-copper); font-weight:600;">(239) 404-4568</a></p>
+          </div>
+        </div>
+
+        <form class="inquiry-form reveal" name="dealer-locator" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you">
+          <input type="hidden" name="form-name" value="dealer-locator" />
+          <p style="display:none;"><input name="bot-field" /></p>
+          <input type="hidden" name="preferred-dealer" id="preferredDealer" value="" />
+
+          <h3>Request a Dealer Introduction</h3>
+          <p class="form-subtitle">We'll respond within 1–2 business days.</p>
+
+          <div id="preferredDealerNote" style="display:none; padding:0.75rem 1rem; background:rgba(184,115,51,0.08); border-left:3px solid var(--color-copper); font-size:0.85rem; color:var(--color-graphite);">
+            Requesting introduction to: <strong id="preferredDealerName"></strong>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" name="first-name" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" name="last-name" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" name="phone" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" name="city" required />
+            </div>
+            <div class="form-group">
+              <label>State *</label>
+              <input type="text" name="state" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Zip Code *</label>
+            <input type="text" name="zip" required />
+          </div>
+
+          <div class="form-group">
+            <label>Project Type</label>
+            <select name="project-type">
+              <option value="">Select one...</option>
+              <option value="new-construction">New Construction</option>
+              <option value="full-renovation">Full Kitchen Renovation</option>
+              <option value="partial-renovation">Partial Kitchen Update</option>
+              <option value="living-spaces">Living Spaces / Closets</option>
+              <option value="just-exploring">Just Exploring Options</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Message</label>
+            <textarea name="message" rows="3" placeholder="Tell us about your project..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            Submit Request
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA />
+
+</BaseLayout>
+
+<!-- Client-side filtering + preferred dealer -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // State filter
+    const chips = document.querySelectorAll('#stateFilters .chip');
+    const cards = document.querySelectorAll('.dealer-card');
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const state = chip.dataset.state;
+        cards.forEach(card => {
+          if (state === 'all' || card.dataset.state === state) {
+            (card as HTMLElement).style.display = '';
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // "Request Introduction" — pre-fill dealer name
+    document.querySelectorAll('.btn-connect').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const dealerName = (btn as HTMLElement).dataset.dealer || '';
+        const hiddenInput = document.getElementById('preferredDealer') as HTMLInputElement;
+        const noteEl = document.getElementById('preferredDealerNote') as HTMLElement;
+        const nameEl = document.getElementById('preferredDealerName') as HTMLElement;
+        if (hiddenInput) hiddenInput.value = dealerName;
+        if (noteEl && nameEl) {
+          nameEl.textContent = dealerName;
+          noteEl.style.display = 'block';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .page-hero { padding: var(--space-5xl) 0 var(--space-2xl); }
+
+  /* Filter bar */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-graphite);
+  }
+  .filter-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .chip {
+    padding: 0.45rem 1rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border: 1.5px solid var(--color-sand);
+    background: var(--color-white);
+    color: var(--color-graphite);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+  .chip:hover { border-color: var(--color-copper); color: var(--color-copper); }
+  .chip.active {
+    background: var(--color-charcoal);
+    color: var(--color-white);
+    border-color: var(--color-charcoal);
+  }
+
+  /* Dealer Grid */
+  .dealer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Dealer Card */
+  .dealer-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-sand);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .dealer-card:hover {
+    border-color: var(--color-copper);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem 1.5rem 0;
+    gap: 0.5rem;
+  }
+
+  .dealer-name {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--color-charcoal);
+    line-height: 1.3;
+  }
+
+  .state-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.5rem;
+    background: rgba(184, 115, 51, 0.08);
+    color: var(--color-copper);
+    flex-shrink: 0;
+  }
+
+  .card-body {
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+  }
+
+  .card-detail {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    font-size: 0.85rem;
+    color: var(--color-graphite);
+    line-height: 1.5;
+  }
+  .card-detail svg { flex-shrink: 0; color: var(--color-copper); margin-top: 2px; }
+  .card-detail a { color: var(--color-copper); text-decoration: none; }
+  .card-detail a:hover { text-decoration: underline; }
+
+  .card-actions {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--color-sand);
+  }
+
+  .btn-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .btn-directions {
+    color: var(--color-graphite);
+    background: transparent;
+    border-right: 1px solid var(--color-sand);
+  }
+  .btn-directions:hover { background: var(--color-ivory); }
+
+  .btn-connect {
+    color: var(--color-copper);
+    background: transparent;
+  }
+  .btn-connect:hover { background: rgba(184, 115, 51, 0.06); }
+
+  /* Lead form section */
+  .inquiry-grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: var(--space-4xl);
+    align-items: start;
+  }
+
+  .inquiry-info h2 { font-size: 1.6rem; }
+
+  .info-note {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.2rem;
+    background: var(--color-white);
+    border-left: 3px solid var(--color-copper);
+  }
+  .info-note p { font-size: 0.85rem; color: var(--color-graphite); }
+
+  .inquiry-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    background: var(--color-white);
+    padding: 2.5rem;
+    border: 1px solid var(--color-sand);
+  }
+  .inquiry-form h3 { font-size: 1.2rem; margin-bottom: 0; }
+  .form-subtitle { font-size: 0.85rem; color: var(--color-warm-gray); margin-top: -0.5rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; }
+
+  @media (max-width: 768px) {
+    .dealer-grid { grid-template-columns: 1fr; }
+    .inquiry-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .inquiry-form { padding: 1.5rem; }
+    .filter-bar { flex-direction: column; align-items: flex-start; }
+  }
+</style>

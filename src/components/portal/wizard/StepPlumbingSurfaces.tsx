@@ -41,7 +41,7 @@ export default function StepPlumbingSurfaces({ data, onChange }: Props) {
         {data.countertops.map((ct, i) => (
           <div key={i} style={cardStyle}>
             <span style={cardLabel}>{ct.label || `Countertop ${i + 1}`}</span>
-            <div style={grid2}>
+            <div className="wizard-grid-2" style={grid2}>
               <Field label="Material">
                 <input style={inputStyle} type="text" value={ct.material} onChange={e => updateCountertop(i, 'material', e.target.value)} placeholder="e.g. Neolith, Quartz" />
               </Field>
@@ -49,7 +49,7 @@ export default function StepPlumbingSurfaces({ data, onChange }: Props) {
                 <input style={inputStyle} type="text" value={ct.color} onChange={e => updateCountertop(i, 'color', e.target.value)} placeholder="e.g. Himalayan Crystal" />
               </Field>
             </div>
-            <div style={grid2}>
+            <div className="wizard-grid-2" style={grid2}>
               <Field label="Thickness">
                 <input style={inputStyle} type="text" value={ct.thickness} onChange={e => updateCountertop(i, 'thickness', e.target.value)} placeholder="e.g. 12mm" />
               </Field>
@@ -114,7 +114,7 @@ function SinkSection({ label, sink, onChange }: {
   return (
     <div style={cardStyle}>
       <span style={cardLabel}>{label}</span>
-      <div style={grid2}>
+      <div className="wizard-grid-2" style={grid2}>
         <Field label="Single or Double Bowl">
           <select style={inputStyle} value={sink.bowlType} onChange={e => onChange('bowlType', e.target.value)}>
             <option value="">Select...</option>
@@ -127,7 +127,7 @@ function SinkSection({ label, sink, onChange }: {
           <input style={inputStyle} type="text" value={sink.mountingType} onChange={e => onChange('mountingType', e.target.value)} placeholder="e.g. Undermount, Drop-in" />
         </Field>
       </div>
-      <div style={grid2}>
+      <div className="wizard-grid-2" style={grid2}>
         <Field label="Dimensions (mm)">
           <input style={inputStyle} type="text" value={sink.dimensions} onChange={e => onChange('dimensions', e.target.value)} placeholder="e.g. 810 x 480 mm" />
         </Field>

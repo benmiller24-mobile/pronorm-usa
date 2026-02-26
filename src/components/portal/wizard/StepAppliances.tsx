@@ -51,7 +51,7 @@ export default function StepAppliances({ data, onChange }: Props) {
                 <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1a1a1a' }}>{app.type}</span>
                 <button type="button" onClick={() => toggleAppliance(app.type)} style={removeBtn}>Remove</button>
               </div>
-              <div style={grid4}>
+              <div className="wizard-grid-2" style={grid4}>
                 <div>
                   <label style={labelStyle}>Manufacturer</label>
                   <input style={inputStyle} type="text" value={app.manufacturer} onChange={e => updateAppliance(i, 'manufacturer', e.target.value)} placeholder="e.g. Fisher Paykel" />

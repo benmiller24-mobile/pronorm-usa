@@ -52,7 +52,7 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="portal-list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.8rem', fontWeight: 400 }}>
             {isAdmin ? 'All Projects' : 'Projects'}
@@ -89,7 +89,7 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
       )}
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+      <div className="portal-filters" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         {STATUS_FILTERS.map(s => (
           <button key={s} onClick={() => setFilter(s)} style={{
             padding: '0.4rem 0.85rem', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.06em',

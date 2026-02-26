@@ -32,7 +32,7 @@ export default function StepCabinetSelection({ data, onChange, errors }: Props) 
       </div>
       {err('productLine') && <span style={errStyle}>{err('productLine')}</span>}
 
-      <div style={{ ...grid2, marginTop: '1.25rem' }}>
+      <div className="wizard-grid-2" style={{ ...grid2, marginTop: '1.25rem' }}>
         <Field label="Range Code (2-4 Letters) *" error={err('rangeCode')}>
           <input style={inputStyle(!!err('rangeCode'))} type="text" value={cab.rangeCode} onChange={e => update('rangeCode', e.target.value.toUpperCase())} placeholder="e.g. KS, KSLG" maxLength={4} />
         </Field>
@@ -41,7 +41,7 @@ export default function StepCabinetSelection({ data, onChange, errors }: Props) 
         </Field>
       </div>
 
-      <div style={grid2}>
+      <div className="wizard-grid-2" style={grid2}>
         <Field label="Door Price Group (0-10)" error={err('doorPriceGroup')}>
           <select style={inputStyle(false)} value={cab.doorPriceGroup} onChange={e => update('doorPriceGroup', e.target.value)}>
             <option value="">Select...</option>

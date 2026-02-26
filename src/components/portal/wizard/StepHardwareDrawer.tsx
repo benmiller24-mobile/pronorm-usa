@@ -30,7 +30,7 @@ export default function StepHardwareDrawer({ data, onChange, errors }: Props) {
       <h3 style={subTitle}>Hardware</h3>
       <p style={hintText}>Include codes and/or finishes where possible.</p>
 
-      <div style={grid2}>
+      <div className="wizard-grid-2" style={grid2}>
         <Field label="Pulls — Code">
           <input style={inputStyle} type="text" value={hw.pullsCode} onChange={e => updateHw('pullsCode', e.target.value)} placeholder="e.g. 843" />
         </Field>
@@ -38,7 +38,7 @@ export default function StepHardwareDrawer({ data, onChange, errors }: Props) {
           <input style={inputStyle} type="text" value={hw.pullsFinish} onChange={e => updateHw('pullsFinish', e.target.value)} placeholder="e.g. Brushed Brass" />
         </Field>
       </div>
-      <div style={grid2}>
+      <div className="wizard-grid-2" style={grid2}>
         <Field label="Knobs — Code">
           <input style={inputStyle} type="text" value={hw.knobsCode} onChange={e => updateHw('knobsCode', e.target.value)} placeholder="Code" />
         </Field>
@@ -52,7 +52,7 @@ export default function StepHardwareDrawer({ data, onChange, errors }: Props) {
         Tip-On / Push to Open
       </label>
 
-      <div style={{ ...grid2, marginTop: '1rem' }}>
+      <div className="wizard-grid-2" style={{ ...grid2, marginTop: '1rem' }}>
         <Field label="X-Gola Channel Color">
           <input style={inputStyle} type="text" value={hw.xGolaChannelColor} onChange={e => updateHw('xGolaChannelColor', e.target.value)} placeholder="Color" />
         </Field>

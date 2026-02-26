@@ -137,7 +137,7 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigne
 
       {/* Quick Actions */}
       {!isAdmin && (
-        <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2.5rem', flexWrap: 'wrap' }}>
+        <div className="portal-quick-actions" style={{ display: 'flex', gap: '0.75rem', marginBottom: '2.5rem', flexWrap: 'wrap' }}>
           <button onClick={() => onNavigate('/dealer-portal/projects/new')} style={{ padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none', borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit' }}>+ New Project</button>
           <button onClick={() => onNavigate('/dealer-portal/warranty/new')} style={{ padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'transparent', color: '#4a4a4a', border: '1.5px solid #d4cdc5', borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit' }}>+ Warranty Claim</button>
         </div>

@@ -214,14 +214,14 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
         {currentStep === 5 && <StepUploadReview data={formData} files={files} onFilesSelected={setFiles} errors={errors} dealerName={dealer.company_name} />}
 
         {/* Navigation */}
-        <div style={navRow}>
+        <div className="wizard-nav-row" style={navRow}>
           {currentStep > 0 ? (
             <button type="button" onClick={handlePrev} style={btnSecondary}>
               &larr; Previous
             </button>
           ) : <div />}
 
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
               <button type="button" onClick={handleSaveDraft} disabled={savingDraft || draftSaved} style={{ ...btnSecondary, borderColor: '#b87333', color: draftSaved ? '#5a9e4b' : '#b87333' }}>
                 {draftSaved ? 'Draft Saved!' : savingDraft ? 'Saving...' : 'Save Draft'}
               </button>

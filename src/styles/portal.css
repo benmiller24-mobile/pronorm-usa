@@ -60,6 +60,97 @@ body {
   }
 }
 
+/* ── Mobile Portal Enhancements (iPhone Max & similar) ── */
+
+/* Wizard progress: swap desktop/mobile versions */
+@media (max-width: 520px) {
+  .wizard-progress-desktop {
+    display: none !important;
+  }
+  .wizard-progress-mobile {
+    display: block !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Stat cards: 2-col stays but shrinks nicely */
+  .portal-main [style*="grid-template-columns: repeat(auto-fit"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Wizard nav row: stack vertically on very small screens */
+  .wizard-nav-row {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  .wizard-nav-row > div {
+    width: 100% !important;
+  }
+  .wizard-nav-row button {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Wizard form 2-col grids → single column */
+  .wizard-grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+
+  /* Wizard progress: compact on mobile */
+  .wizard-progress-bar {
+    gap: 0 !important;
+    padding-bottom: 0.25rem !important;
+  }
+  .wizard-progress-bar span[style*="text-transform"] {
+    font-size: 0.55rem !important;
+    letter-spacing: 0 !important;
+  }
+
+  /* Dashboard tables: allow horizontal scroll with better UX */
+  .portal-main table {
+    font-size: 0.78rem !important;
+  }
+  .portal-main table td,
+  .portal-main table th {
+    padding: 0.5rem 0.5rem !important;
+  }
+
+  /* Quick action buttons: full width stacked */
+  .portal-quick-actions {
+    flex-direction: column !important;
+  }
+  .portal-quick-actions button {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Project list header: stack title + button */
+  .portal-list-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .portal-list-header button {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* Filter chips: scroll if many */
+  .portal-filters {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
+  }
+  .portal-filters button {
+    flex-shrink: 0 !important;
+  }
+}
+
 /* Form focus states */
 input:focus, textarea:focus, select:focus {
   border-color: #b87333 !important;

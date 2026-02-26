@@ -20,7 +20,7 @@ export default function StepProjectInfo({ data, onChange, errors }: Props) {
       <h2 style={sectionTitle}>Project Information</h2>
       <p style={sectionDesc}>Enter the basic details for this project.</p>
 
-      <div style={grid2}>
+      <div className="wizard-grid-2" style={grid2}>
         <Field label="Job Name *" error={err('jobName')}>
           <input style={inputStyle(!!err('jobName'))} type="text" value={info.jobName} onChange={e => update('jobName', e.target.value)} placeholder="e.g. Miller Kitchen" />
         </Field>
@@ -29,7 +29,7 @@ export default function StepProjectInfo({ data, onChange, errors }: Props) {
         </Field>
       </div>
 
-      <div style={grid2}>
+      <div className="wizard-grid-2" style={grid2}>
         <Field label="Cell Phone" error={err('cellPhone')}>
           <input style={inputStyle(false)} type="tel" value={info.cellPhone} onChange={e => update('cellPhone', e.target.value)} placeholder="e.g. 480-993-9224" />
         </Field>

@@ -126,6 +126,7 @@ function isActive(href: string) {
           <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
         </svg>
       </button>
+      <a href="/request-consultation" class="nav-consult-desktop">Request Consultation</a>
       <a href="/find-a-dealer" class="nav-cta nav-cta-desktop">Find a Dealer</a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -240,6 +241,14 @@ function isActive(href: string) {
   .nav-cta-mobile { display:none; }
   .nav-cta-secondary-mobile { display:none; }
 
+  .nav-consult-desktop {
+    display:inline-flex; align-items:center;
+    color:rgba(255,255,255,.5); text-decoration:none;
+    font-family:var(--font-body); font-size:.7rem; font-weight:400;
+    letter-spacing:.04em; transition:color .3s;
+  }
+  .nav-consult-desktop:hover { color:var(--color-copper); }
+
   .nav-dealer-login {
     display:inline-flex; align-items:center; gap:.35rem;
     color:rgba(255,255,255,.4); text-decoration:none;
@@ -286,6 +295,7 @@ function isActive(href: string) {
     .nav-actions { margin-left:auto; }
     .nav-search-btn { display:none; }
     .nav-cta-desktop { display:none; }
+    .nav-consult-desktop { display:none; }
     .nav-dealer-login { display:none; }
     .nav-dealer-login-mobile { display:block; }
 

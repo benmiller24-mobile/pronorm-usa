@@ -1,0 +1,428 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+import { galleryItems } from '@/data/gallery';
+
+export function getStaticPaths() {
+  return galleryItems.map((item) => ({
+    params: { slug: item.slug },
+    props: { item },
+  }));
+}
+
+interface Props {
+  item: typeof galleryItems[0];
+}
+
+const { item } = Astro.props;
+
+// Get related items from the same collection or style
+const relatedItems = galleryItems
+  .filter(
+    (i) =>
+      i.slug !== item.slug &&
+      (i.collection === item.collection || i.style === item.style)
+  )
+  .slice(0, 3);
+
+// Create breadcrumb
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Gallery",
+      item: `${Astro.site}gallery`,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: item.title,
+      item: `${Astro.site}gallery/${item.slug}`,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={`${item.title} | Kitchen Design`}
+  description={item.description}
+  schema={breadcrumbSchema}
+>
+  <!-- Hero Section -->
+  <section class="detail-hero">
+    <div class="detail-hero-image">
+      <img src={item.image} alt={item.title} />
+    </div>
+    <div class="detail-hero-overlay"></div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="section">
+    <div class="container-narrow">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="/gallery">Gallery</a>
+        <span class="breadcrumb-divider">/</span>
+        <span>{item.title}</span>
+      </nav>
+
+      <!-- Title & Meta -->
+      <div class="detail-header">
+        <h1>{item.title}</h1>
+        <div class="detail-meta">
+          <span class="meta-item">
+            <span class="meta-label">Collection:</span>
+            <span class="meta-value">{item.collection}</span>
+          </span>
+          <span class="meta-item">
+            <span class="meta-label">Style:</span>
+            <span class="meta-value">{item.style}</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="detail-description">
+        <p>{item.description}</p>
+      </div>
+
+      <!-- Key Features -->
+      <div class="features-section">
+        <div class="feature">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+            </svg>
+          </div>
+          <h3>German Engineering</h3>
+          <p>Pronorm kitchens combine European design expertise with premium German craftsmanship for enduring quality.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+          </div>
+          <h3>Customizable Design</h3>
+          <p>Every element can be tailored to your space, from materials and colors to layout and hardware selections.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+            </svg>
+          </div>
+          <h3>Built to Last</h3>
+          <p>Premium materials and expert construction ensure your Pronorm kitchen maintains its beauty for decades.</p>
+        </div>
+      </div>
+
+      <!-- Back Button -->
+      <div class="back-button-section">
+        <a href="/gallery" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Gallery
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Projects -->
+  {relatedItems.length > 0 && (
+    <section class="section related-section">
+      <div class="container-narrow">
+        <span class="overline">Explore More</span>
+        <h2 style="margin-top: 0.5rem; margin-bottom: 2rem;">Related Projects</h2>
+        <div class="related-grid">
+          {relatedItems.map((related) => (
+            <a href={`/gallery/${related.slug}`} class="related-card">
+              <div class="related-image">
+                <img src={related.image} alt={related.title} />
+              </div>
+              <div class="related-info">
+                <h4>{related.title}</h4>
+                <span class="related-meta">{related.collection}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- CTA Section -->
+  <ConsultationCTA
+    heading="Ready to Create Your Pronorm Kitchen?"
+    text="Work with an authorized Pronorm dealer to bring your kitchen vision to life. Schedule a consultation to explore collections, materials, and custom options."
+  />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .detail-hero {
+    position: relative;
+    height: 60vh;
+    max-height: 600px;
+    overflow: hidden;
+    margin-top: -72px;
+  }
+
+  .detail-hero-image {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .detail-hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .detail-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(26, 26, 26, 0) 0%,
+      rgba(26, 26, 26, 0.3) 100%
+    );
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-warm-gray);
+    margin-bottom: 3rem;
+    margin-top: 3rem;
+  }
+
+  .breadcrumb a {
+    color: var(--color-graphite);
+    text-decoration: none;
+    transition: color var(--duration-fast) ease;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-copper);
+  }
+
+  .breadcrumb-divider {
+    color: var(--color-sand);
+  }
+
+  /* Detail Header */
+  .detail-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .detail-header h1 {
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin: 0 0 1.5rem;
+    color: var(--color-black);
+  }
+
+  .detail-meta {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .meta-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-warm-gray);
+  }
+
+  .meta-value {
+    font-size: 0.875rem;
+    color: var(--color-graphite);
+    font-weight: 500;
+  }
+
+  /* Description */
+  .detail-description {
+    margin: 2.5rem 0;
+  }
+
+  .detail-description p {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--color-graphite);
+    margin: 0;
+    max-width: 75ch;
+  }
+
+  /* Features */
+  .features-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2.5rem;
+    margin: 4rem 0;
+    padding: 2rem;
+    background: var(--color-ivory);
+    border-radius: 8px;
+  }
+
+  .feature {
+    text-align: center;
+  }
+
+  .feature-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    color: var(--color-copper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feature-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .feature h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: var(--color-black);
+  }
+
+  .feature p {
+    font-size: 0.875rem;
+    color: var(--color-warm-gray);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* Back Button */
+  .back-button-section {
+    margin: 3rem 0;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-copper);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all var(--duration-fast) ease;
+  }
+
+  .back-link:hover {
+    gap: 0.75rem;
+    color: var(--color-walnut);
+  }
+
+  .back-link svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Related Projects */
+  .related-section {
+    background: var(--color-ivory);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .related-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all var(--duration-fast) ease;
+  }
+
+  .related-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .related-image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+
+  .related-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-base) ease;
+  }
+
+  .related-card:hover .related-image img {
+    transform: scale(1.05);
+  }
+
+  .related-info {
+    padding: 1.25rem;
+    background: var(--color-white);
+  }
+
+  .related-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: var(--color-black);
+  }
+
+  .related-meta {
+    font-size: 0.8rem;
+    color: var(--color-warm-gray);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .detail-hero {
+      height: 40vh;
+    }
+
+    .detail-header h1 {
+      font-size: 1.75rem;
+    }
+
+    .detail-description p {
+      font-size: 1rem;
+    }
+
+    .features-section {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      padding: 1.5rem;
+    }
+
+    .detail-meta {
+      gap: 1.5rem;
+    }
+  }
+</style>

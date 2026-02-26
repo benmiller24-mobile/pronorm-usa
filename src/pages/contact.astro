@@ -1,8 +1,27 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const contactSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Pronorm USA",
+  "description": "Exclusive US distributor of Pronorm German fitted kitchens, represented by Pinnacle Sales.",
+  "url": "https://www.pronormusa.com",
+  "telephone": "+1-239-404-4568",
+  "email": "info@pronormusa.com",
+  "logo": "https://www.pronormusa.com/images/pronorm-logo.svg",
+  "image": "https://www.pronormusa.com/images/pronorm-og-default.jpg",
+  "sameAs": [
+    "https://www.instagram.com/pronormusa",
+    "https://www.pinterest.com/pronormusa",
+    "https://www.houzz.com/pro/pronormusa"
+  ],
+  "areaServed": { "@type": "Country", "name": "United States" },
+  "brand": { "@type": "Brand", "name": "Pronorm" }
+};
 ---
 
-<BaseLayout title="Contact" description="Contact Pronorm USA — questions about German fitted kitchens, dealer partnerships, or design consultations. Exclusive US distribution by Pinnacle Sales.">
+<BaseLayout title="Contact" description="Contact Pronorm USA — questions about German fitted kitchens, dealer partnerships, or design consultations. Exclusive US distribution by Pinnacle Sales." schema={contactSchema}>
 
   <section class="page-hero" style="position:relative; overflow:hidden;">
     <div style="position:absolute;inset:0;background-image:url('/images/about/kitchen-studio-banner.jpg');background-size:cover;background-position:center;opacity:0.1;"></div>
@@ -25,6 +44,14 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
             <div class="contact-item">
               <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Pronorm USA</h4>
               <p style="margin-top: 0.3rem;">Exclusive US distribution by<br/><a href="https://pinnaclesales.biz" target="_blank" rel="noopener" style="color: var(--color-copper);">Pinnacle Sales</a></p>
+            </div>
+            <div class="contact-item">
+              <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Phone</h4>
+              <p style="margin-top: 0.3rem;"><a href="tel:+12394044568" style="color: var(--color-graphite);">(239) 404-4568</a></p>
+            </div>
+            <div class="contact-item">
+              <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Email</h4>
+              <p style="margin-top: 0.3rem;"><a href="mailto:info@pronormusa.com" style="color: var(--color-copper);">info@pronormusa.com</a></p>
             </div>
             <div class="contact-item">
               <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Territory</h4>

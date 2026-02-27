@@ -66,24 +66,14 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
       <p class="subtitle" style="margin: 1rem auto 2rem; max-width: 55ch;">Pronorm's dedicated Handle Collection offers a curated range of premium handles designed to complement every front colour and material in the Proline128 range.</p>
       <div class="handle-grid">
         <div class="handle-card reveal">
-          <img src="/images/product-lines/category-style.jpg" alt="Bar Handles" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <img src="/images/projects/modern-black/gold-handle.webp" alt="Pronorm Bar Handle" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Bar Handles</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Linear, architectural profiles</p>
         </div>
         <div class="handle-card reveal">
-          <img src="/images/product-lines/category-colour.jpg" alt="Bow Handles" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
-          <h4 style="margin-top: 0.75rem;">Bow Handles</h4>
-          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Curved, organic comfort</p>
-        </div>
-        <div class="handle-card reveal">
-          <img src="/images/product-lines/category-material.jpg" alt="Knob Handles" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <img src="/images/projects/country-kitchen/drawer-fronts.webp" alt="Pronorm Knobs" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
           <h4 style="margin-top: 0.75rem;">Knobs</h4>
           <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Classic, compact elegance</p>
-        </div>
-        <div class="handle-card reveal">
-          <img src="/images/product-lines/category-productline.jpg" alt="Recessed Handles" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
-          <h4 style="margin-top: 0.75rem;">Recessed Grips</h4>
-          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Flush, minimal integration</p>
         </div>
       </div>
     </div>
@@ -164,7 +154,7 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
   .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4xl); align-items: center; }
   .detail-grid.reverse > :first-child { order: 1; }
   .detail-grid.reverse > :last-child { order: 2; }
-  .handle-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl); }
+  .handle-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-xl); max-width: 700px; margin: 0 auto; }
   .combo-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .combo-tag {
     font-size: 0.75rem; font-weight: 500; letter-spacing: 0.06em;
@@ -175,7 +165,7 @@ import ConsultationCTA from '@/components/ConsultationCTA.astro';
   .project-grid .img-placeholder { transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); cursor: pointer; }
   .project-grid .img-placeholder:hover { transform: scale(1.03); }
 
-  @media (max-width: 1024px) { .handle-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 1024px) { .handle-grid { grid-template-columns: repeat(2, 1fr); max-width: 100%; } }
   @media (max-width: 768px) {
     .detail-grid, .project-grid { grid-template-columns: 1fr; }
     .detail-grid.reverse > :first-child { order: 2; }

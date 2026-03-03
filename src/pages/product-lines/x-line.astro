@@ -1,6 +1,162 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ConsultationCTA from '@/components/ConsultationCTA.astro';
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Pronorm X-line",
+  "description": "The classic handleless kitchen with a gently curved C-shaped handle profile in 10 colour options. Timeless elegance meets seamless expansive design.",
+  "brand": { "@type": "Brand", "name": "Pronorm" },
+  "manufacturer": { "@type": "Organization", "name": "Pronorm", "url": "https://pronormusa.com" },
+  "image": "https://pronormusa.com/images/product-lines/xline-handleless-classic.webp",
+  "url": "https://pronormusa.com/product-lines/x-line/",
+  "category": "Fitted Kitchens"
+};
+---
+
+<BaseLayout
+  schema={schema}
+  title="X‑line — The Classic Handleless Kitchen"
+  description="Pronorm X‑line: the classic handleless kitchen with a gently curved C-shaped handle profile in 10 colour options. Timeless elegance meets seamless expansive design."
+>
+  <section class="collection-hero">
+    <div class="hero-bg" style="position:absolute;inset:0;background-image:url('/images/product-lines/xline-handleless-classic.webp');background-size:cover;background-position:center;"></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(26,26,26,0.8) 0%, rgba(26,26,26,0.2) 70%); z-index: 2;"></div>
+    <div style="position: relative; z-index: 3;" class="container">
+      <span class="overline animate-in" style="color: var(--color-copper);">Product Line</span>
+      <h1 class="animate-in animate-in-delay-1" style="color: var(--color-white);">X‑line</h1>
+      <p class="animate-in animate-in-delay-2" style="color: var(--color-sand); font-family: var(--font-display); font-size: 1.3rem; font-style: italic; max-width: 50ch; margin-top: 0.75rem;">The classic handleless kitchen. A masterpiece of timeless elegance with a gently curved C-shaped handle profile.</p>
+    </div>
+  </section>
+
+  <!-- Design Philosophy -->
+  <section class="section-lg">
+    <div class="container">
+      <div class="detail-grid">
+        <div class="reveal">
+          <span class="overline">Design Philosophy</span>
+          <h2 style="margin-top: 0.5rem;">Timeless.<br/>Classic. Elegant.</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>At the heart of the X‑line is a gently curved C-shaped handle profile that delivers both visual appeal and comfortable access across the entire cabinet length. Where the Y‑line is bold and linear, the X‑line is soft and refined — a handleless system for those who prefer classic elegance over sharp minimalism.</p>
+          <p style="margin-top: 1rem;">With this classic handleless kitchen, it's possible to create seamless and expansive interior designs with a truly unified look. The C-profile's gentle curve catches light beautifully, adding subtle dimension to every cabinet run.</p>
+        </div>
+        <div class="reveal">
+          <div style="aspect-ratio:3/4;overflow:hidden;border-radius:4px;"><img src="/images/gallery/xline-open-perspectives.jpg" alt="X-line C-Profile Detail — Organic Platin with Oak" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- C-Profile Colours -->
+  <section class="section bg-ivory">
+    <div class="container text-center">
+      <span class="overline">C-Profile Customization</span>
+      <h2 style="margin-top: 0.5rem;">10 Colour Options</h2>
+      <p class="subtitle" style="margin: 1rem auto 2rem; max-width: 55ch;">The C-profile handle can be customized from a selection of 10 colour options to suit individual style preferences — from bright stainless to warm champagne to dramatic black.</p>
+      <div class="colour-grid">
+        <div class="colour-swatch reveal"><div style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #c0c0c0, #e8e8e8); border-radius: 50%;"></div><span>Stainless Steel</span></div>
+        <div class="colour-swatch reveal"><div style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #2d2d2d, #4a4a4a); border-radius: 50%;"></div><span>Black</span></div>
+        <div class="colour-swatch reveal"><div style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #8b7355, #c4a97d); border-radius: 50%;"></div><span>Bronze</span></div>
+        <div class="colour-swatch reveal"><div style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #d4c5a9, #e8dcc6); border-radius: 50%;"></div><span>Champagne</span></div>
+        <div class="colour-swatch reveal"><div style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #f0ebe4, #fdfcfa); border-radius: 50%;"></div><span>White</span></div>
+      </div>
+      <p style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--color-warm-gray);">Plus 5 additional colours — visit a dealer to see the full range in person.</p>
+    </div>
+  </section>
+
+  <!-- X-line Plus -->
+  <section class="section">
+    <div class="container">
+      <div class="detail-grid reverse">
+        <div class="reveal">
+          <div style="aspect-ratio:4/3;overflow:hidden;border-radius:4px;"><img src="/images/equipment/ergonomics-cabinet-heights.jpg" alt="X-line Plus Personalized Ergonomics" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        </div>
+        <div class="reveal">
+          <span class="overline">Enhanced Ergonomics</span>
+          <h2 style="margin-top: 0.5rem;">X‑line Plus</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>X‑line plus goes beyond the standard to offer maximum, personalized ergonomics — whether for taller individuals or for enhanced design with a lower plinth.</p>
+          <p style="margin-top: 1rem;">X‑line transforms your home into a cohesive and stylish living space where every surface, every opening, every proportion is considered.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video -->
+  <section class="section bg-ivory text-center">
+    <div class="container-narrow">
+      <span class="overline">See It in Motion</span>
+      <h2 style="margin-top: 0.5rem;">The X‑line Experience</h2>
+      <div style="aspect-ratio: 16/9; margin-top: 2rem; border-radius: 4px; overflow: hidden; background: #1a1a1a;">
+        <video controls preload="metadata" poster="/images/gallery/kitchen-spot-4-poster.jpg" playsinline style="width:100%;height:100%;object-fit:cover;">
+          <source src="/videos/kitchen-spot-4.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- Downloads -->
+  <section class="section text-center">
+    <div class="container-narrow">
+      <span class="overline">Resources</span>
+      <h2 style="margin-top: 0.5rem;">X‑line Downloads</h2>
+      <p class="subtitle" style="margin: 1rem auto 2rem; max-width: 50ch;">Explore our product specifications, finishes catalog, and full brochure for the X‑line collection.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="/downloads/Product-Range-Y-X-2026-EN.pdf" target="_blank" rel="noopener" class="btn btn-outline" style="gap: 0.5rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Y &amp; X Product Range (PDF)
+        </a>
+        <a href="/downloads/Fronts-Overview-2025-EN.pdf" target="_blank" rel="noopener" class="btn btn-outline" style="gap: 0.5rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Fronts Overview (PDF)
+        </a>
+        <a href="/downloads/Create-Your-World-Brochure-2026-EN.pdf" target="_blank" rel="noopener" class="btn btn-outline" style="gap: 0.5rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          2026 Brochure (PDF)
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="section bg-cream">
+    <div class="container text-center">
+      <span class="overline">Gallery</span>
+      <h2 style="margin-top: 0.5rem;">X‑line Kitchens</h2>
+      <div class="project-grid" style="margin-top: var(--space-2xl);">
+        <div style="aspect-ratio:16/10;overflow:hidden;border-radius:4px;"><img src="/images/gallery/xline-exquisitely-designed.jpg" alt="X-line Oak Truffle Grey with Black Glass" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/xline-classic-handleless.jpg" alt="X-line Brilliant Cubanit" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/xline-industrial-vintage.jpg" alt="X-line Vintage Oak with Steel Grey" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/xline-great-pleasure.jpg" alt="X-line Steelbrush Gold Ultra Matte" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:16/10;overflow:hidden;border-radius:4px;grid-column:span 2;"><img src="/images/gallery/xline-convincing-heart.jpg" alt="X-line Arctic White Ultra Matte" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA heading="Experience X‑line In Person" text="Visit an authorized dealer to see the C-shaped handle profile in all 10 colour options." />
+</BaseLayout>
+
+<style>
+  .collection-hero { position: relative; min-height: 65vh; display: flex; align-items: center; overflow: hidden; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4xl); align-items: center; }
+  .detail-grid.reverse > :first-child { order: 1; }
+  .detail-grid.reverse > :last-child { order: 2; }
+  .colour-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+  .colour-swatch { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; width: 80px; }
+  .colour-swatch span { font-size: 0.75rem; color: var(--color-graphite); }
+  .project-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+  .project-grid .img-placeholder { transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); cursor: pointer; }
+  .project-grid .img-placeholder:hover { transform: scale(1.03); }
+
+  @media (max-width: 768px) {
+    .detail-grid, .project-grid { grid-template-columns: 1fr; }
+    .detail-grid.reverse > :first-child { order: 2; }
+    .detail-grid.reverse > :last-child { order: 1; }
+  }
+</style>
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
 ---
 
 <BaseLayout

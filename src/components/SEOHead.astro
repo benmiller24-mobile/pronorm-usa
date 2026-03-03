@@ -27,26 +27,21 @@ const defaultSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Pronorm USA",
-  "url": "https://www.pronormusa.com",
-  "logo": "https://www.pronormusa.com/images/pronorm-logo.svg",
-  "description": "Pronorm German fitted kitchens — precision-engineered in Vlotho, Germany. Available through authorized dealers across the United States.",
+  "url": "https://pronormusa.com",
+  "logo": "https://pronormusa.com/images/pronorm-logo.svg",
+  "description": "German fitted kitchens by Pronorm — precision-engineered cabinetry brought to American homes.",
   "sameAs": [
-    "https://www.instagram.com/pronormusa",
-    "https://www.pinterest.com/pronormusa",
-    "https://www.houzz.com/pro/pronormusa"
-  ],
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "contactType": "sales",
-    "availableLanguage": "English"
-  }
+    "https://www.instagram.com/pronormusa"
+  ]
 };
 ---
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="generator" content={Astro.generator} />
+
+  <!-- Google Search Console Verification -->
+  <meta name="google-site-verification" content="qKSL0nGvNlj_63YDqC0xbHOqxsj_CYKB8btwdJcVyEI" />
 
   <!-- Primary Meta -->
   <title>{fullTitle}</title>
@@ -76,6 +71,16 @@ const defaultSchema = {
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+  <!-- Google Analytics 4 (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KXZP6QQTGP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KXZP6QQTGP');
+  </script>
 
   <!-- Schema.org -->
   <script type="application/ld+json" set:html={JSON.stringify(schema || defaultSchema)} />

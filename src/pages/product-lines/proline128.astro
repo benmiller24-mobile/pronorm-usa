@@ -1,9 +1,21 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ConsultationCTA from '@/components/ConsultationCTA.astro';
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Pronorm Proline128",
+  "description": "The innovative 128mm grid planning system that makes any desired height a reality. Combine with handles, push-to-open, or mix with Y-line and X-line for maximum individuality.",
+  "brand": { "@type": "Brand", "name": "Pronorm" },
+  "manufacturer": { "@type": "Organization", "name": "Pronorm", "url": "https://pronormusa.com" },
+  "image": "https://pronormusa.com/images/product-lines/proline-classic-handles.webp",
+  "url": "https://pronormusa.com/product-lines/proline128/",
+  "category": "Fitted Kitchens"
+};
 ---
 
 <BaseLayout
+  schema={schema}
   title="Proline128 — The Ergonomic Grid Kitchen"
   description="Pronorm Proline128: the innovative 128mm grid planning system that makes any desired height a reality. Combine with handles, push-to-open, or mix with Y‑line and X‑line for maximum individuality."
 >

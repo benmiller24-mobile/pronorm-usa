@@ -1,6 +1,181 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ConsultationCTA from '@/components/ConsultationCTA.astro';
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Pronorm Y-line",
+  "description": "The unique handleless kitchen with integrated grip profile in stainless, bronze, or black anodized finishes. Contemporary living through handleless elegance and clean, linear design.",
+  "brand": { "@type": "Brand", "name": "Pronorm" },
+  "manufacturer": { "@type": "Organization", "name": "Pronorm", "url": "https://pronormusa.com" },
+  "image": "https://pronormusa.com/images/product-lines/yline-handleless-modern.webp",
+  "url": "https://pronormusa.com/product-lines/y-line/",
+  "category": "Fitted Kitchens"
+};
+---
+
+<BaseLayout
+  schema={schema}
+  title="Y‑line — The Unique Handleless Kitchen"
+  description="Pronorm Y‑line: the unique handleless kitchen with integrated grip profile in stainless, bronze, or black anodized finishes. Contemporary living through handleless elegance and clean, linear design."
+>
+  <section class="collection-hero">
+    <div class="hero-bg" style="position:absolute;inset:0;background-image:url('/images/product-lines/yline-handleless-modern.webp');background-size:cover;background-position:center;"></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(26,26,26,0.8) 0%, rgba(26,26,26,0.2) 70%); z-index: 2;"></div>
+    <div style="position: relative; z-index: 3;" class="container">
+      <span class="overline animate-in" style="color: var(--color-copper);">Product Line</span>
+      <h1 class="animate-in animate-in-delay-1" style="color: var(--color-white);">Y‑line</h1>
+      <p class="animate-in animate-in-delay-2" style="color: var(--color-sand); font-family: var(--font-display); font-size: 1.3rem; font-style: italic; max-width: 50ch; margin-top: 0.75rem;">The unique handleless kitchen. Contemporary living through a captivating fusion of handleless elegance and clean, linear design.</p>
+    </div>
+  </section>
+
+  <!-- Design Philosophy -->
+  <section class="section-lg">
+    <div class="container">
+      <div class="detail-grid">
+        <div class="reveal">
+          <span class="overline">Design Philosophy</span>
+          <h2 style="margin-top: 0.5rem;">Form, Function<br/>& Ergonomics</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Y‑line brings a captivating identity to modern living. A concept for design-forward interiors that masterfully balance form, function, and ergonomics. The integrated grip profile is not only visually striking but provides an exceptionally comfortable user experience.</p>
+          <p style="margin-top: 1rem;">The rear handle rail behind the grip profile can be supplied in the front's colour or in a contrasting shade of your choice — allowing for fully personalized kitchen designs. Every detail is considered to transform your home into a unique expression of your personality.</p>
+        </div>
+        <div class="reveal">
+          <div style="aspect-ratio:3/4;overflow:hidden;border-radius:4px;"><img src="/images/product-lines/yline-handle-profile-bronze.webp" alt="Y-line Grip Profile Detail" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grip Profile Options -->
+  <section class="section bg-ivory">
+    <div class="container text-center">
+      <span class="overline">Integrated Grip Profile</span>
+      <h2 style="margin-top: 0.5rem;">Three Finishes, Endless Possibilities</h2>
+      <p class="subtitle" style="margin: 1rem auto 2rem; max-width: 55ch;">The Y‑line grip profile is available in three premium anodized finishes — each transforming the kitchen's character while maintaining seamless handleless operation.</p>
+      <div class="finish-grid">
+        <div class="finish-card reveal">
+          <img src="/images/product-lines/yline-grip-stainless-detail.jpg" alt="Y-line Stainless Grip Profile Detail" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4 style="margin-top: 0.75rem;">Stainless</h4>
+          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Clean, contemporary brightness</p>
+        </div>
+        <div class="finish-card reveal">
+          <img src="/images/product-lines/yline-handle-profile-bronze.webp" alt="Bronze Finish" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4 style="margin-top: 0.75rem;">Bronze</h4>
+          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Warm, organic elegance</p>
+        </div>
+        <div class="finish-card reveal">
+          <img src="/images/gallery/dark-black-boho.webp" alt="Black Anodized Finish" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4 style="margin-top: 0.75rem;">Black Anodized</h4>
+          <p style="font-size: 0.85rem; color: var(--color-warm-gray);">Bold, architectural contrast</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Y-line Plus -->
+  <section class="section">
+    <div class="container">
+      <div class="detail-grid reverse">
+        <div class="reveal">
+          <div style="aspect-ratio:4/3;overflow:hidden;border-radius:4px;"><img src="/images/equipment/ergonomics-cabinet-heights.jpg" alt="Y-line Plus Customized Ergonomics" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        </div>
+        <div class="reveal">
+          <span class="overline">Enhanced Ergonomics</span>
+          <h2 style="margin-top: 0.5rem;">Y‑line Plus</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Y‑line plus goes beyond the standard, offering maximum, tailored ergonomics — whether for taller individuals or to achieve a more striking design with a lower plinth.</p>
+          <p style="margin-top: 1rem;">Custom plinth heights, adjusted working heights, and personalized proportions ensure your kitchen isn't just beautiful — it's built specifically for how you live and cook.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rear Handle Rail -->
+  <section class="section bg-cream">
+    <div class="container text-center">
+      <span class="overline">Personalization</span>
+      <h2 style="margin-top: 0.5rem;">Rear Handle Rail</h2>
+      <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">The rear handle rail behind the grip profile can match your front colour for a seamless look — or contrast it for a striking design statement. Your choice transforms the entire character of the kitchen.</p>
+      <div class="rail-demo" style="margin-top: 2.5rem;">
+        <div style="aspect-ratio:21/9;overflow:hidden;border-radius:4px;"><img src="/images/product-lines/handleless-cross-product.webp" alt="Rear Handle Rail" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video -->
+  <section class="section bg-ivory text-center">
+    <div class="container-narrow">
+      <span class="overline">See It in Motion</span>
+      <h2 style="margin-top: 0.5rem;">The Y‑line Experience</h2>
+      <div style="aspect-ratio: 16/9; margin-top: 2rem; border-radius: 4px; overflow: hidden;">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Vt1XiCDDhws" title="Pronorm Y-line" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:0;"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Downloads -->
+  <section class="section text-center">
+    <div class="container-narrow">
+      <span class="overline">Resources</span>
+      <h2 style="margin-top: 0.5rem;">Y‑line Downloads</h2>
+      <p class="subtitle" style="margin: 1rem auto 2rem; max-width: 50ch;">Explore our product specifications, finishes catalog, and full brochure for the Y‑line collection.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="/downloads/Product-Range-Y-X-2026-EN.pdf" target="_blank" rel="noopener" class="btn btn-outline" style="gap: 0.5rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Y &amp; X Product Range (PDF)
+        </a>
+        <a href="/downloads/Fronts-Overview-2025-EN.pdf" target="_blank" rel="noopener" class="btn btn-outline" style="gap: 0.5rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Fronts Overview (PDF)
+        </a>
+        <a href="/downloads/Create-Your-World-Brochure-2026-EN.pdf" target="_blank" rel="noopener" class="btn btn-outline" style="gap: 0.5rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          2026 Brochure (PDF)
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="section">
+    <div class="container text-center">
+      <span class="overline">Gallery</span>
+      <h2 style="margin-top: 0.5rem;">Y‑line in American Homes</h2>
+      <div class="project-grid" style="margin-top: var(--space-2xl);">
+        <div style="aspect-ratio:16/10;overflow:hidden;border-radius:4px;"><img src="/images/gallery/yline-airy-elegance.jpg" alt="Y-line Arctic White Ultra Matte Kitchen with Island" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/yline-relaxed-ambience.jpg" alt="Y-line Sand Matte Lacquer with Old Oak Natural" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/yline-fine-details.jpg" alt="Y-line Arctic White with Alba Oak Brown Accents" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/yline-haven-green.jpg" alt="Y-line Dark Green Matte Lacquer Kitchen" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:1;overflow:hidden;border-radius:4px;"><img src="/images/gallery/yline-passionate-impulsive.jpg" alt="Y-line Platin Grey Ultra Matte with Parsol Glass" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+        <div style="aspect-ratio:16/10;overflow:hidden;border-radius:4px;"><img src="/images/gallery/yline-phenomenal-impact.jpg" alt="Y-line Organic Onyx Grey with Oak Sepia" loading="lazy" style="width:100%;height:100%;object-fit:cover;" /></div>
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA heading="Experience Y‑line In Person" text="Visit an authorized Pronorm dealer to see the integrated grip profile in stainless, bronze, and black anodized finishes." />
+</BaseLayout>
+
+<style>
+  .collection-hero { position: relative; min-height: 65vh; display: flex; align-items: center; overflow: hidden; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4xl); align-items: center; }
+  .detail-grid.reverse > :first-child { order: 1; }
+  .detail-grid.reverse > :last-child { order: 2; }
+  .finish-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
+  .project-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+  .project-grid .img-placeholder { transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); cursor: pointer; }
+  .project-grid .img-placeholder:hover { transform: scale(1.03); }
+
+  @media (max-width: 768px) {
+    .detail-grid, .project-grid { grid-template-columns: 1fr; }
+    .detail-grid.reverse > :first-child { order: 2; }
+    .detail-grid.reverse > :last-child { order: 1; }
+    .finish-grid { grid-template-columns: 1fr; }
+  }
+</style>
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
 ---
 
 <BaseLayout

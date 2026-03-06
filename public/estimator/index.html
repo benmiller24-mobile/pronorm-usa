@@ -535,7 +535,7 @@ function App(){
 
   // AI Render function — called when transitioning to step 7
   // Gemini API config — Nano Banana 2
-  var GEMINI_KEY="AIzaSyAKdlA7CenlOXsYhCoLJmP43on_MTikdd4";
+  var GEMINI_PROXY="/.netlify/functions/render-kitchen";
   // Model cascade — try newest first, fall back to older
   var GEMINI_MODELS=[
     "gemini-3-pro-image-preview",
@@ -545,7 +545,7 @@ function App(){
     "gemini-2.5-flash-image-preview",
     "gemini-2.5-flash-image"
   ];
-  var GEMINI_BASE="https://generativelanguage.googleapis.com/v1beta/models/";
+  // API calls routed through serverless proxy
 
   // Flat slab door reference image (CORS-enabled)
   var SHAKER_REFS={
@@ -731,14 +731,14 @@ function App(){
         return;
       }
       var model=GEMINI_MODELS[idx];
-      var url=GEMINI_BASE+model+":generateContent";
+      // model passed to proxy
       sRDbg("Trying model "+(idx+1)+"/"+GEMINI_MODELS.length+": "+model);
-      console.log("Gemini: trying "+model+" at "+url);
+      console.log("Gemini: trying "+model+" via proxy");
 
-      fetch(url,{
+      fetch(GEMINI_PROXY,{
         method:"POST",
-        headers:{"Content-Type":"application/json","x-goog-api-key":GEMINI_KEY},
-        body:bodyJson
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({model:model,payload:JSON.parse(bodyJson)})
       }).then(function(r){
         console.log("Gemini "+model+": HTTP "+r.status);
         if(!r.ok){

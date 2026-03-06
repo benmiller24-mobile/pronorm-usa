@@ -2,13 +2,26 @@ exports.handler = async function(event) {
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Allow-Methods": "POST" }, body: "" };
   }
+
+  // Debug endpoint - GET request shows env status
+  if (event.httpMethod === "GET") {
+    const hasKey = !!process.env.GEMINI_API_KEY;
+    const keyLen = hasKey ? process.env.GEMINI_API_KEY.length : 0;
+    const envKeys = Object.keys(process.env).filter(k => k.includes("GEMINI") || k.includes("API")).join(", ");
+    return { 
+      statusCode: 200, 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hasKey, keyLength: keyLen, matchingEnvVars: envKeys || "none" })
+    };
+  }
+
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method not allowed" };
   }
 
   const API_KEY = process.env.GEMINI_API_KEY;
   if (!API_KEY) {
-    return { statusCode: 500, body: JSON.stringify({ error: "API key not configured" }) };
+    return { statusCode: 500, body: JSON.stringify({ error: "API key not configured. Set GEMINI_API_KEY in Netlify Environment Variables and redeploy." }) };
   }
 
   let body;
@@ -36,7 +49,7 @@ exports.handler = async function(event) {
     if (!resp.ok) {
       return {
         statusCode: resp.status,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         body: JSON.stringify({ error: data.error?.message || "Gemini API error", status: resp.status })
       };
     }

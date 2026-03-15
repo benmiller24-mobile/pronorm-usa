@@ -1,5 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
 
+const ESTIMATOR_API = 'https://estimator.pronormusa.com/.netlify/functions/admin-users';
+const ESTIMATOR_SECRET = process.env.ESTIMATOR_API_SECRET || 'pronorm-estimator-admin-2026';
+
+// Mirror user to the Pronorm Estimator (best-effort, don't block portal creation)
+async function mirrorToEstimator(email, password, role, company_name) {
+  try {
+    const res = await fetch(ESTIMATOR_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ESTIMATOR_SECRET}`,
+      },
+      body: JSON.stringify({ email, password, role: role === 'admin' ? 'admin' : 'dealer', company_name }),
+    });
+    const data = await res.json();
+    if (data.error) console.warn(`Estimator mirror warning for ${email}: ${data.error}`);
+    else console.log(`Estimator account mirrored for ${email}`);
+  } catch (err) {
+    console.warn(`Estimator mirror failed for ${email}: ${err.message}`);
+  }
+}
+
 export const handler = async function (event) {
   // CORS headers
   const headers = {
@@ -151,6 +173,14 @@ export const handler = async function (event) {
         body: JSON.stringify({ error: `Failed to create dealer record: ${insertErr.message}` }),
       };
     }
+
+    // 3. Mirror account to Pronorm Estimator (same email + password)
+    await mirrorToEstimator(
+      email.trim().toLowerCase(),
+      password,
+      role,
+      role === 'designer' ? (company_name || callerDealer.company_name) : company_name.trim()
+    );
 
     return {
       statusCode: 200, headers,

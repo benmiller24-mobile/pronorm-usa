@@ -12,10 +12,13 @@ interface PortalLayoutProps {
   children: React.ReactNode;
 }
 
+const ESTIMATOR_LINK = { path: 'https://estimator.pronormusa.com', label: 'Estimator', icon: '\u20AC', external: true };
+
 const DEALER_NAV_ITEMS = [
   { path: '/dealer-portal/dashboard', label: 'Dashboard', icon: '\u25A3' },
   { path: '/dealer-portal/projects', label: 'Projects', icon: '\u2637' },
   { path: '/dealer-portal/orders', label: 'Orders', icon: '\u2750' },
+  ESTIMATOR_LINK,
   { path: '/dealer-portal/warranty', label: 'Warranty', icon: '\u2696' },
   { path: '/dealer-portal/messages', label: 'Messages', icon: '\u2709' },
   { path: '/dealer-portal/resources', label: 'Resources', icon: '\u2630' },
@@ -23,7 +26,6 @@ const DEALER_NAV_ITEMS = [
   { path: '/dealer-portal/account', label: 'Account', icon: '\u2699' },
 ];
 
-const PRICING_NAV_ITEM = { path: '/dealer-portal/pricing', label: 'Pricing', icon: '\u20AC' };
 const ESTIMATOR_USERS_NAV_ITEM = { path: '/dealer-portal/estimator-users', label: 'Estimator Users', icon: '\u2616' };
 const DESIGN_ENGINE_NAV_ITEM = { path: '/dealer-portal/design-engine', label: 'Design Engine', icon: '\u2B21' };
 
@@ -31,6 +33,7 @@ const ADMIN_NAV_ITEMS = [
   { path: '/dealer-portal/dashboard', label: 'Admin Dashboard', icon: '\u25A3' },
   { path: '/dealer-portal/projects', label: 'All Projects', icon: '\u2637' },
   { path: '/dealer-portal/orders', label: 'All Orders', icon: '\u2750' },
+  ESTIMATOR_LINK,
   { path: '/dealer-portal/warranty', label: 'Warranty Claims', icon: '\u2696' },
   { path: '/dealer-portal/messages', label: 'Messages', icon: '\u2709' },
   { path: '/dealer-portal/resources', label: 'Resources', icon: '\u2630' },
@@ -42,6 +45,7 @@ const DESIGNER_NAV_ITEMS = [
   { path: '/dealer-portal/dashboard', label: 'Dashboard', icon: '\u25A3' },
   { path: '/dealer-portal/projects', label: 'Projects', icon: '\u2637' },
   { path: '/dealer-portal/orders', label: 'Orders', icon: '\u2750' },
+  ESTIMATOR_LINK,
   { path: '/dealer-portal/warranty', label: 'Warranty', icon: '\u2696' },
   { path: '/dealer-portal/messages', label: 'Messages', icon: '\u2709' },
   { path: '/dealer-portal/resources', label: 'Resources', icon: '\u2630' },
@@ -50,11 +54,9 @@ const DESIGNER_NAV_ITEMS = [
 export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout, isAdmin, isDesigner, dealerEmail, children }: PortalLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const showPricing = dealerEmail === 'ben.miller24@gmail.com' || isAdmin;
   const showEstimatorUsers = isAdmin;
   const showDesignEngine = dealerEmail === 'ben.miller24@gmail.com';
   const extraItems = [
-    ...(showPricing ? [PRICING_NAV_ITEM] : []),
     ...(showEstimatorUsers ? [ESTIMATOR_USERS_NAV_ITEM] : []),
     ...(showDesignEngine ? [DESIGN_ENGINE_NAV_ITEM] : []),
   ];
@@ -109,12 +111,20 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
 
         {/* Nav */}
         <nav style={{ padding: '1rem 0', flex: 1 }}>
-          {NAV_ITEMS.map((item) => {
-            const isActive = currentPath === item.path || currentPath.startsWith(item.path + '/');
+          {NAV_ITEMS.map((item: any) => {
+            const isExternal = item.external;
+            const isActive = !isExternal && (currentPath === item.path || currentPath.startsWith(item.path + '/'));
             return (
               <button
                 key={item.path}
-                onClick={() => { onNavigate(item.path); setMobileMenuOpen(false); }}
+                onClick={() => {
+                  if (isExternal) {
+                    window.open(item.path, '_blank');
+                  } else {
+                    onNavigate(item.path);
+                  }
+                  setMobileMenuOpen(false);
+                }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -135,6 +145,7 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
               >
                 <span style={{ fontSize: '1rem' }}>{item.icon}</span>
                 {item.label}
+                {isExternal && <span style={{ fontSize: '0.65rem', opacity: 0.5, marginLeft: 'auto' }}>↗</span>}
               </button>
             );
           })}

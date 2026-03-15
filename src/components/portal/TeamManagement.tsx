@@ -314,7 +314,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
             All Dealers & Designers
           </h3>
 
-          {dealers.filter(d => d.role === 'dealer').length === 0 ? (
+          {dealers.length === 0 ? (
             <p style={{ fontSize: '0.85rem', color: '#8a8279' }}>No dealers yet. Invite one to get started.</p>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
@@ -328,7 +328,7 @@ export default function TeamManagement({ dealer, isAdmin, isDesigner }: TeamMana
                 </tr>
               </thead>
               <tbody>
-                {dealers.filter(d => d.role === 'dealer').map(d => {
+                {dealers.map(d => {
                   const dDesigners = getDesignersForDealer(d.id);
                   const isExpanded = expandedDealer === d.id;
                   return (

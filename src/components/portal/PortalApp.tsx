@@ -143,7 +143,20 @@ export default function PortalApp() {
       // Only show pricing tool to the specific dealer or admin
       const userEmail = dealer.email || session?.user?.email;
       if (userEmail === 'ben.miller24@gmail.com' || isAdmin) {
-        return <PricingTool dealer={scopedDealer} onNavigate={navigate} />;
+        return (
+          <iframe
+            src="https://estimator.pronormusa.com"
+            style={{
+              width: '100%',
+              height: 'calc(100vh - 2rem)',
+              border: 'none',
+              borderRadius: '8px',
+              background: '#f7f6f3',
+            }}
+            allow="clipboard-write"
+            title="Pronorm Estimator"
+          />
+        );
       }
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }

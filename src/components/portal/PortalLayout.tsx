@@ -24,6 +24,7 @@ const DEALER_NAV_ITEMS = [
 ];
 
 const PRICING_NAV_ITEM = { path: '/dealer-portal/pricing', label: 'Pricing', icon: '\u20AC' };
+const ESTIMATOR_USERS_NAV_ITEM = { path: '/dealer-portal/estimator-users', label: 'Estimator Users', icon: '\u2616' };
 const DESIGN_ENGINE_NAV_ITEM = { path: '/dealer-portal/design-engine', label: 'Design Engine', icon: '\u2B21' };
 
 const ADMIN_NAV_ITEMS = [
@@ -50,9 +51,11 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const showPricing = dealerEmail === 'ben.miller24@gmail.com' || isAdmin;
+  const showEstimatorUsers = isAdmin;
   const showDesignEngine = dealerEmail === 'ben.miller24@gmail.com';
   const extraItems = [
     ...(showPricing ? [PRICING_NAV_ITEM] : []),
+    ...(showEstimatorUsers ? [ESTIMATOR_USERS_NAV_ITEM] : []),
     ...(showDesignEngine ? [DESIGN_ENGINE_NAV_ITEM] : []),
   ];
   const NAV_ITEMS = isAdmin

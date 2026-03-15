@@ -15,6 +15,7 @@ import AccountSettings from './AccountSettings';
 import TeamManagement from './TeamManagement';
 import PricingTool from './PricingTool';
 import DesignEngine from './design-engine/DesignEngine';
+import EstimatorUsers from './EstimatorUsers';
 import Messages from './Messages';
 import ResourceLibrary from './ResourceLibrary';
 
@@ -157,6 +158,12 @@ export default function PortalApp() {
             title="Pronorm Estimator"
           />
         );
+      }
+      return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
+    }
+    if (path === '/dealer-portal/estimator-users') {
+      if (isAdmin) {
+        return <EstimatorUsers />;
       }
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }

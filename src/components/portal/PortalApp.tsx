@@ -141,23 +141,11 @@ export default function PortalApp() {
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
     if (path === '/dealer-portal/pricing') {
-      // Only show pricing tool to the specific dealer or admin
+      // Open the estimator in a new tab and redirect back to dashboard
       const userEmail = dealer.email || session?.user?.email;
       if (userEmail === 'ben.miller24@gmail.com' || isAdmin) {
-        return (
-          <iframe
-            src="https://estimator.pronormusa.com?embed=portal"
-            style={{
-              width: '100%',
-              height: 'calc(100vh - 2rem)',
-              border: 'none',
-              borderRadius: '8px',
-              background: '#f7f6f3',
-            }}
-            allow="clipboard-write"
-            title="Pronorm Estimator"
-          />
-        );
+        window.open('https://estimator.pronormusa.com', '_blank');
+        navigate('/dealer-portal/dashboard');
       }
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }

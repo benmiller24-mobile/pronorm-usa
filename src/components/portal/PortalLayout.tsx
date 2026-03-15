@@ -12,7 +12,7 @@ interface PortalLayoutProps {
   children: React.ReactNode;
 }
 
-const ESTIMATOR_LINK = { path: 'https://estimator.pronormusa.com', label: 'Estimator', icon: '\u20AC', external: true };
+const ESTIMATOR_LINK = { path: '__estimator__', label: 'Estimator', icon: '\u20AC', external: true };
 
 const DEALER_NAV_ITEMS = [
   { path: '/dealer-portal/dashboard', label: 'Dashboard', icon: '\u25A3' },
@@ -118,7 +118,10 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
               <button
                 key={item.path}
                 onClick={() => {
-                  if (isExternal) {
+                  if (item.path === '__estimator__') {
+                    const email = encodeURIComponent(dealerEmail || '');
+                    window.open(`https://estimator.pronormusa.com/.netlify/functions/auto-login?email=${email}&token=pronorm-estimator-admin-2026`, '_blank');
+                  } else if (isExternal) {
                     window.open(item.path, '_blank');
                   } else {
                     onNavigate(item.path);

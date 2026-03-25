@@ -47,6 +47,13 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
   const filtered = filter === 'all' ? projects : projects.filter(p => p.status === filter);
   const dealerMap = new Map(dealers.map(d => [d.id, d.company_name]));
 
+  const handleDelete = async (projectId) => {
+    if (!confirm('Are you sure you want to delete this project? This cannot be undone.')) return;
+    const { error } = await supabase.from('projects').delete().eq('id', projectId);
+    if (error) { alert('Error deleting project: ' + error.message); return; }
+    setProjects(projects.filter(p => p.id !== projectId));
+  };
+
   return (
     <div>
       <div className="portal-list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -76,7 +83,7 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
           >
             <option value="all">All Dealers</option>
             {dealers.map(d => (
-              <option key={d.id} value={d.id}>{d.company_name} — {d.contact_name}</option>
+              <option key={d.id} value={d.id}>{d.company_name} â {d.contact_name}</option>
             ))}
           </select>
         </div>
@@ -107,6 +114,7 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
                 {(isAdmin ? ['Job Name', 'Dealer', 'Client', 'Status', 'Quote', 'Submitted'] : ['Job Name', 'Client', 'Status', 'Quote', 'Submitted']).map(h => (
                   <th key={h} style={{ textAlign: h === 'Quote' || h === 'Submitted' ? 'right' : 'left', padding: '0.75rem 1rem', fontWeight: 600, color: '#4a4a4a', fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{h}</th>
                 ))}
+                {isAdmin && <th style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', color: '#888' }}>Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -117,14 +125,15 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
                 >
                   <td style={{ padding: '0.75rem 1rem', fontWeight: 500, color: '#1a1a1a' }}>{p.job_name}</td>
                   {isAdmin && (
-                    <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a', fontSize: '0.82rem' }}>{dealerMap.get(p.dealer_id) || '—'}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a', fontSize: '0.82rem' }}>{dealerMap.get(p.dealer_id) || 'â'}</td>
                   )}
                   <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a' }}>{p.client_name}</td>
                   <td style={{ padding: '0.75rem 1rem' }}><StatusBadge status={p.status} /></td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'right', color: '#2d2d2d', fontWeight: 500 }}>
-                    {p.quote_amount ? `$${p.quote_amount.toLocaleString()}` : '—'}
+                    {p.quote_amount ? `$${p.quote_amount.toLocaleString()}` : 'â'}
                   </td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'right', color: '#8a8279' }}>{new Date(p.created_at).toLocaleDateString()}</td>
+                {isAdmin && <td style={{ padding: '0.5rem', textAlign: 'center' }}><button onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }} style={{ background: '#c0392b', color: '#fff', border: 'none', borderRadius: '3px', padding: '0.3rem 0.6rem', cursor: 'pointer', fontSize: '0.75rem' }}>Delete</button></td>}
                 </tr>
               ))}
             </tbody>

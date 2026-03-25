@@ -20,7 +20,6 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
 
   useEffect(() => {
     if (isAdmin) {
-      // Load all dealers for the dropdown
       supabase.from('dealers').select('*').neq('role', 'admin').order('company_name').then(({ data }) => {
         setDealers(data || []);
       });
@@ -46,8 +45,6 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
   }, [dealer.id, isAdmin, selectedDealerId]);
 
   const filtered = filter === 'all' ? projects : projects.filter(p => p.status === filter);
-
-  // Map dealer_id to company name for admin view
   const dealerMap = new Map(dealers.map(d => [d.id, d.company_name]));
 
   return (
@@ -59,16 +56,13 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
           </h1>
           <p style={{ fontSize: '0.85rem', color: '#8a8279', marginTop: '0.2rem' }}>{projects.length} total projects</p>
         </div>
-        {!isAdmin && (
-          <button onClick={() => onNavigate('/dealer-portal/projects/new')} style={{
-            padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em',
-            textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none',
-            borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit',
-          }}>+ New Project</button>
-        )}
+        <button onClick={() => onNavigate('/dealer-portal/projects/new')} style={{
+          padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em',
+          textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none',
+          borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit',
+        }}>+ New Project</button>
       </div>
 
-      {/* Admin dealer selector */}
       {isAdmin && (
         <div style={{ marginBottom: '1rem' }}>
           <select
@@ -82,13 +76,12 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
           >
             <option value="all">All Dealers</option>
             {dealers.map(d => (
-              <option key={d.id} value={d.id}>{d.company_name}</option>
+              <option key={d.id} value={d.id}>{d.company_name} — {d.contact_name}</option>
             ))}
           </select>
         </div>
       )}
 
-      {/* Filters */}
       <div className="portal-filters" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         {STATUS_FILTERS.map(s => (
           <button key={s} onClick={() => setFilter(s)} style={{
@@ -102,7 +95,6 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
         ))}
       </div>
 
-      {/* Table */}
       <div style={{ background: '#fdfcfa', border: '1px solid rgba(26,26,26,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
         {loading ? (
           <div style={{ padding: '2rem', textAlign: 'center', color: '#8a8279' }}>Loading...</div>
@@ -130,7 +122,7 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
                   <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a' }}>{p.client_name}</td>
                   <td style={{ padding: '0.75rem 1rem' }}><StatusBadge status={p.status} /></td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'right', color: '#2d2d2d', fontWeight: 500 }}>
-                    {p.quote_amount ? `$${p.quote_amount.toLocaleString()}` : '\u2014'}
+                    {p.quote_amount ? `$${p.quote_amount.toLocaleString()}` : '—'}
                   </td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'right', color: '#8a8279' }}>{new Date(p.created_at).toLocaleDateString()}</td>
                 </tr>

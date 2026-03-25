@@ -101,7 +101,7 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
           client_name: formData.generalInfo.clientName.trim() || 'Draft',
           message: 'DRAFT - ' + (formData.generalInfo.room || 'No room specified'),
           design_packet_data: formData as any,
-          status: 'draft',
+          status: 'submitted',
         })
         .select()
         .single();
@@ -243,7 +243,7 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
   );
 }
 
-// ── Helpers ──
+// ââ Helpers ââ
 
 function loadFromStorage(dealerId: string): DesignPacketData {
   try {
@@ -270,7 +270,7 @@ function loadFromStorage(dealerId: string): DesignPacketData {
   return createDefaultDesignPacket();
 }
 
-// ── Styles ──
+// ââ Styles ââ
 
 const backBtn: React.CSSProperties = {
   background: 'none', border: 'none', color: '#b87333', fontSize: '0.78rem', fontWeight: 600,

@@ -240,7 +240,7 @@ export default function PortalApp() {
             >
               <option value="" disabled>-- Choose a dealer or designer --</option>
               {dealers.filter(d => d.role !== 'admin').map(d => (
-                <option key={d.id} value={d.id}>{d.company_name} \u2014 {d.contact_name} ({d.role})</option>
+                <option key={d.id} value={d.id}>{d.role === 'designer' ? ((dealers.find(p => p.id === d.parent_dealer_id) || {}).company_name || d.company_name) : d.company_name} \u2014 {d.contact_name} ({d.role})</option>
               ))}
             </select>
             <button onClick={() => navigate('/dealer-portal/projects')} style={{ padding: '0.5rem 1rem', background: '#666', color: '#fff', border: 'none', borderRadius: '3px', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>

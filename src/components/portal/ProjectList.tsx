@@ -47,12 +47,21 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
   const filtered = filter === 'all' ? projects : projects.filter(p => p.status === filter);
   const dealerMap = new Map(dealers.map(d => [d.id, d.company_name]));
 
-  const handleDelete = async (projectId) => {
+  const handleDelete = async (projectId: string) => {
     if (!confirm('Are you sure you want to delete this project? This cannot be undone.')) return;
-    const { error } = await supabase.from('projects').delete().eq('id', projectId);
-    if (error) { alert('Error deleting project: ' + error.message); return; }
-    setProjects(projects.filter(p => p.id !== projectId));
-  };
+    try {
+      const resp = await fetch('/.netlify/functions/delete-project', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, dealerId: dealer.id })
+      });
+      const data = await resp.json();
+      if (!resp.ok) { alert('Error deleting project: ' + (data.error || 'Unknown error')); return; }
+      setProjects(projects.filter(p => p.id !== projectId));
+    } catch (e: any) {
+      alert('Error deleting project: ' + e.message);
+    }
+  }
 
   return (
     <div>
@@ -83,7 +92,7 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
           >
             <option value="all">All Dealers</option>
             {dealers.map(d => (
-              <option key={d.id} value={d.id}>{d.company_name} â {d.contact_name}</option>
+              <option key={d.id} value={d.id}>{d.company_name} Ã¢ÂÂ {d.contact_name}</option>
             ))}
           </select>
         </div>
@@ -125,12 +134,12 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
                 >
                   <td style={{ padding: '0.75rem 1rem', fontWeight: 500, color: '#1a1a1a' }}>{p.job_name}</td>
                   {isAdmin && (
-                    <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a', fontSize: '0.82rem' }}>{dealerMap.get(p.dealer_id) || 'â'}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a', fontSize: '0.82rem' }}>{dealerMap.get(p.dealer_id) || 'Ã¢ÂÂ'}</td>
                   )}
                   <td style={{ padding: '0.75rem 1rem', color: '#4a4a4a' }}>{p.client_name}</td>
                   <td style={{ padding: '0.75rem 1rem' }}><StatusBadge status={p.status} /></td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'right', color: '#2d2d2d', fontWeight: 500 }}>
-                    {p.quote_amount ? `$${p.quote_amount.toLocaleString()}` : 'â'}
+                    {p.quote_amount ? `$${p.quote_amount.toLocaleString()}` : 'Ã¢ÂÂ'}
                   </td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'right', color: '#8a8279' }}>{new Date(p.created_at).toLocaleDateString()}</td>
                 {isAdmin && <td style={{ padding: '0.5rem', textAlign: 'center' }}><button onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }} style={{ background: '#c0392b', color: '#fff', border: 'none', borderRadius: '3px', padding: '0.3rem 0.6rem', cursor: 'pointer', fontSize: '0.75rem' }}>Delete</button></td>}

@@ -24,6 +24,12 @@ export default function PortalApp() {
   const [dealer, setDealer] = useState<Dealer | null>(null);
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState('/dealer-portal/dashboard');
+  const [isRecovery, setIsRecovery] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [recoveryError, setRecoveryError] = useState('');
+  const [recoverySuccess, setRecoverySuccess] = useState(false);
+  const [recoveryLoading, setRecoveryLoading] = useState(false);
 
   // Read initial path from URL
   useEffect(() => {
@@ -41,10 +47,17 @@ export default function PortalApp() {
       else setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s);
-      if (s) fetchDealer(s.user.id);
-      else { setDealer(null); setLoading(false); }
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecovery(true);
+        setLoading(false);
+      } else if (s) {
+        fetchDealer(s.user.id);
+      } else {
+        setDealer(null);
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -82,44 +95,92 @@ export default function PortalApp() {
   };
 
   const handleLogin = () => {
-    // Session will be picked up by the auth state listener
     navigate('/dealer-portal/dashboard');
   };
 
-  // Loading
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRecoveryError('');
+    if (newPassword.length < 8) {
+      setRecoveryError('Password must be at least 8 characters.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setRecoveryError('Passwords do not match.');
+      return;
+    }
+    setRecoveryLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      setRecoverySuccess(true);
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => {
+        setIsRecovery(false);
+        setRecoverySuccess(false);
+        navigate('/dealer-portal/dashboard');
+      }, 2000);
+    } catch (err: any) {
+      setRecoveryError(err.message || 'Failed to update password.');
+    } finally {
+      setRecoveryLoading(false);
+    }
+  };
+
   if (loading) {
     return (
-      <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#f7f4f0', fontFamily: "'DM Sans', sans-serif", color: '#8a8279',
-      }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f7f4f0', fontFamily: "'DM Sans', sans-serif", color: '#8a8279' }}>
         Loading...
       </div>
     );
   }
 
-  // Not authenticated
+  if (isRecovery && session) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)', fontFamily: "'DM Sans', sans-serif", padding: '1rem' }}>
+        <div style={{ background: '#232323', border: '1px solid #333', borderRadius: '8px', padding: '2.5rem 2rem', width: '100%', maxWidth: '400px', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.5rem', fontWeight: 600, color: '#fdfcfa', textAlign: 'center', marginBottom: '0.3rem' }}>Set New Password</h1>
+          <p style={{ textAlign: 'center', fontSize: '0.82rem', color: '#b5aca3', marginBottom: '1.8rem' }}>
+            {recoverySuccess ? 'Password updated! Redirecting...' : 'Enter your new password below.'}
+          </p>
+          {!recoverySuccess && (
+            <form onSubmit={handlePasswordUpdate}>
+              {recoveryError && (
+                <div style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '4px', padding: '0.6rem 0.75rem', fontSize: '0.8rem', color: '#fca5a5', marginBottom: '1rem' }}>{recoveryError}</div>
+              )}
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: '#b5aca3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>New Password</label>
+                <input type="password" required minLength={8} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} style={{ width: '100%', padding: '0.65rem 0.75rem', background: '#1a1a1a', border: '1px solid #444', borderRadius: '4px', color: '#fdfcfa', fontSize: '0.88rem', outline: 'none', fontFamily: 'inherit' }} placeholder="Minimum 8 characters" />
+              </div>
+              <div style={{ marginBottom: '1.2rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: '#b5aca3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem' }}>Confirm Password</label>
+                <input type="password" required minLength={8} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} style={{ width: '100%', padding: '0.65rem 0.75rem', background: '#1a1a1a', border: '1px solid #444', borderRadius: '4px', color: '#fdfcfa', fontSize: '0.88rem', outline: 'none', fontFamily: 'inherit' }} placeholder="Re-enter password" />
+              </div>
+              <button type="submit" disabled={recoveryLoading} style={{ width: '100%', padding: '0.85rem', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', background: recoveryLoading ? '#d4cdc5' : '#b87333', color: '#fdfcfa', border: 'none', borderRadius: '3px', cursor: recoveryLoading ? 'wait' : 'pointer', fontFamily: 'inherit', transition: 'background 200ms' }}>
+                {recoveryLoading ? 'Updating...' : 'Update Password'}
+              </button>
+            </form>
+          )}
+          {recoverySuccess && (
+            <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '0.6rem 0.75rem', fontSize: '0.8rem', color: '#86efac', textAlign: 'center' }}>Password updated successfully!</div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (!session) {
     return <LoginForm onLogin={handleLogin} />;
   }
 
-  // No dealer profile
   if (!dealer) {
     return (
-      <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#f7f4f0', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', padding: '2rem',
-      }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f7f4f0', fontFamily: "'DM Sans', sans-serif", textAlign: 'center', padding: '2rem' }}>
         <div>
           <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.5rem', fontWeight: 400, marginBottom: '0.5rem' }}>Account Setup Pending</h2>
-          <p style={{ color: '#8a8279', marginBottom: '1.5rem' }}>
-            Your dealer profile hasn't been set up yet. Please contact your Pronorm USA representative.
-          </p>
-          <button onClick={handleLogout} style={{
-            padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em',
-            textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none',
-            borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit',
-          }}>Sign Out</button>
+          <p style={{ color: '#8a8279', marginBottom: '1.5rem' }}>Your dealer profile hasn't been set up yet. Please contact your Pronorm USA representative.</p>
+          <button onClick={handleLogout} style={{ padding: '0.7rem 1.5rem', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: '#b87333', color: '#fdfcfa', border: 'none', borderRadius: '3px', cursor: 'pointer', fontFamily: 'inherit' }}>Sign Out</button>
         </div>
       </div>
     );
@@ -127,21 +188,13 @@ export default function PortalApp() {
 
   const isAdmin = dealer.role === 'admin';
   const isDesigner = dealer.role === 'designer';
+  const scopedDealer: Dealer = isDesigner && dealer.parent_dealer_id ? { ...dealer, id: dealer.parent_dealer_id } : dealer;
 
-  // Designers are nested under a dealer — scope all data to the parent dealer's account.
-  // We swap dealer.id to parent_dealer_id so every component's queries naturally
-  // filter to the parent dealer's projects, orders, and warranty claims.
-  const scopedDealer: Dealer = isDesigner && dealer.parent_dealer_id
-    ? { ...dealer, id: dealer.parent_dealer_id }
-    : dealer;
-
-  // Route matching
   const renderPage = () => {
     if (path === '/dealer-portal/dashboard' || path === '/dealer-portal' || path === '/dealer-portal/') {
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
     if (path === '/dealer-portal/pricing') {
-      // Open the estimator in a new tab and redirect back to dashboard
       const userEmail = dealer.email || session?.user?.email;
       if (userEmail === 'ben.miller24@gmail.com' || isAdmin) {
         window.open('https://estimator.pronormusa.com', '_blank');
@@ -150,55 +203,28 @@ export default function PortalApp() {
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
     if (path === '/dealer-portal/estimator-users') {
-      if (isAdmin) {
-        return <EstimatorUsers />;
-      }
+      if (isAdmin) return <EstimatorUsers />;
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
     if (path === '/dealer-portal/design-engine') {
       const userEmail = dealer.email || session?.user?.email;
-      if (userEmail === 'ben.miller24@gmail.com') {
-        return <DesignEngine dealer={scopedDealer} onNavigate={navigate} />;
-      }
+      if (userEmail === 'ben.miller24@gmail.com') return <DesignEngine dealer={scopedDealer} onNavigate={navigate} />;
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
-    if (path === '/dealer-portal/projects/new') {
-      return <DesignPacketWizard dealer={scopedDealer} onNavigate={navigate} />;
-    }
-    if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') {
-      return <ProjectList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    }
-    if (path.startsWith('/dealer-portal/projects/')) {
-      const id = path.split('/').pop()!;
-      return <ProjectDetail projectId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    }
-    if (path === '/dealer-portal/orders' || path === '/dealer-portal/orders/') {
-      return <OrderList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    }
-    if (path.startsWith('/dealer-portal/orders/')) {
-      const id = path.split('/').pop()!;
-      return <OrderDetail orderId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    }
-    if (path === '/dealer-portal/warranty/new') {
-      return <WarrantyForm dealer={scopedDealer} onNavigate={navigate} />;
-    }
-    if (path === '/dealer-portal/warranty' || path === '/dealer-portal/warranty/') {
-      return <WarrantyList dealer={scopedDealer} onNavigate={navigate} />;
-    }
+    if (path === '/dealer-portal/projects/new') return <DesignPacketWizard dealer={scopedDealer} onNavigate={navigate} />;
+    if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') return <ProjectList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    if (path.startsWith('/dealer-portal/projects/')) { const id = path.split('/').pop()!; return <ProjectDetail projectId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />; }
+    if (path === '/dealer-portal/orders' || path === '/dealer-portal/orders/') return <OrderList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    if (path.startsWith('/dealer-portal/orders/')) { const id = path.split('/').pop()!; return <OrderDetail orderId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />; }
+    if (path === '/dealer-portal/warranty/new') return <WarrantyForm dealer={scopedDealer} onNavigate={navigate} />;
+    if (path === '/dealer-portal/warranty' || path === '/dealer-portal/warranty/') return <WarrantyList dealer={scopedDealer} onNavigate={navigate} />;
     if (path === '/dealer-portal/team' || path === '/dealer-portal/team/') {
-      // Designers don't manage anyone — redirect to dashboard
       if (isDesigner) return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
       return <TeamManagement dealer={scopedDealer} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
-    if (path === '/dealer-portal/messages') {
-      return <Messages dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    }
-    if (path === '/dealer-portal/resources') {
-      return <ResourceLibrary dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    }
-    if (path === '/dealer-portal/account') {
-      return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;
-    }
+    if (path === '/dealer-portal/messages') return <Messages dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    if (path === '/dealer-portal/resources') return <ResourceLibrary dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    if (path === '/dealer-portal/account') return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;
     return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
   };
 

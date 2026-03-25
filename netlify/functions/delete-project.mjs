@@ -1,4 +1,4 @@
-import pg from "pg";
+import { createClient } from "@supabase/supabase-js";
 
 export default async (req) => {
   if (req.method !== "POST") {
@@ -26,48 +26,51 @@ export default async (req) => {
     });
   }
 
-  const client = new pg.Client({
-    host: "db.zsbzyazabqtjamhzqqxn.supabase.co",
-    port: 5432,
-    user: "postgres",
-    password: process.env.SUPABASE_DB_PASSWORD,
-    database: "postgres",
-    ssl: { rejectUnauthorized: false }
-  });
+  const supabase = createClient(
+    process.env.PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
   try {
-    await client.connect();
+    // Verify the requesting dealer is an admin
+    const { data: dealer, error: dealerErr } = await supabase
+      .from("dealers")
+      .select("role")
+      .eq("id", dealerId)
+      .single();
 
-    const adminCheck = await client.query(
-      "SELECT role FROM dealers WHERE id = $1",
-      [dealerId]
-    );
-    if (!adminCheck.rows.length || adminCheck.rows[0].role !== "admin") {
-      await client.end();
+    if (dealerErr || !dealer || dealer.role !== "admin") {
       return new Response(JSON.stringify({ error: "Only admins can delete projects" }), {
         status: 403,
         headers: { "Content-Type": "application/json" }
       });
     }
 
-    const result = await client.query(
-      "DELETE FROM projects WHERE id = $1 RETURNING id, job_name",
-      [projectId]
-    );
-    await client.end();
+    // Delete the project
+    const { data, error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", projectId)
+      .select();
 
-    if (!result.rows.length) {
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    if (!data || data.length === 0) {
       return new Response(JSON.stringify({ error: "Project not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" }
       });
     }
 
-    return new Response(JSON.stringify({ success: true, deleted: result.rows[0] }), {
+    return new Response(JSON.stringify({ success: true, deleted: data[0] }), {
       headers: { "Content-Type": "application/json" }
     });
   } catch (e) {
-    try { await client.end(); } catch (_) {}
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" }

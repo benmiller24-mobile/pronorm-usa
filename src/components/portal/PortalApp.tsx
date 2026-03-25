@@ -30,6 +30,8 @@ export default function PortalApp() {
   const [recoveryError, setRecoveryError] = useState('');
   const [recoverySuccess, setRecoverySuccess] = useState(false);
   const [recoveryLoading, setRecoveryLoading] = useState(false);
+  const [dealers, setDealers] = useState([]);
+  const [adminSelectedDealer, setAdminSelectedDealer] = useState(null);
 
   // Read initial path from URL
   useEffect(() => {
@@ -68,6 +70,17 @@ export default function PortalApp() {
     setDealer(data);
     setLoading(false);
   }
+
+  const fetchAllDealers = async () => {
+    const { data } = await supabase.from('dealers').select('*');
+    if (data) setDealers(data);
+  };
+
+  useEffect(() => {
+    if (dealer && dealer.role === 'admin') {
+      fetchAllDealers();
+    }
+  }, [dealer]);
 
   const navigate = (newPath: string) => {
     setPath(newPath);
@@ -211,7 +224,32 @@ export default function PortalApp() {
       if (userEmail === 'ben.miller24@gmail.com') return <DesignEngine dealer={scopedDealer} onNavigate={navigate} />;
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
-    if (path === '/dealer-portal/projects/new') return <DesignPacketWizard dealer={scopedDealer} onNavigate={navigate} />;
+    if (path === '/dealer-portal/projects/new') {
+      if (isAdmin && !adminSelectedDealer) {
+        return (
+          <div style={{ padding: '2rem', maxWidth: 600 }}>
+            <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '1.3rem', marginBottom: '1rem' }}>Create Project on Behalf of Dealer/Designer</h2>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 600 }}>Select Dealer or Designer:</label>
+            <select
+              onChange={(e) => {
+                const selected = dealers.find(d => d.id === e.target.value);
+                if (selected) setAdminSelectedDealer(selected);
+              }}
+              style={{ width: '100%', padding: '0.6rem', fontSize: '0.9rem', marginBottom: '1rem', border: '1px solid #ccc', borderRadius: '4px' }}
+              defaultValue=""
+            >
+              <option value="" disabled>-- Choose a dealer or designer --</option>
+              {dealers.filter(d => d.role !== 'admin').map(d => (
+                <option key={d.id} value={d.id}>{d.company_name} \u2014 {d.contact_name} ({d.role})</option>
+              ))}
+            </select>
+            <button onClick={() => navigate('/dealer-portal/projects')} style={{ padding: '0.5rem 1rem', background: '#666', color: '#fff', border: 'none', borderRadius: '3px', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>
+          </div>
+        );
+      }
+      const targetDealer = isAdmin && adminSelectedDealer ? (adminSelectedDealer.role === 'designer' && adminSelectedDealer.parent_dealer_id ? { ...adminSelectedDealer, id: adminSelectedDealer.parent_dealer_id } : adminSelectedDealer) : scopedDealer;
+      return <DesignPacketWizard dealer={targetDealer} onNavigate={(p) => { setAdminSelectedDealer(null); navigate(p); }} />;
+    }
     if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') return <ProjectList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
     if (path.startsWith('/dealer-portal/projects/')) { const id = path.split('/').pop()!; return <ProjectDetail projectId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />; }
     if (path === '/dealer-portal/orders' || path === '/dealer-portal/orders/') return <OrderList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;

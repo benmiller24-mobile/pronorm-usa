@@ -247,7 +247,7 @@ export default function PortalApp() {
           </div>
         );
       }
-      const targetDealer = isAdmin && adminSelectedDealer ? (adminSelectedDealer.role === 'designer' && adminSelectedDealer.parent_dealer_id ? { ...adminSelectedDealer, id: adminSelectedDealer.parent_dealer_id } : adminSelectedDealer) : scopedDealer;
+      const targetDealer = isAdmin && adminSelectedDealer ? (adminSelectedDealer.role === 'designer' && adminSelectedDealer.parent_dealer_id ? (dealers.find(d => d.id === adminSelectedDealer.parent_dealer_id) || adminSelectedDealer) : adminSelectedDealer) : scopedDealer;
       return <DesignPacketWizard dealer={targetDealer} onNavigate={(p) => { setAdminSelectedDealer(null); navigate(p); }} />;
     }
     if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') return <ProjectList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;

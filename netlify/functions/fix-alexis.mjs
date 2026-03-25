@@ -1,25 +1,29 @@
-import { createClient } from "@supabase/supabase-js";
+import pg from "pg";
 
 export default async () => {
-  const supabase = createClient(
-    process.env.PUBLIC_SUPABASE_URL,
-    process.env.PUBLIC_SUPABASE_ANON_KEY
-  );
+  const client = new pg.Client({
+    host: "aws-0-us-west-1.pooler.supabase.com",
+    port: 6543,
+    user: "postgres.zsbzyazabqtjamhzqqxn",
+    password: process.env.SUPABASE_DB_PASSWORD,
+    database: "postgres",
+    ssl: { rejectUnauthorized: false }
+  });
 
-  const { data, error } = await supabase
-    .from("dealers")
-    .update({ company_name: "27 Diamonds" })
-    .eq("id", "a9d2a500-72b4-4cfb-82e4-01e515cc4638")
-    .select();
-
-  if (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+  try {
+    await client.connect();
+    const result = await client.query(
+      "UPDATE dealers SET company_name = $1 WHERE id = $2 RETURNING id, company_name, contact_name",
+      ["27 Diamonds", "a9d2a500-72b4-4cfb-82e4-01e515cc4638"]
+    );
+    await client.end();
+    return new Response(JSON.stringify({ success: true, rows: result.rows }), {
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" }
     });
   }
-
-  return new Response(JSON.stringify({ success: true, updated: data }), {
-    headers: { "Content-Type": "application/json" }
-  });
 };

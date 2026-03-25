@@ -2,9 +2,9 @@ import pg from "pg";
 
 export default async () => {
   const client = new pg.Client({
-    host: "aws-0-us-west-1.pooler.supabase.com",
-    port: 6543,
-    user: "postgres.zsbzyazabqtjamhzqqxn",
+    host: "db.zsbzyazabqtjamhzqqxn.supabase.co",
+    port: 5432,
+    user: "postgres",
     password: process.env.SUPABASE_DB_PASSWORD,
     database: "postgres",
     ssl: { rejectUnauthorized: false }

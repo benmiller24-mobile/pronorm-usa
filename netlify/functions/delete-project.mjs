@@ -32,18 +32,40 @@ export default async (req) => {
   );
 
   try {
-    // Verify the requesting dealer is an admin
+    // Verify the requesting dealer exists
     const { data: dealer, error: dealerErr } = await supabase
       .from("dealers")
-      .select("role")
+      .select("id, role")
       .eq("id", dealerId)
       .single();
 
-    if (dealerErr || !dealer || dealer.role !== "admin") {
-      return new Response(JSON.stringify({ error: "Only admins can delete projects" }), {
-        status: 403,
+    if (dealerErr || !dealer) {
+      return new Response(JSON.stringify({ error: "Dealer not found" }), {
+        status: 404,
         headers: { "Content-Type": "application/json" }
       });
+    }
+
+    // Non-admin dealers can only delete their own projects
+    if (dealer.role !== "admin") {
+      const { data: project, error: projErr } = await supabase
+        .from("projects")
+        .select("dealer_id")
+        .eq("id", projectId)
+        .single();
+
+      if (projErr || !project) {
+        return new Response(JSON.stringify({ error: "Project not found" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+      if (project.dealer_id !== dealerId) {
+        return new Response(JSON.stringify({ error: "You can only delete your own projects" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
     }
 
     // Delete the project

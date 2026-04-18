@@ -53,6 +53,10 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
   const [adminNotesInput, setAdminNotesInput] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
 
+  // Dealer submission-files upload state (drawings added after initial submission)
+  const [submissionFiles, setSubmissionFiles] = useState<File[]>([]);
+  const [submissionUploading, setSubmissionUploading] = useState(false);
+
   useEffect(() => { loadData(); }, [projectId]);
 
   async function loadData() {
@@ -187,6 +191,32 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
       alert(`Upload failed: ${err.message || 'Unknown error'}`);
     }
     setAdminUploading(false);
+  };
+
+  // Dealer upload additional drawings/submission files after project creation.
+  // Available while the project is still pre-delivery (submitted / in_design).
+  const handleDealerSubmissionUpload = async () => {
+    if (!project || submissionFiles.length === 0) return;
+    setSubmissionUploading(true);
+    try {
+      for (const file of submissionFiles) {
+        const path = `${project.dealer_id}/${project.id}/submission-${Date.now()}-${file.name}`;
+        const { error: uploadErr } = await supabase.storage.from('project-files').upload(path, file);
+        if (uploadErr) throw new Error(`Storage upload failed: ${uploadErr.message}`);
+        const { error: insertErr } = await supabase.from('project_files').insert({
+          project_id: project.id, file_name: file.name, file_path: path,
+          file_type: file.type || 'application/octet-stream', file_size: file.size,
+          category: 'submission', uploaded_by: 'dealer',
+        });
+        if (insertErr) throw new Error(`File record failed: ${insertErr.message}`);
+      }
+      setSubmissionFiles([]);
+      await loadData();
+    } catch (err: any) {
+      console.error(err);
+      alert(`Upload failed: ${err.message || 'Unknown error'}`);
+    }
+    setSubmissionUploading(false);
   };
 
   const handleSaveQuote = async () => {
@@ -329,6 +359,23 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
                   {savingNotes ? 'Saving...' : 'Save Notes'}
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* Dealer Drawings Upload — available pre-delivery so dealers can add floor plans, elevations, etc. to an existing project */}
+          {!isAdmin && ['submitted', 'in_design', 'changes_requested'].includes(project.status) && (
+            <div style={{ ...cardStyle, borderLeft: '4px solid #b87333' }}>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '1.2rem', fontWeight: 500, marginBottom: '0.35rem' }}>Upload Drawings</h3>
+              <p style={{ fontSize: '0.85rem', color: '#4a4a4a', lineHeight: 1.5, marginBottom: '1rem' }}>
+                Add floor plans, elevations, perspectives, or other supporting documents to this project. Files are attached to your design packet submission.
+              </p>
+              <FileUploader onFilesSelected={setSubmissionFiles} />
+              {submissionFiles.length > 0 && (
+                <button onClick={handleDealerSubmissionUpload} disabled={submissionUploading}
+                  style={{ ...btnPrimary, marginTop: '0.75rem', opacity: submissionUploading ? 0.5 : 1, cursor: submissionUploading ? 'wait' : 'pointer' }}>
+                  {submissionUploading ? 'Uploading...' : `Upload ${submissionFiles.length} file${submissionFiles.length > 1 ? 's' : ''}`}
+                </button>
+              )}
             </div>
           )}
 

@@ -1,7 +1,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
+// ============================================================================
+// SECURITY TODO — CLIENT-SIDE ADMIN TOKEN LEAK
+// ----------------------------------------------------------------------------
+// The `API_SECRET` below is a bearer token for the estimator's admin-users
+// endpoint (list / create / update / delete estimator accounts). Because this
+// component ships in the React bundle, the token is visible to anyone who
+// opens DevTools — it is NOT a secret.
+//
+// This is an existing production leak, not a regression. Removing the literal
+// from source does NOT un-leak the token; it is already in git history and in
+// every deployed bundle. Real remediation requires ALL of:
+//
+//   1. Rotate ESTIMATOR_API_SECRET on the estimator service. The current
+//      value ('pronorm-estimator-admin-2026') must be considered public.
+//   2. Build a server-side proxy as a Netlify function on this repo that
+//      authenticates the caller via Supabase session (admin role required)
+//      and forwards to the estimator using `process.env.ESTIMATOR_API_SECRET`.
+//   3. Migrate this component and `PortalLayout.tsx` (auto-login URL) to
+//      hit the proxy — no bearer token in client code, ever.
+//
+// Until the above is done, this admin UI is effectively unauthenticated to
+// anyone who views source.
+// ============================================================================
 const ESTIMATOR_API = 'https://estimator.pronormusa.com/.netlify/functions/admin-users';
-const API_SECRET = 'pronorm-estimator-admin-2026';
+const API_SECRET = 'pronorm-estimator-admin-2026'; // FIXME: see SECURITY TODO above
 
 interface EstimatorUser {
   id: string;

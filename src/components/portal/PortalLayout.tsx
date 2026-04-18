@@ -120,6 +120,14 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
                 onClick={() => {
                   if (item.path === '__estimator__') {
                     const email = encodeURIComponent(dealerEmail || '');
+                    // SECURITY FIXME — the token below is a shared admin secret
+                    // that ships in the React bundle and is ALSO exposed in the
+                    // URL (referrer logs, browser history, server access logs).
+                    // See the SECURITY TODO at the top of EstimatorUsers.tsx.
+                    // Remediation: rotate the secret and replace this with a
+                    // server-side proxy (Netlify function) that validates the
+                    // caller's Supabase session and issues a short-lived
+                    // single-use auto-login token.
                     window.open(`https://estimator.pronormusa.com/.netlify/functions/auto-login?email=${email}&token=pronorm-estimator-admin-2026`, '_blank');
                   } else if (isExternal) {
                     window.open(item.path, '_blank');

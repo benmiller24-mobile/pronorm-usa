@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 const ADMIN_EMAIL = 'ben.miller24@gmail.com';
-const PORTAL_URL = 'https://www.pronormusa.com';
+const PORTAL_URL = 'https://pronormusa.com';
 
 const STATUS_LABELS = {
   // Project statuses

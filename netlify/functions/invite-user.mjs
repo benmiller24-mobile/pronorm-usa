@@ -1,10 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
 const ESTIMATOR_API = 'https://estimator.pronormusa.com/.netlify/functions/admin-users';
-const ESTIMATOR_SECRET = process.env.ESTIMATOR_API_SECRET || 'pronorm-estimator-admin-2026';
+// Must be provided via Netlify env var. No fallback — a missing secret should
+// fail loudly (estimator mirror will no-op) rather than ship a hardcoded one.
+const ESTIMATOR_SECRET = process.env.ESTIMATOR_API_SECRET;
 
 // Mirror user to the Pronorm Estimator (best-effort, don't block portal creation)
 async function mirrorToEstimator(email, password, role, company_name) {
+  if (!ESTIMATOR_SECRET) {
+    console.warn(`Estimator mirror skipped for ${email}: ESTIMATOR_API_SECRET not set`);
+    return;
+  }
   try {
     const res = await fetch(ESTIMATOR_API, {
       method: 'POST',

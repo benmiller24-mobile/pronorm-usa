@@ -46,11 +46,11 @@ export default async (req) => {
       });
     }
 
-    // Non-admin dealers can only delete their own projects
+    // Non-admin dealers can only delete their own projects, and not if approved
     if (dealer.role !== "admin") {
       const { data: project, error: projErr } = await supabase
         .from("projects")
-        .select("dealer_id")
+        .select("dealer_id, status")
         .eq("id", projectId)
         .single();
 
@@ -62,6 +62,12 @@ export default async (req) => {
       }
       if (project.dealer_id !== dealerId) {
         return new Response(JSON.stringify({ error: "You can only delete your own projects" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+      if (project.status === "approved") {
+        return new Response(JSON.stringify({ error: "Approved projects cannot be deleted. Please contact an admin." }), {
           status: 403,
           headers: { "Content-Type": "application/json" }
         });

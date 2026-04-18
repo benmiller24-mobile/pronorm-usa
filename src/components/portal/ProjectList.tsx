@@ -142,7 +142,7 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
                     {p.quote_amount ? `$${p.quote_amount.toLocaleString()}` : ''}
                   </td>
                   <td style={{ padding: '0.75rem 1rem', textAlign: 'right', color: '#8a8279' }}>{new Date(p.created_at).toLocaleDateString()}</td>
-                  <td style={{ padding: '0.5rem', textAlign: 'center' }}><button onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }} style={{ background: '#c0392b', color: '#fff', border: 'none', borderRadius: '3px', padding: '0.3rem 0.6rem', cursor: 'pointer', fontSize: '0.75rem' }}>Delete</button></td>
+                  <td style={{ padding: '0.5rem', textAlign: 'center' }}>{(isAdmin || p.status !== 'approved') && (<button onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }} style={{ background: '#c0392b', color: '#fff', border: 'none', borderRadius: '3px', padding: '0.3rem 0.6rem', cursor: 'pointer', fontSize: '0.75rem' }}>Delete</button>)}</td>
                 </tr>
               ))}
             </tbody>

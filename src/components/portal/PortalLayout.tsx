@@ -1,5 +1,48 @@
 import React, { useState } from 'react';
 import type { Dealer } from '../../lib/types';
+import { supabase } from '../../lib/supabase';
+
+// Opens the Pronorm Estimator in a new tab via a server-side auto-login
+// proxy. The estimator still authenticates via a shared static token today,
+// but that token is NO LONGER embedded in this bundle — the proxy holds
+// it server-side and only an authenticated portal user (with a valid
+// Supabase session) can get a signed URL back. Full remediation still
+// requires the estimator to accept short-lived signed tokens; see
+// netlify/functions/estimator-auto-login.mjs for the plan.
+async function openEstimatorAutoLogin() {
+  // Synchronously open a placeholder tab so popup blockers don't block
+  // us after the async session + fetch hop.
+  const win = window.open('about:blank', '_blank');
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      if (win) win.close();
+      alert('Your session has expired. Please sign in again.');
+      return;
+    }
+    const res = await fetch('/.netlify/functions/estimator-auto-login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.url) {
+      if (win) win.close();
+      alert('Could not sign in to the estimator: ' + (data.error || 'Unknown error'));
+      return;
+    }
+    if (win) {
+      win.location.href = data.url;
+    } else {
+      window.open(data.url, '_blank');
+    }
+  } catch (e: any) {
+    if (win) win.close();
+    alert('Could not sign in to the estimator: ' + e.message);
+  }
+}
 
 interface PortalLayoutProps {
   dealer: Dealer | null;
@@ -119,16 +162,7 @@ export default function PortalLayout({ dealer, currentPath, onNavigate, onLogout
                 key={item.path}
                 onClick={() => {
                   if (item.path === '__estimator__') {
-                    const email = encodeURIComponent(dealerEmail || '');
-                    // SECURITY FIXME — the token below is a shared admin secret
-                    // that ships in the React bundle and is ALSO exposed in the
-                    // URL (referrer logs, browser history, server access logs).
-                    // See the SECURITY TODO at the top of EstimatorUsers.tsx.
-                    // Remediation: rotate the secret and replace this with a
-                    // server-side proxy (Netlify function) that validates the
-                    // caller's Supabase session and issues a short-lived
-                    // single-use auto-login token.
-                    window.open(`https://estimator.pronormusa.com/.netlify/functions/auto-login?email=${email}&token=pronorm-estimator-admin-2026`, '_blank');
+                    openEstimatorAutoLogin();
                   } else if (isExternal) {
                     window.open(item.path, '_blank');
                   } else {

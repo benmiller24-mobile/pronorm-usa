@@ -1,30 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { supabase } from '../../lib/supabase';
 
-// ============================================================================
-// SECURITY TODO — CLIENT-SIDE ADMIN TOKEN LEAK
-// ----------------------------------------------------------------------------
-// The `API_SECRET` below is a bearer token for the estimator's admin-users
-// endpoint (list / create / update / delete estimator accounts). Because this
-// component ships in the React bundle, the token is visible to anyone who
-// opens DevTools — it is NOT a secret.
-//
-// This is an existing production leak, not a regression. Removing the literal
-// from source does NOT un-leak the token; it is already in git history and in
-// every deployed bundle. Real remediation requires ALL of:
-//
-//   1. Rotate ESTIMATOR_API_SECRET on the estimator service. The current
-//      value ('pronorm-estimator-admin-2026') must be considered public.
-//   2. Build a server-side proxy as a Netlify function on this repo that
-//      authenticates the caller via Supabase session (admin role required)
-//      and forwards to the estimator using `process.env.ESTIMATOR_API_SECRET`.
-//   3. Migrate this component and `PortalLayout.tsx` (auto-login URL) to
-//      hit the proxy — no bearer token in client code, ever.
-//
-// Until the above is done, this admin UI is effectively unauthenticated to
-// anyone who views source.
-// ============================================================================
-const ESTIMATOR_API = 'https://estimator.pronormusa.com/.netlify/functions/admin-users';
-const API_SECRET = 'pronorm-estimator-admin-2026'; // FIXME: see SECURITY TODO above
+// All estimator admin-users requests go through our own Netlify function,
+// which authenticates the caller via Supabase session (admin role required)
+// and forwards to the estimator using the real ESTIMATOR_API_SECRET server-
+// side. The old client-side literal bearer has been removed — the admin
+// secret no longer ships in the bundle.
+const PROXY_API = '/.netlify/functions/estimator-admin-users';
 
 interface EstimatorUser {
   id: string;
@@ -37,6 +19,17 @@ interface EstimatorUser {
 
 const FONT = "'DM Sans', -apple-system, sans-serif";
 const SERIF = "'Cormorant Garamond', Georgia, serif";
+
+async function authHeaders(): Promise<Record<string, string>> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error('Your session has expired. Please sign in again.');
+  }
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${session.access_token}`,
+  };
+}
 
 export default function EstimatorUsers() {
   const [users, setUsers] = useState<EstimatorUser[]>([]);
@@ -58,14 +51,10 @@ export default function EstimatorUsers() {
   const [editCompany, setEditCompany] = useState('');
   const [editPassword, setEditPassword] = useState('');
 
-  const headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${API_SECRET}`,
-  };
-
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await fetch(ESTIMATOR_API, { headers });
+      const headers = await authHeaders();
+      const res = await fetch(PROXY_API, { headers });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setUsers(data.users || []);
@@ -89,7 +78,8 @@ export default function EstimatorUsers() {
     e.preventDefault();
     setCreating(true);
     try {
-      const res = await fetch(ESTIMATOR_API, {
+      const headers = await authHeaders();
+      const res = await fetch(PROXY_API, {
         method: 'POST',
         headers,
         body: JSON.stringify({ email: newEmail, password: newPassword, role: newRole, company_name: newCompany }),
@@ -109,7 +99,8 @@ export default function EstimatorUsers() {
   const handleDelete = async (user: EstimatorUser) => {
     if (!confirm(`Delete ${user.email}? This will remove their account and all their orders from the estimator.`)) return;
     try {
-      const res = await fetch(ESTIMATOR_API, {
+      const headers = await authHeaders();
+      const res = await fetch(PROXY_API, {
         method: 'DELETE',
         headers,
         body: JSON.stringify({ id: user.id }),
@@ -132,9 +123,10 @@ export default function EstimatorUsers() {
 
   const handleUpdate = async (userId: string) => {
     try {
+      const headers = await authHeaders();
       const body: any = { id: userId, role: editRole, company_name: editCompany };
       if (editPassword) body.password = editPassword;
-      const res = await fetch(ESTIMATOR_API, {
+      const res = await fetch(PROXY_API, {
         method: 'PUT',
         headers,
         body: JSON.stringify(body),

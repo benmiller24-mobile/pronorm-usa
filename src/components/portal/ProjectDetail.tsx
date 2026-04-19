@@ -27,6 +27,7 @@ const STEP_LABELS: Record<string, string> = {
 
 const CATEGORY_LABELS: Record<string, string> = {
   submission: 'Your Design Packet',
+  appliance_spec: 'Appliance Spec Sheets',
   design_output: 'Design Output from Pronorm',
   dealer_markup: 'Your Marked-Up Changes',
   design_revision: 'Revised Design from Pronorm',
@@ -435,8 +436,10 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
             </div>
           )}
 
-          {/* Design Packet Questionnaire */}
-          {project.design_packet_data && (
+          {/* Design Packet Questionnaire — only render when the full questionnaire shape is present.
+              Projects submitted through the simple form store { specs: ... } under design_packet_data
+              without generalInfo, so skip the summary to avoid crashing on undefined field access. */}
+          {project.design_packet_data && (project.design_packet_data as any).generalInfo && (
             <div style={cardStyle}>
               <DesignPacketSummary data={project.design_packet_data as DesignPacketData} />
             </div>

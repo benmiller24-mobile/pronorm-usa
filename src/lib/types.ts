@@ -55,6 +55,7 @@ export type FileCategory =
   | 'design_output'         // Pronorm's design output package (perspectives, plans, element lists)
   | 'dealer_markup'         // Dealer's marked-up changes
   | 'design_revision'       // Pronorm's revised design files
+  | 'appliance_spec'        // Appliance spec sheets (PDFs) uploaded by dealer on project creation
   | 'acknowledgement'       // Factory order confirmation PDF
   | 'acknowledgement_markup'; // Dealer's markup on factory confirmation
 

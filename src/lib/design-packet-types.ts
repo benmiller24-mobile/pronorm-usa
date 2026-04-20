@@ -117,6 +117,18 @@ export interface ApplianceEntry {
   modelNumber: string;
   dimensions: string;
   isPaneled: boolean;
+  /**
+   * Storage path of the uploaded spec-sheet PDF, persisted after upload.
+   * Null while the dealer hasn't attached one (or hasn't saved yet).
+   * The File itself is held in wizard state, not here — File objects are
+   * not JSON-serializable and can't round-trip through Supabase.
+   */
+  specFilePath?: string | null;
+  /**
+   * Display name for the uploaded spec sheet, mirrored from project_files
+   * so the review/resume UI can show the filename without a second query.
+   */
+  specFileName?: string | null;
 }
 
 export interface SinkDetails {

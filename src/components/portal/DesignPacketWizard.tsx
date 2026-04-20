@@ -26,6 +26,13 @@ export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Prop
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<DesignPacketData>(() => loadFromStorage(dealer.id));
   const [files, setFiles] = useState<File[]>([]);
+  /**
+   * In-memory spec PDFs keyed by appliance type. File objects can't be saved to
+   * sessionStorage or serialized into `design_packet_data`, so we hold them here
+   * until Save Draft / Submit uploads them and persists the storage path back
+   * onto `formData.appliances[i].specFilePath`.
+   */
+  const [applianceSpecFiles, setApplianceSpecFiles] = useState<Record<string, File | null>>({});
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -106,6 +113,63 @@ export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Prop
     if (draftSaved) setDraftSaved(false); // let user re-save if they keep editing
   };
 
+  const handleSpecFileChange = (applianceType: string, file: File | null) => {
+    setApplianceSpecFiles(prev => {
+      const next = { ...prev };
+      if (file === null) delete next[applianceType];
+      else next[applianceType] = file;
+      return next;
+    });
+    if (draftSaved) setDraftSaved(false);
+  };
+
+  /**
+   * Upload any pending spec-sheet PDFs to Supabase storage under category
+   * 'appliance_spec' and return an updated appliances array with specFilePath
+   * / specFileName populated. Safe to call with no pending files — it will
+   * just return the input unchanged.
+   *
+   * @returns { appliances, uploadedCount } — the mutated appliances list plus
+   *   a counter so callers can decide whether to re-persist design_packet_data.
+   */
+  const uploadPendingSpecFiles = async (
+    projectId: string,
+    appliances: typeof formData.appliances,
+  ): Promise<{ appliances: typeof formData.appliances; uploadedCount: number }> => {
+    let uploadedCount = 0;
+    const nextAppliances = appliances.map(a => ({ ...a }));
+    for (let i = 0; i < nextAppliances.length; i++) {
+      const app = nextAppliances[i];
+      const pending = applianceSpecFiles[app.type];
+      if (!pending) continue;
+      const slug = slugify([app.manufacturer, app.modelNumber, app.type].filter(Boolean).join('-'));
+      const storagePath = `${dealer.id}/${projectId}/appliance-${slug}-${Date.now()}-${pending.name}`;
+      const { error: uploadErr } = await supabase.storage.from('project-files').upload(storagePath, pending);
+      if (uploadErr) {
+        console.error(`Appliance spec upload error for "${app.type}":`, uploadErr);
+        continue;
+      }
+      const displayName = applianceSpecLabel(app, pending.name);
+      const { error: insertErr } = await supabase.from('project_files').insert({
+        project_id: projectId,
+        file_name: displayName,
+        file_path: storagePath,
+        file_type: pending.type || 'application/pdf',
+        file_size: pending.size,
+        category: 'appliance_spec',
+        uploaded_by: 'dealer',
+      });
+      if (insertErr) {
+        console.error('project_files insert failed for appliance spec:', insertErr);
+        // Row insert failed but the storage blob landed — patch the appliance
+        // anyway so the dealer's file isn't lost.
+      }
+      nextAppliances[i] = { ...app, specFilePath: storagePath, specFileName: displayName };
+      uploadedCount++;
+    }
+    return { appliances: nextAppliances, uploadedCount };
+  };
+
   const validateCurrentStep = (): boolean => {
     let stepErrors: ValidationError[];
     switch (currentStep) {
@@ -136,8 +200,12 @@ export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Prop
 
 
   /**
-   * Save progress as a draft. Unlike Submit, this does NOT upload files or generate the
-   * design-packet PDF — those only run when the dealer finishes Step 6 and clicks Submit.
+   * Save progress as a draft.
+   *
+   * Appliance spec PDFs ARE uploaded on draft save — otherwise the File object
+   * lives only in React state and is lost on reload. Drawing files (step 6) and
+   * the generated design-packet PDF summary are deferred until Submit since the
+   * review step is where the dealer finalizes them.
    *
    * First save → INSERT a row with status='draft' and remember the id.
    * Subsequent saves → UPDATE that same row so we don't leave a trail of draft duplicates.
@@ -154,7 +222,9 @@ export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Prop
       const clientName = formData.generalInfo.clientName.trim() || 'Draft';
       const message = `Room: ${formData.generalInfo.room || '(tbd)'} | Address: ${formData.generalInfo.jobAddress || '(tbd)'}`;
 
-      if (draftProjectId) {
+      let projectId = draftProjectId;
+
+      if (projectId) {
         // Existing draft — UPDATE in place.
         const { error: updateErr } = await supabase
           .from('projects')
@@ -167,7 +237,7 @@ export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Prop
             // the row drifted somehow: re-assert draft status.
             status: 'draft',
           })
-          .eq('id', draftProjectId);
+          .eq('id', projectId);
         if (updateErr) throw updateErr;
       } else {
         // First time saving — INSERT a new draft row.
@@ -184,12 +254,38 @@ export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Prop
           .select()
           .single();
         if (insertErr || !project) throw insertErr || new Error('Failed to save draft');
+        projectId = project.id;
         setDraftProjectId(project.id);
         // Reflect the draft id in the URL so a refresh/bookmark picks up the same row.
         try {
           const nextUrl = `/dealer-portal/projects/new?draft=${project.id}`;
           window.history.replaceState(null, '', nextUrl);
         } catch { /* ok */ }
+      }
+
+      // Upload any pending appliance spec PDFs now that we have a project id.
+      // If any land, patch the persisted design_packet_data with their storage paths
+      // and clear them from the in-memory queue so the UI flips to "Spec attached".
+      if (projectId && Object.keys(applianceSpecFiles).length > 0) {
+        const { appliances: updatedAppliances, uploadedCount } = await uploadPendingSpecFiles(projectId, formData.appliances);
+        if (uploadedCount > 0) {
+          const nextFormData = { ...formData, appliances: updatedAppliances };
+          const { error: patchErr } = await supabase
+            .from('projects')
+            .update({ design_packet_data: nextFormData as any })
+            .eq('id', projectId);
+          if (patchErr) console.error('Failed to patch appliances with specFilePath:', patchErr);
+          setFormData(nextFormData);
+          // Drop uploaded files from in-memory queue; leftover entries (upload failures)
+          // stay so the dealer can retry without re-selecting.
+          setApplianceSpecFiles(prev => {
+            const next = { ...prev };
+            for (const app of updatedAppliances) {
+              if (app.specFilePath) delete next[app.type];
+            }
+            return next;
+          });
+        }
       }
 
       setDraftSaved(true);
@@ -259,10 +355,25 @@ export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Prop
         });
       }
 
+      // Upload pending appliance spec PDFs and patch design_packet_data with their paths.
+      // Do this BEFORE the PDF summary so the generated summary captures the attachments.
+      let submittedFormData = formData;
+      if (Object.keys(applianceSpecFiles).length > 0) {
+        const { appliances: updatedAppliances, uploadedCount } = await uploadPendingSpecFiles(projectId, formData.appliances);
+        if (uploadedCount > 0) {
+          submittedFormData = { ...formData, appliances: updatedAppliances };
+          const { error: patchErr } = await supabase
+            .from('projects')
+            .update({ design_packet_data: submittedFormData as any })
+            .eq('id', projectId);
+          if (patchErr) console.error('Failed to patch appliances with specFilePath on submit:', patchErr);
+        }
+      }
+
       // Generate and upload PDF summary
       try {
-        const pdfBlob = await generateDesignPacketPDF(formData, dealer.company_name);
-        const pdfName = `Design-Packet-Summary-${formData.generalInfo.jobName.replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
+        const pdfBlob = await generateDesignPacketPDF(submittedFormData, dealer.company_name);
+        const pdfName = `Design-Packet-Summary-${submittedFormData.generalInfo.jobName.replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
         const pdfPath = `${dealer.id}/${projectId}/${Date.now()}-${pdfName}`;
         const { error: pdfUploadErr } = await supabase.storage.from('project-files').upload(pdfPath, pdfBlob, { contentType: 'application/pdf' });
         if (!pdfUploadErr) {
@@ -328,7 +439,7 @@ export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Prop
         {currentStep === 0 && <StepProjectInfo data={formData} onChange={handleChange} errors={errors} />}
         {currentStep === 1 && <StepCabinetSelection data={formData} onChange={handleChange} errors={errors} />}
         {currentStep === 2 && <StepHardwareDrawer data={formData} onChange={handleChange} errors={errors} />}
-        {currentStep === 3 && <StepAppliances data={formData} onChange={handleChange} errors={errors} />}
+        {currentStep === 3 && <StepAppliances data={formData} onChange={handleChange} errors={errors} specFiles={applianceSpecFiles} onSpecFileChange={handleSpecFileChange} />}
         {currentStep === 4 && <StepPlumbingSurfaces data={formData} onChange={handleChange} errors={errors} />}
         {currentStep === 5 && <StepUploadReview data={formData} files={files} onFilesSelected={setFiles} errors={errors} dealerName={dealer.company_name} />}
 
@@ -378,6 +489,22 @@ function mergeWithDefaults(defaults: DesignPacketData, parsed: Partial<DesignPac
     appliances: (parsed as any).appliances || [],
     countertops: (parsed as any).countertops || defaults.countertops,
   } as DesignPacketData;
+}
+
+/**
+ * Build a human-readable label for an appliance spec PDF so the project_files
+ * list reads "Wolf DF366 Range — spec.pdf" rather than an opaque filename.
+ * Falls back gracefully when manufacturer/model are blank.
+ */
+function applianceSpecLabel(a: { type: string; manufacturer: string; modelNumber: string }, rawName: string): string {
+  const parts = [a.manufacturer, a.modelNumber || a.type].filter(Boolean);
+  const prefix = parts.length ? parts.join(' ') : (a.type || 'Appliance');
+  return `${prefix} — ${rawName}`;
+}
+
+/** Slugify for storage paths so they stay URL-safe and grep-able. */
+function slugify(s: string): string {
+  return (s || 'appliance').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'appliance';
 }
 
 function loadFromStorage(dealerId: string): DesignPacketData {

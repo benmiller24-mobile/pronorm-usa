@@ -1,0 +1,13 @@
+-- Add 'draft' to project_status enum so the New Project wizard's
+-- Save Draft action can persist half-filled submissions without marking
+-- them as real submissions. Drafts are promoted to 'submitted' when
+-- the dealer finishes the wizard and clicks Submit on Step 6.
+--
+-- IMPORTANT: ALTER TYPE ... ADD VALUE must run OUTSIDE a transaction.
+-- The Supabase SQL editor runs statements outside an explicit BEGIN/COMMIT
+-- by default, so pasting this in and clicking Run works. If this is ever
+-- replayed via a migration tool that wraps everything in a transaction,
+-- it will error out — which is fine, it means the value is already there.
+--
+-- IF NOT EXISTS makes this idempotent: safe to re-run.
+ALTER TYPE project_status ADD VALUE IF NOT EXISTS 'draft';

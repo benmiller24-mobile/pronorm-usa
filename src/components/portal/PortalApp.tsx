@@ -33,10 +33,12 @@ export default function PortalApp() {
   const [dealers, setDealers] = useState([]);
   const [adminSelectedDealer, setAdminSelectedDealer] = useState(null);
 
-  // Read initial path from URL
+  // Read initial path from URL. Include the query string so things like
+  // ?draft=<id> survive a refresh/bookmark — the wizard reads that param to
+  // resume an in-progress draft rather than starting fresh.
   useEffect(() => {
-    const currentPath = window.location.pathname;
-    if (currentPath.startsWith('/dealer-portal/') && currentPath !== '/dealer-portal/') {
+    const currentPath = window.location.pathname + window.location.search;
+    if (currentPath.startsWith('/dealer-portal/') && window.location.pathname !== '/dealer-portal/') {
       setPath(currentPath);
     }
   }, []);
@@ -88,11 +90,11 @@ export default function PortalApp() {
     window.scrollTo(0, 0);
   };
 
-  // Handle browser back/forward
+  // Handle browser back/forward — keep the query string so draft-resume links stay resumable.
   useEffect(() => {
     const handlePopState = () => {
-      const currentPath = window.location.pathname;
-      if (currentPath.startsWith('/dealer-portal')) {
+      const currentPath = window.location.pathname + window.location.search;
+      if (window.location.pathname.startsWith('/dealer-portal')) {
         setPath(currentPath);
       }
     };
@@ -203,11 +205,20 @@ export default function PortalApp() {
   const isDesigner = dealer.role === 'designer';
   const scopedDealer: Dealer = isDesigner && dealer.parent_dealer_id ? { ...dealer, id: dealer.parent_dealer_id } : dealer;
 
+  // Split path + query for matching. `path` is the state value we route on and includes the
+  // query string (so refresh/back preserves ?draft=<id>) but routing comparisons ignore it.
+  const [pathOnly, queryString] = (() => {
+    const idx = path.indexOf('?');
+    return idx === -1 ? [path, ''] : [path.slice(0, idx), path.slice(idx + 1)];
+  })();
+  const searchParams = new URLSearchParams(queryString);
+  const draftIdParam = searchParams.get('draft');
+
   const renderPage = () => {
-    if (path === '/dealer-portal/dashboard' || path === '/dealer-portal' || path === '/dealer-portal/') {
+    if (pathOnly === '/dealer-portal/dashboard' || pathOnly === '/dealer-portal' || pathOnly === '/dealer-portal/') {
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
-    if (path === '/dealer-portal/pricing') {
+    if (pathOnly === '/dealer-portal/pricing') {
       const userEmail = dealer.email || session?.user?.email;
       if (userEmail === 'ben.miller24@gmail.com' || isAdmin) {
         window.open('https://estimator.pronormusa.com', '_blank');
@@ -215,16 +226,16 @@ export default function PortalApp() {
       }
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
-    if (path === '/dealer-portal/estimator-users') {
+    if (pathOnly === '/dealer-portal/estimator-users') {
       if (isAdmin) return <EstimatorUsers />;
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
-    if (path === '/dealer-portal/design-engine') {
+    if (pathOnly === '/dealer-portal/design-engine') {
       const userEmail = dealer.email || session?.user?.email;
       if (userEmail === 'ben.miller24@gmail.com') return <DesignEngine dealer={scopedDealer} onNavigate={navigate} />;
       return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
-    if (path === '/dealer-portal/projects/new') {
+    if (pathOnly === '/dealer-portal/projects/new') {
       if (isAdmin && !adminSelectedDealer) {
         return (
           <div style={{ padding: '2rem', maxWidth: 600 }}>
@@ -248,21 +259,21 @@ export default function PortalApp() {
         );
       }
       const targetDealer = isAdmin && adminSelectedDealer ? (adminSelectedDealer.role === 'designer' && adminSelectedDealer.parent_dealer_id ? (dealers.find(d => d.id === adminSelectedDealer.parent_dealer_id) || adminSelectedDealer) : adminSelectedDealer) : scopedDealer;
-      return <DesignPacketWizard dealer={targetDealer} onNavigate={(p) => { setAdminSelectedDealer(null); navigate(p); }} />;
+      return <DesignPacketWizard dealer={targetDealer} onNavigate={(p) => { setAdminSelectedDealer(null); navigate(p); }} draftId={draftIdParam} />;
     }
-    if (path === '/dealer-portal/projects' || path === '/dealer-portal/projects/') return <ProjectList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    if (path.startsWith('/dealer-portal/projects/')) { const id = path.split('/').pop()!; return <ProjectDetail projectId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />; }
-    if (path === '/dealer-portal/orders' || path === '/dealer-portal/orders/') return <OrderList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    if (path.startsWith('/dealer-portal/orders/')) { const id = path.split('/').pop()!; return <OrderDetail orderId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />; }
-    if (path === '/dealer-portal/warranty/new') return <WarrantyForm dealer={scopedDealer} onNavigate={navigate} />;
-    if (path === '/dealer-portal/warranty' || path === '/dealer-portal/warranty/') return <WarrantyList dealer={scopedDealer} onNavigate={navigate} />;
-    if (path === '/dealer-portal/team' || path === '/dealer-portal/team/') {
+    if (pathOnly === '/dealer-portal/projects' || pathOnly === '/dealer-portal/projects/') return <ProjectList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    if (pathOnly.startsWith('/dealer-portal/projects/')) { const id = pathOnly.split('/').pop()!; return <ProjectDetail projectId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />; }
+    if (pathOnly === '/dealer-portal/orders' || pathOnly === '/dealer-portal/orders/') return <OrderList dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    if (pathOnly.startsWith('/dealer-portal/orders/')) { const id = pathOnly.split('/').pop()!; return <OrderDetail orderId={id} dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />; }
+    if (pathOnly === '/dealer-portal/warranty/new') return <WarrantyForm dealer={scopedDealer} onNavigate={navigate} />;
+    if (pathOnly === '/dealer-portal/warranty' || pathOnly === '/dealer-portal/warranty/') return <WarrantyList dealer={scopedDealer} onNavigate={navigate} />;
+    if (pathOnly === '/dealer-portal/team' || pathOnly === '/dealer-portal/team/') {
       if (isDesigner) return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
       return <TeamManagement dealer={scopedDealer} isAdmin={isAdmin} isDesigner={isDesigner} />;
     }
-    if (path === '/dealer-portal/messages') return <Messages dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    if (path === '/dealer-portal/resources') return <ResourceLibrary dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
-    if (path === '/dealer-portal/account') return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;
+    if (pathOnly === '/dealer-portal/messages') return <Messages dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    if (pathOnly === '/dealer-portal/resources') return <ResourceLibrary dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} />;
+    if (pathOnly === '/dealer-portal/account') return <AccountSettings dealer={dealer} onDealerUpdate={setDealer} />;
     return <DealerDashboard dealer={scopedDealer} onNavigate={navigate} isAdmin={isAdmin} isDesigner={isDesigner} />;
   };
 

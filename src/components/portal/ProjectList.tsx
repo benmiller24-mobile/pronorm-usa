@@ -9,7 +9,10 @@ interface ProjectListProps {
   isAdmin?: boolean;
 }
 
-const STATUS_FILTERS = ['all', 'submitted', 'in_design', 'design_delivered', 'changes_requested', 'design_revised', 'approved'] as const;
+// Dealers see 'draft' as a filter chip (their own in-progress wizard state).
+// Admins never see drafts at all — they're hidden at the query level below.
+const STATUS_FILTERS_DEALER = ['all', 'draft', 'submitted', 'in_design', 'design_delivered', 'changes_requested', 'design_revised', 'approved'] as const;
+const STATUS_FILTERS_ADMIN = ['all', 'submitted', 'in_design', 'design_delivered', 'changes_requested', 'design_revised', 'approved'] as const;
 
 export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectListProps) {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -31,6 +34,9 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
       setLoading(true);
       let query = supabase.from('projects').select('*').order('created_at', { ascending: false });
       if (isAdmin) {
+        // Admins never see dealer drafts — those are private in-progress wizard state,
+        // not something Pronorm should see until the dealer submits.
+        query = query.neq('status', 'draft');
         if (selectedDealerId !== 'all') {
           query = query.eq('dealer_id', selectedDealerId);
         }
@@ -107,7 +113,7 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
       )}
 
       <div className="portal-filters" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        {STATUS_FILTERS.map(s => (
+        {(isAdmin ? STATUS_FILTERS_ADMIN : STATUS_FILTERS_DEALER).map(s => (
           <button key={s} onClick={() => setFilter(s)} style={{
             padding: '0.4rem 0.85rem', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.06em',
             textTransform: 'uppercase', background: filter === s ? '#2d2d2d' : '#fdfcfa',
@@ -136,7 +142,8 @@ export default function ProjectList({ dealer, onNavigate, isAdmin }: ProjectList
             </thead>
             <tbody>
               {filtered.map(p => (
-                <tr key={p.id} onClick={() => onNavigate(`/dealer-portal/projects/${p.id}`)} style={{ borderBottom: '1px solid #f0ebe4', cursor: 'pointer', transition: 'background 150ms' }}
+                // Draft rows resume the wizard instead of opening the (empty) detail page.
+                <tr key={p.id} onClick={() => onNavigate(p.status === 'draft' ? `/dealer-portal/projects/new?draft=${p.id}` : `/dealer-portal/projects/${p.id}`)} style={{ borderBottom: '1px solid #f0ebe4', cursor: 'pointer', transition: 'background 150ms' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#faf8f5')}
                   onMouseLeave={e => (e.currentTarget.style.background = '')}
                 >

@@ -21,9 +21,11 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigne
   useEffect(() => {
     async function loadData() {
       if (isAdmin) {
-        // Admin sees all records across all dealers
+        // Admin sees all records across all dealers. Drafts are excluded —
+        // they're dealer-private in-progress state, not something the admin
+        // should see (or act on) until the dealer actually submits.
         const [projRes, ordRes, warRes, dealersRes, designersRes] = await Promise.all([
-          supabase.from('projects').select('*').order('created_at', { ascending: false }).limit(10),
+          supabase.from('projects').select('*').neq('status', 'draft').order('created_at', { ascending: false }).limit(10),
           supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(10),
           supabase.from('warranty_claims').select('*').order('created_at', { ascending: false }).limit(10),
           supabase.from('dealers').select('id', { count: 'exact', head: true }).eq('role', 'dealer'),
@@ -67,7 +69,9 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigne
         ...orders.filter(o => o.status === 'pending_shipping_payment').map(o => ({ type: 'order', label: `Pay shipping: ${o.order_number}`, id: o.id })),
       ];
 
-  const activeProjects = projects.filter(p => p.status !== 'approved');
+  // "Active" means in-flight design work, not unfinished wizards. Drafts live in their own bucket
+  // (dealers can find them via the Drafts filter on /projects) so we exclude them here.
+  const activeProjects = projects.filter(p => p.status !== 'approved' && p.status !== 'draft');
   const activeOrders = orders.filter(o => o.status !== 'delivered');
   const pendingWarranties = warranties.filter(w => !['resolved', 'denied'].includes(w.status));
 
@@ -157,7 +161,7 @@ export default function DealerDashboard({ dealer, onNavigate, isAdmin, isDesigne
               <th style={thStyle}>Job Name</th><th style={thStyle}>Client</th><th style={thStyle}>Status</th><th style={{ ...thStyle, textAlign: 'right' }}>Date</th>
             </tr></thead>
             <tbody>{projects.map(p => (
-              <tr key={p.id} onClick={() => onNavigate(`/dealer-portal/projects/${p.id}`)} style={{ borderBottom: '1px solid #f0ebe4', cursor: 'pointer' }}>
+              <tr key={p.id} onClick={() => onNavigate(p.status === 'draft' ? `/dealer-portal/projects/new?draft=${p.id}` : `/dealer-portal/projects/${p.id}`)} style={{ borderBottom: '1px solid #f0ebe4', cursor: 'pointer' }}>
                 <td style={{ padding: '0.65rem 0', color: '#1a1a1a', fontWeight: 500 }}>{p.job_name}</td>
                 <td style={{ padding: '0.65rem 0', color: '#4a4a4a' }}>{p.client_name}</td>
                 <td style={{ padding: '0.65rem 0' }}><StatusBadge status={p.status} size="sm" /></td>

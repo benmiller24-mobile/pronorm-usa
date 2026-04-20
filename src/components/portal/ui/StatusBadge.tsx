@@ -2,6 +2,7 @@ import React from 'react';
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   /* ── Project statuses ── */
+  draft:                  { bg: '#f5f0e8', text: '#8a6432', label: 'Draft' },
   submitted:              { bg: '#e8e4df', text: '#4a4a4a', label: 'Submitted' },
   in_design:              { bg: '#e2d9f3', text: '#5b3d8f', label: 'In Design' },
   design_delivered:       { bg: '#cce5ff', text: '#004085', label: 'Design Delivered' },

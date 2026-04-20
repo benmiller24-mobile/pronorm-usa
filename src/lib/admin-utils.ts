@@ -5,6 +5,7 @@ import type { ProjectStatus, OrderStatus } from './types';
 /* Valid next statuses that an admin can transition a project to */
 export function getValidNextProjectStatuses(current: ProjectStatus): ProjectStatus[] {
   const transitions: Record<ProjectStatus, ProjectStatus[]> = {
+    draft: [],                       // Dealer action only: finish wizard → 'submitted'. Admin cannot advance drafts.
     submitted: ['in_design'],
     in_design: ['design_delivered'],
     design_delivered: [],            // Dealer action: approve or request changes
@@ -35,6 +36,7 @@ export function getValidNextOrderStatuses(current: OrderStatus): OrderStatus[] {
 
 /* Human-readable status labels */
 export const PROJECT_STATUS_LABELS: Record<string, string> = {
+  draft: 'Draft',
   submitted: 'Submitted',
   in_design: 'In Design',
   design_delivered: 'Design Delivered',

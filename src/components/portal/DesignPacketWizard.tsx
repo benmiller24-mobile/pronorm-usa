@@ -15,12 +15,14 @@ import StepUploadReview from './wizard/StepUploadReview';
 interface Props {
   dealer: Dealer;
   onNavigate: (path: string) => void;
+  /** When set, the wizard resumes an existing draft row from `projects` instead of starting fresh. */
+  draftId?: string | null;
 }
 
 const STEPS = ['Project Info', 'Cabinets', 'Hardware & Drawer', 'Appliances', 'Plumbing & Surfaces', 'Upload & Review'];
 const STORAGE_KEY_PREFIX = 'pronorm_wizard_';
 
-export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
+export default function DesignPacketWizard({ dealer, onNavigate, draftId }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<DesignPacketData>(() => loadFromStorage(dealer.id));
   const [files, setFiles] = useState<File[]>([]);
@@ -29,6 +31,14 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
   const [submitError, setSubmitError] = useState('');
   const [savingDraft, setSavingDraft] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
+  /**
+   * If the wizard was opened with ?draft=<id> we treat that row as the backing store.
+   * Otherwise this gets populated the first time the dealer clicks "Save Draft", so
+   * subsequent saves UPDATE the same row instead of spawning a new draft every time.
+   */
+  const [draftProjectId, setDraftProjectId] = useState<string | null>(draftId || null);
+  const [loadingDraft, setLoadingDraft] = useState<boolean>(!!draftId);
+  const [draftLoadError, setDraftLoadError] = useState('');
 
   // Auto-fill dealer info on first load
   useEffect(() => {
@@ -44,6 +54,41 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
     }
   }, [dealer]);
 
+  /* Resume an existing draft: when draftId is present, pull the saved design_packet_data from
+     the projects row and use it as the starting state. DB wins over any stale sessionStorage
+     so a dealer who opens the same draft on a second device sees the authoritative version. */
+  useEffect(() => {
+    if (!draftId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('projects')
+          .select('id, dealer_id, status, design_packet_data')
+          .eq('id', draftId)
+          .single();
+        if (cancelled) return;
+        if (error || !data) throw error || new Error('Draft not found');
+        if (data.status !== 'draft') {
+          // Already submitted — send the user to the project detail page instead of editing.
+          onNavigate(`/dealer-portal/projects/${data.id}`);
+          return;
+        }
+        if (data.design_packet_data) {
+          const defaults = createDefaultDesignPacket();
+          const parsed = data.design_packet_data as Partial<DesignPacketData>;
+          setFormData(mergeWithDefaults(defaults, parsed));
+        }
+        setDraftProjectId(data.id);
+      } catch (err: any) {
+        if (!cancelled) setDraftLoadError(err?.message || 'Failed to load draft');
+      } finally {
+        if (!cancelled) setLoadingDraft(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [draftId]);
+
   // Save to sessionStorage on data changes
   const saveToStorage = useCallback((data: DesignPacketData) => {
     try {
@@ -58,6 +103,7 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
   const handleChange = (data: DesignPacketData) => {
     setFormData(data);
     if (errors.length > 0) setErrors([]);
+    if (draftSaved) setDraftSaved(false); // let user re-save if they keep editing
   };
 
   const validateCurrentStep = (): boolean => {
@@ -89,26 +135,66 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
   };
 
 
+  /**
+   * Save progress as a draft. Unlike Submit, this does NOT upload files or generate the
+   * design-packet PDF — those only run when the dealer finishes Step 6 and clicks Submit.
+   *
+   * First save → INSERT a row with status='draft' and remember the id.
+   * Subsequent saves → UPDATE that same row so we don't leave a trail of draft duplicates.
+   *
+   * We intentionally keep the draft on screen after save (stay on the current step) so the
+   * dealer can keep working. The previous behavior of redirecting to the project list
+   * after a 1.5s timeout was a leftover from when Save Draft was accidentally a Submit.
+   */
   const handleSaveDraft = async () => {
     setSavingDraft(true);
     setSubmitError('');
     try {
-      const { data: project, error: projErr } = await supabase
-        .from('projects')
-        .insert({
-          dealer_id: dealer.id,
-          job_name: formData.generalInfo.jobName.trim() || 'Untitled Draft',
-          client_name: formData.generalInfo.clientName.trim() || 'Draft',
-          message: 'DRAFT - ' + (formData.generalInfo.room || 'No room specified'),
-          design_packet_data: formData as any,
-          status: 'submitted',
-        })
-        .select()
-        .single();
-      if (projErr || !project) throw projErr || new Error('Failed to save draft');
-      try { sessionStorage.removeItem(STORAGE_KEY_PREFIX + dealer.id); } catch { /* ok */ }
+      const jobName = formData.generalInfo.jobName.trim() || 'Untitled Draft';
+      const clientName = formData.generalInfo.clientName.trim() || 'Draft';
+      const message = `Room: ${formData.generalInfo.room || '(tbd)'} | Address: ${formData.generalInfo.jobAddress || '(tbd)'}`;
+
+      if (draftProjectId) {
+        // Existing draft — UPDATE in place.
+        const { error: updateErr } = await supabase
+          .from('projects')
+          .update({
+            job_name: jobName,
+            client_name: clientName,
+            message,
+            design_packet_data: formData as any,
+            // Leave status alone; it should still be 'draft'. Belt-and-suspenders in case
+            // the row drifted somehow: re-assert draft status.
+            status: 'draft',
+          })
+          .eq('id', draftProjectId);
+        if (updateErr) throw updateErr;
+      } else {
+        // First time saving — INSERT a new draft row.
+        const { data: project, error: insertErr } = await supabase
+          .from('projects')
+          .insert({
+            dealer_id: dealer.id,
+            job_name: jobName,
+            client_name: clientName,
+            message,
+            design_packet_data: formData as any,
+            status: 'draft',
+          })
+          .select()
+          .single();
+        if (insertErr || !project) throw insertErr || new Error('Failed to save draft');
+        setDraftProjectId(project.id);
+        // Reflect the draft id in the URL so a refresh/bookmark picks up the same row.
+        try {
+          const nextUrl = `/dealer-portal/projects/new?draft=${project.id}`;
+          window.history.replaceState(null, '', nextUrl);
+        } catch { /* ok */ }
+      }
+
       setDraftSaved(true);
-      setTimeout(() => onNavigate('/dealer-portal/projects'), 1500);
+      // Clear "Saved!" confirmation after a moment so the button is usable again.
+      setTimeout(() => setDraftSaved(false), 2500);
     } catch (err: any) {
       setSubmitError(err.message || 'Failed to save draft. Please try again.');
     }
@@ -121,28 +207,49 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
     setSubmitError('');
 
     try {
-      // 1. Create project with design packet data
-      const { data: project, error: projErr } = await supabase
-        .from('projects')
-        .insert({
-          dealer_id: dealer.id,
-          job_name: formData.generalInfo.jobName.trim(),
-          client_name: formData.generalInfo.clientName.trim(),
-          message: `Room: ${formData.generalInfo.room} | Address: ${formData.generalInfo.jobAddress}`,
-          design_packet_data: formData as any,
-        })
-        .select()
-        .single();
+      let projectId: string;
 
-      if (projErr || !project) throw projErr || new Error('Failed to create project');
+      if (draftProjectId) {
+        // Promote the existing draft row to submitted — keeps a single stable project id
+        // across the entire draft → submitted → design lifecycle.
+        const { data: updated, error: updateErr } = await supabase
+          .from('projects')
+          .update({
+            job_name: formData.generalInfo.jobName.trim(),
+            client_name: formData.generalInfo.clientName.trim(),
+            message: `Room: ${formData.generalInfo.room} | Address: ${formData.generalInfo.jobAddress}`,
+            design_packet_data: formData as any,
+            status: 'submitted',
+          })
+          .eq('id', draftProjectId)
+          .select()
+          .single();
+        if (updateErr || !updated) throw updateErr || new Error('Failed to submit draft');
+        projectId = updated.id;
+      } else {
+        // No prior draft — straight insert as 'submitted' (the default enum value).
+        const { data: project, error: projErr } = await supabase
+          .from('projects')
+          .insert({
+            dealer_id: dealer.id,
+            job_name: formData.generalInfo.jobName.trim(),
+            client_name: formData.generalInfo.clientName.trim(),
+            message: `Room: ${formData.generalInfo.room} | Address: ${formData.generalInfo.jobAddress}`,
+            design_packet_data: formData as any,
+          })
+          .select()
+          .single();
+        if (projErr || !project) throw projErr || new Error('Failed to create project');
+        projectId = project.id;
+      }
 
-      // 2. Upload drawing files
+      // Upload drawing files
       for (const file of files) {
-        const path = `${dealer.id}/${project.id}/${Date.now()}-${file.name}`;
+        const path = `${dealer.id}/${projectId}/${Date.now()}-${file.name}`;
         const { error: uploadErr } = await supabase.storage.from('project-files').upload(path, file);
         if (uploadErr) { console.error('File upload error:', uploadErr); continue; }
         await supabase.from('project_files').insert({
-          project_id: project.id,
+          project_id: projectId,
           file_name: file.name,
           file_path: path,
           file_type: file.type || 'application/octet-stream',
@@ -152,15 +259,15 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
         });
       }
 
-      // 3. Generate and upload PDF summary
+      // Generate and upload PDF summary
       try {
         const pdfBlob = await generateDesignPacketPDF(formData, dealer.company_name);
         const pdfName = `Design-Packet-Summary-${formData.generalInfo.jobName.replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
-        const pdfPath = `${dealer.id}/${project.id}/${Date.now()}-${pdfName}`;
+        const pdfPath = `${dealer.id}/${projectId}/${Date.now()}-${pdfName}`;
         const { error: pdfUploadErr } = await supabase.storage.from('project-files').upload(pdfPath, pdfBlob, { contentType: 'application/pdf' });
         if (!pdfUploadErr) {
           await supabase.from('project_files').insert({
-            project_id: project.id,
+            project_id: projectId,
             file_name: pdfName,
             file_path: pdfPath,
             file_type: 'application/pdf',
@@ -174,9 +281,9 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
         // Non-fatal: project still created successfully
       }
 
-      // 4. Clear storage and navigate
+      // Clear storage and navigate
       try { sessionStorage.removeItem(STORAGE_KEY_PREFIX + dealer.id); } catch { /* ok */ }
-      onNavigate(`/dealer-portal/projects/${project.id}`);
+      onNavigate(`/dealer-portal/projects/${projectId}`);
     } catch (err: any) {
       setSubmitError(err.message || 'Something went wrong. Please try again.');
       setSubmitting(false);
@@ -185,11 +292,23 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
 
   const isLastStep = currentStep === STEPS.length - 1;
 
+  if (loadingDraft) {
+    return <div style={{ padding: '2rem', color: '#8a8279' }}>Loading draft...</div>;
+  }
+  if (draftLoadError) {
+    return (
+      <div style={{ padding: '2rem' }}>
+        <div style={errorBanner}>{draftLoadError}</div>
+        <button onClick={() => onNavigate('/dealer-portal/projects')} style={backBtn}>&larr; Back to Projects</button>
+      </div>
+    );
+  }
+
   return (
     <div>
       <button onClick={() => onNavigate('/dealer-portal/projects')} style={backBtn}>&larr; Back to Projects</button>
 
-      <h1 style={pageTitle}>Submit New Project</h1>
+      <h1 style={pageTitle}>{draftProjectId ? 'Resume Draft' : 'Submit New Project'}</h1>
       <p style={pageDesc}>Complete the design packet questionnaire, then upload your drawings to submit.</p>
 
       <WizardProgress currentStep={currentStep} steps={STEPS} />
@@ -222,7 +341,7 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
           ) : <div />}
 
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-              <button type="button" onClick={handleSaveDraft} disabled={savingDraft || draftSaved} style={{ ...btnSecondary, borderColor: '#b87333', color: draftSaved ? '#5a9e4b' : '#b87333' }}>
+              <button type="button" onClick={handleSaveDraft} disabled={savingDraft} style={{ ...btnSecondary, borderColor: '#b87333', color: draftSaved ? '#5a9e4b' : '#b87333' }}>
                 {draftSaved ? 'Draft Saved!' : savingDraft ? 'Saving...' : 'Save Draft'}
               </button>
               {isLastStep ? (
@@ -243,34 +362,36 @@ export default function DesignPacketWizard({ dealer, onNavigate }: Props) {
   );
 }
 
-// ââ Helpers ââ
+// ── Helpers ──
+
+function mergeWithDefaults(defaults: DesignPacketData, parsed: Partial<DesignPacketData>): DesignPacketData {
+  return {
+    ...defaults,
+    ...parsed,
+    generalInfo: { ...defaults.generalInfo, ...(parsed as any).generalInfo },
+    cabinetDetails: { ...defaults.cabinetDetails, ...(parsed as any).cabinetDetails },
+    hardwareDetails: { ...defaults.hardwareDetails, ...(parsed as any).hardwareDetails },
+    drawerToekick: { ...defaults.drawerToekick, ...(parsed as any).drawerToekick },
+    primarySink: { ...defaults.primarySink, ...(parsed as any).primarySink },
+    prepSink: { ...defaults.prepSink, ...(parsed as any).prepSink },
+    backsplash: { ...defaults.backsplash, ...(parsed as any).backsplash },
+    appliances: (parsed as any).appliances || [],
+    countertops: (parsed as any).countertops || defaults.countertops,
+  } as DesignPacketData;
+}
 
 function loadFromStorage(dealerId: string): DesignPacketData {
   try {
     const saved = sessionStorage.getItem(STORAGE_KEY_PREFIX + dealerId);
     if (saved) {
-      const parsed = JSON.parse(saved);
-      // Merge with defaults to handle any new fields added after save
-      const defaults = createDefaultDesignPacket();
-      return {
-        ...defaults,
-        ...parsed,
-        generalInfo: { ...defaults.generalInfo, ...parsed.generalInfo },
-        cabinetDetails: { ...defaults.cabinetDetails, ...parsed.cabinetDetails },
-        hardwareDetails: { ...defaults.hardwareDetails, ...parsed.hardwareDetails },
-        drawerToekick: { ...defaults.drawerToekick, ...parsed.drawerToekick },
-        primarySink: { ...defaults.primarySink, ...parsed.primarySink },
-        prepSink: { ...defaults.prepSink, ...parsed.prepSink },
-        backsplash: { ...defaults.backsplash, ...parsed.backsplash },
-        appliances: parsed.appliances || [],
-        countertops: parsed.countertops || defaults.countertops,
-      };
+      const parsed = JSON.parse(saved) as Partial<DesignPacketData>;
+      return mergeWithDefaults(createDefaultDesignPacket(), parsed);
     }
   } catch { /* ignore */ }
   return createDefaultDesignPacket();
 }
 
-// ââ Styles ââ
+// ── Styles ──
 
 const backBtn: React.CSSProperties = {
   background: 'none', border: 'none', color: '#b87333', fontSize: '0.78rem', fontWeight: 600,

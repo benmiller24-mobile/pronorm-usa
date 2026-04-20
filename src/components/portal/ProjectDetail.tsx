@@ -60,6 +60,15 @@ export default function ProjectDetail({ projectId, dealer, onNavigate, isAdmin }
 
   useEffect(() => { loadData(); }, [projectId]);
 
+  /* If a draft is opened by direct URL (e.g. someone shared the project detail link before
+     the wizard was ever submitted), bounce to the resume-wizard route rather than showing
+     an empty detail page with no files and a non-actionable status. */
+  useEffect(() => {
+    if (project && project.status === 'draft') {
+      onNavigate(`/dealer-portal/projects/new?draft=${project.id}`);
+    }
+  }, [project?.status, project?.id]);
+
   async function loadData() {
     const [projRes, filesRes] = await Promise.all([
       supabase.from('projects').select('*').eq('id', projectId).single(),

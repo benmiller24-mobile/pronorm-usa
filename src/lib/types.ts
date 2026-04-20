@@ -4,6 +4,7 @@
   FULL WORKFLOW:
   ─────────────────────────────────────────
   PROJECT PHASE (Design)
+  0. draft                   – Dealer saved partial wizard progress (not submitted)
   1. submitted              – Dealer submitted design packet
   2. in_design              – Pronorm USA is designing
   3. design_delivered        – Design output package uploaded for dealer review
@@ -26,6 +27,7 @@
 */
 
 export type ProjectStatus =
+  | 'draft'
   | 'submitted'
   | 'in_design'
   | 'design_delivered'

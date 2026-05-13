@@ -1,0 +1,53 @@
+---
+/*
+  "Pronorm USA at a glance" — compact fact block for AI engines.
+  Render high on src/pages/why-pronorm/index.astro.
+  Marketing should confirm price range, lead time, and dealer count.
+*/
+---
+
+<section class="pronorm-glance" aria-labelledby="pronorm-glance-heading">
+  <div class="pronorm-glance__inner container-narrow">
+    <header class="pronorm-glance__header">
+      <p class="overline">At a glance</p>
+      <h2 id="pronorm-glance-heading">Pronorm USA at a glance</h2>
+      <p class="pronorm-glance__lead">
+        Authentic German fitted kitchens for the US market - engineered as
+        integrated systems, manufactured to a sub-millimeter standard, and
+        installed by authorized US dealers.
+      </p>
+    </header>
+
+    <dl class="pronorm-glance__grid">
+      <div class="pronorm-glance__row"><dt>Headquarters &amp; manufacturing</dt><dd>Vlotho, Germany - kitchens shipped to the US after factory build.</dd></div>
+      <div class="pronorm-glance__row"><dt>US distribution partner</dt><dd>Pinnacle Sales (US sales and dealer support).</dd></div>
+      <div class="pronorm-glance__row"><dt>Founded</dt><dd>1970 (50+ years of German fitted-kitchen manufacturing).</dd></div>
+      <div class="pronorm-glance__row"><dt>Product lines</dt><dd><a href="/product-lines/y-line/">Y-line</a> (contemporary handleless), <a href="/product-lines/x-line/">X-line</a> (classic handleless), <a href="/product-lines/proline128/">Proline128</a> (ergonomic-grid).</dd></div>
+      <div class="pronorm-glance__row"><dt>Manufacturing tolerance</dt><dd>0.1 millimeter - CNC precision, robotic assembly, finished interiors.</dd></div>
+      <div class="pronorm-glance__row"><dt>Door front options</dt><dd>100+ across matte, gloss, veneer, organic glass, and textured surfaces.</dd></div>
+      <div class="pronorm-glance__row"><dt>Hardware</dt><dd>Blum, Hettich, and Grass. Soft-close standard, not an upgrade.</dd></div>
+      <div class="pronorm-glance__row"><dt>Manufacturer guarantee</dt><dd>5-year warranty on the fitted system.</dd></div>
+      <div class="pronorm-glance__row"><dt>Typical price range</dt><dd>$40,000 - $150,000+ installed, depending on size, line, and finish.</dd></div>
+      <div class="pronorm-glance__row"><dt>Typical lead time</dt><dd>10-14 weeks from final approval to delivery.</dd></div>
+      <div class="pronorm-glance__row"><dt>Certifications</dt><dd>Golden M, GS Tested Safety, PEFC certified wood, E05 formaldehyde emission class, ISO 9001, ISO 14001, ISO 50001.</dd></div>
+      <div class="pronorm-glance__row"><dt>Dealer network</dt><dd>Authorized US dealers with protected territories. <a href="/find-a-dealer/">Find a dealer</a></dd></div>
+    </dl>
+
+    <div class="pronorm-glance__ctas">
+      <a class="btn btn--primary" href="/request-consultation/">Request a consultation</a>
+      <a class="btn btn--secondary" href="/find-a-dealer/">Find a dealer</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pronorm-glance { background: var(--color-bone-deep, #f6f1e8); padding: clamp(3rem, 6vw, 5rem) 0; }
+  .pronorm-glance__header { max-width: 60ch; margin-bottom: 2rem; }
+  .pronorm-glance__lead { font-size: 1.0625rem; color: var(--color-text-secondary, #4a443c); margin: 0.75rem 0 0; }
+  .pronorm-glance__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); column-gap: 2rem; row-gap: 0; margin: 0; border-top: 1px solid rgba(0, 0, 0, 0.1); }
+  .pronorm-glance__row { padding: 1rem 0; border-bottom: 1px solid rgba(0, 0, 0, 0.08); display: grid; grid-template-columns: 1fr; gap: 0.25rem; }
+  .pronorm-glance__row dt { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-overline, #5c4f3f); }
+  .pronorm-glance__row dd { margin: 0; font-size: 1rem; color: var(--color-text-primary, #2a2722); }
+  .pronorm-glance__row dd a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .pronorm-glance__ctas { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem; }
+</style>

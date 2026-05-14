@@ -1,3 +1,104 @@
+
+
+/* =========================================================
+   AUDIT IMPLEMENTATION — Accessibility additions
+   WCAG 2.4.7 (Focus Visible) and 1.4.3 (Contrast Minimum).
+   ========================================================= */
+
+/* Darker tokens for placeholder, overline, and footer-legal text
+   so small text reliably passes 4.5:1 on bone / cream backgrounds. */
+:root {
+     --color-text-placeholder: #5a5651;
+     --color-text-overline: #5c4f3f;
+     --color-text-footer-legal: #d9d4cc;
+     --color-text-footer-link:  #f1ede5;
+     --color-focus-ring: var(--color-walnut, #5c4033);
+}
+
+/* Remove default outline only when not keyboard-focused. */
+*:focus { outline: none; }
+
+/* Universal focus ring for keyboard / programmatic focus. */
+*:focus-visible {
+     outline: 2px solid var(--color-focus-ring);
+     outline-offset: 2px;
+     border-radius: 2px;
+}
+
+/* Stronger ring for interactive controls — readable against busy hero photography. */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+     outline: 3px solid var(--color-focus-ring);
+     outline-offset: 3px;
+     box-shadow: 0 0 0 5px rgba(92, 64, 51, 0.18);
+}
+
+/* Card / tile focus — ring lives inside the rounded corner. */
+.card:focus-visible,
+.gallery-item:focus-visible,
+a.gallery-link:focus-visible,
+a.product-card:focus-visible {
+     outline: 3px solid var(--color-focus-ring);
+     outline-offset: -3px;
+     border-radius: inherit;
+}
+
+/* Menu item focus — visible against dark mega-menu panels. */
+nav[aria-label] a:focus-visible,
+.mega-menu a:focus-visible,
+.mega-menu button:focus-visible {
+     outline: 2px solid var(--color-focus-ring);
+     outline-offset: 4px;
+}
+
+/* Placeholder contrast (WCAG 1.4.3). */
+::placeholder { color: var(--color-text-placeholder); opacity: 1; }
+:-ms-input-placeholder { color: var(--color-text-placeholder); }
+::-ms-input-placeholder { color: var(--color-text-placeholder); }
+
+/* Overline / small label contrast. */
+.overline,
+.eyebrow,
+.kicker,
+.small-caps {
+     color: var(--color-text-overline);
+     font-weight: 600;
+}
+
+/* Footer legal text + small footer links. */
+.site-footer,
+footer.site-footer {
+     color: var(--color-text-footer-legal);
+}
+.site-footer a,
+footer.site-footer a {
+     color: var(--color-text-footer-link);
+}
+.site-footer a:hover,
+.site-footer a:focus-visible {
+     color: #ffffff;
+     text-decoration: underline;
+     text-underline-offset: 3px;
+}
+
+/* Respect prefers-reduced-motion for focus transitions. */
+@media (prefers-reduced-motion: reduce) {
+     *:focus-visible { transition: none !important; }
+}
+
+/* sr-only helper, used by labels we want present for AT but hidden visually. */
+.sr-only {
+     position: absolute;
+     width: 1px; height: 1px;
+     padding: 0; margin: -1px;
+     overflow: hidden; clip: rect(0,0,0,0);
+     white-space: nowrap; border: 0;
+}
 /* ============================================
    PRONORM USA — Design System
    Aesthetic: European Luxury Editorial

@@ -1,0 +1,84 @@
+---
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://pronormusa.com/#organization",
+  "name": "Pronorm USA",
+  "alternateName": ["Pronorm", "Pronorm Kuechen"],
+  "url": "https://pronormusa.com/",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://pronormusa.com/images/pronorm-logo.svg",
+    "width": 512,
+    "height": 128
+  },
+  "image": "https://pronormusa.com/images/og/pronorm-og-default.jpg",
+  "description": "Pronorm USA brings authentic German fitted kitchens to the US market - Y-line, X-line, and Proline128 systems manufactured to 0.1mm tolerance in Vlotho, Germany, and installed by authorized US dealers in partnership with Pinnacle Sales.",
+  "slogan": "German Engineering. American Living.",
+  "foundingDate": "1970",
+  "foundingLocation": { "@type": "Place", "name": "Vlotho, Germany" },
+  "parentOrganization": {
+    "@type": "Organization",
+    "@id": "https://www.pronorm.de/#organization",
+    "name": "Pronorm Einbaukuechen GmbH",
+    "url": "https://www.pronorm.de/",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Vlotho",
+      "postalCode": "32602",
+      "addressCountry": "DE"
+    }
+  },
+  "areaServed": [
+    { "@type": "Country", "name": "United States" },
+    { "@type": "Country", "name": "Canada" }
+  ],
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "areaServed": "US",
+      "availableLanguage": ["English"],
+      "url": "https://pronormusa.com/find-a-dealer/"
+    },
+    {
+      "@type": "ContactPoint",
+      "contactType": "dealer inquiries",
+      "areaServed": "US",
+      "availableLanguage": ["English"],
+      "url": "https://pronormusa.com/become-a-dealer/"
+    }
+  ],
+  "sameAs": [
+    "https://www.pronorm.de/",
+    "https://www.pronorm.de/dealer-search-usa/",
+    "https://www.instagram.com/pronormusa/",
+    "https://www.pinterest.com/pronormusa/",
+    "https://www.houzz.com/pro/pronormusa",
+    "https://www.facebook.com/pronormusa/",
+    "https://www.linkedin.com/company/pronorm-usa/",
+    "https://www.youtube.com/@pronormusa"
+  ],
+  "brand": [
+    { "@type": "Brand", "name": "Y-line", "url": "https://pronormusa.com/product-lines/y-line/" },
+    { "@type": "Brand", "name": "X-line", "url": "https://pronormusa.com/product-lines/x-line/" },
+    { "@type": "Brand", "name": "Proline128", "url": "https://pronormusa.com/product-lines/proline128/" }
+  ],
+  "award": [
+    "Golden M (German furniture quality mark)",
+    "GS Tested Safety",
+    "PEFC Certified Wood",
+    "E05 Formaldehyde Emission Class"
+  ],
+  "naics": "337110",
+  "knowsAbout": [
+    "German fitted kitchens",
+    "Handleless kitchen design",
+    "Kitchen ergonomics",
+    "Sustainable kitchen cabinetry",
+    "Kitchen surfaces and finishes"
+  ]
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

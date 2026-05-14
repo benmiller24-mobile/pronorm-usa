@@ -38,6 +38,19 @@
   from = "/why-pronorm/german-vs-american"
   to = "/magazine/german-vs-american-kitchens"
   status = 301
+# AUDIT FIX (#1): /sitemap.xml -> /sitemap-index.xml
+[[redirects]]
+  from = "/sitemap.xml"
+    to = "/sitemap-index.xml"
+      status = 301
+        force = true
+
+        [[redirects]]
+          from = "/sitemap_index.xml"
+            to = "/sitemap-index.xml"
+              status = 301
+                force = true
+                
 
 # --- Catch-all 404 (must be last) ---
 

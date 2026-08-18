@@ -1,0 +1,345 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About Pronorm USA",
+  "url": "https://pronormusa.com/about/",
+  "description": "Pronorm has built fitted kitchens in Vlotho, Germany since 1972. In the US, authorized dealers in California, Arizona, Colorado, Nevada, and Washington plan and install them — German systems, American depths.",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "Pronorm USA",
+    "foundingDate": "1972",
+    "foundingLocation": { "@type": "Place", "name": "Vlotho, Germany" },
+    "areaServed": [
+      { "@type": "State", "name": "California" },
+      { "@type": "State", "name": "Arizona" },
+      { "@type": "State", "name": "Colorado" },
+      { "@type": "State", "name": "Nevada" },
+      { "@type": "State", "name": "Washington" }
+    ]
+  }
+};
+
+const people = [
+  { name: 'Scott Miller', role: 'Arizona and the wider West', place: 'Arizona' },
+  { name: 'Ben Miller', role: 'California and Nevada', place: 'California' },
+  { name: 'Anna Fisher', role: 'Colorado', place: 'Colorado' },
+  { name: 'Gillian Patriquin', role: 'Training, all showrooms', place: 'Colorado' },
+  { name: 'Josh Polvogt', role: 'Washington', place: 'Oregon / Washington' },
+];
+---
+
+<BaseLayout
+  title="About Pronorm USA | German Kitchens, American Showrooms"
+  exactTitle={true}
+  description="Pronorm has built fitted kitchens in Vlotho, Germany since 1972. In the US, authorized dealers in California, Arizona, Colorado, Nevada, and Washington plan and install them — German systems, American depths."
+  schema={schema}
+>
+
+  <section class="page-hero-full">
+    <div class="hero-bg" style="background-image: url('/images/about/sustainability-factory.jpg'); background-size: cover; background-position: center;"></div>
+    <div class="hero-overlay-gradient"></div>
+    <div class="hero-text">
+      <div class="container">
+        <span class="overline animate-in" style="color: var(--color-copper);">About Pronorm USA</span>
+        <h1 class="animate-in animate-in-delay-1" style="color: var(--color-white);">A German kitchen factory.<br/>American showrooms.</h1>
+        <p class="hero-sub animate-in animate-in-delay-2">Pronorm designs and builds fitted kitchens in Vlotho, in Eastern Westphalia. In the United States you meet the brand through authorized dealers — and a small US team that helps those showrooms specify, order, and install.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-lg">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">The Factory</span>
+          <h2 style="margin-top: 0.5rem;">Made in Vlotho since 1972.</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Pronorm’s factory history starts in 1972. For more than 50 years the kitchen has been planned, cut, and finished in Vlotho — a German system built for the room you actually have.</p>
+          <p style="margin-top: 1rem;">Furniture Made in Germany 2020. Climate-neutral since 2021. Hardware from Blum, Hettich, and Grass. Manufacturing tolerance: 0.1mm.</p>
+          <blockquote class="pull-quote">German engineering. American living.</blockquote>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/about/sustainability-solar.jpg" alt="Pronorm factory in Vlotho, Germany" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+
+      <div class="cert-grid reveal">
+        <div class="cert-card"><h4>Furniture Made in Germany</h4><p>Awarded 2020. Designed, built, and tested in Germany.</p></div>
+        <div class="cert-card"><h4>Climate-neutral since 2021</h4><p>Verified factory climate accounting, not a brochure claim.</p></div>
+        <div class="cert-card"><h4>Golden M &amp; GS</h4><p>Quality and tested-safety marks from independent German institutes.</p></div>
+        <div class="cert-card"><h4>ISO 9001 / 14001 / 50001</h4><p>Quality, environmental, and energy management — audited systems.</p></div>
+        <div class="cert-card"><h4>PEFC &amp; E05</h4><p>Certified wood sourcing and low-emission interiors.</p></div>
+        <div class="cert-card"><h4>0.1mm tolerance</h4><p>CNC precision so the kitchen reads as one piece, not a row of boxes.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-ivory">
+    <div class="container">
+      <div class="content-split reverse">
+        <div class="content-text reveal">
+          <span class="overline">American Depths</span>
+          <h2 style="margin-top: 0.5rem;">American depths. Still planned in millimeters.</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>A German kitchen should feel at home on an American wall. Pronorm plans US kitchens for American rooms, American appliances, and the way people stand at a sink.</p>
+          <p style="margin-top: 1rem;">The factory does not switch to inches. The millimeter plan is the point. The depth is for how you live, not a conversion on a spec sheet.</p>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/magazine/santa-barbara-linear-oak/01-kitchen-overview-wide.webp" alt="Linear oak Pronorm kitchen in Santa Barbara" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-dark">
+    <div class="container text-center">
+      <span class="overline" style="color: var(--color-copper);">Pricing</span>
+      <h2 style="margin-top: 0.5rem; color: var(--color-white);">Premium. Not a 6-figure entry ticket.</h2>
+      <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch; color: var(--color-stone);">
+        Typical US installations $40,000–$150,000+. Authentic German engineering without treating six figures as the starting line.
+      </p>
+    </div>
+  </section>
+
+  <section class="section-lg">
+    <div class="container text-center">
+      <span class="overline reveal">The Path</span>
+      <h2 class="reveal" style="margin-top: 0.5rem;">From Vlotho to a showroom near you.</h2>
+      <p class="subtitle reveal" style="margin: 1rem auto 2rem; max-width: 60ch;">A small US team sits with the factory so your dealer can stay on the kitchen. You still buy local. That is on purpose.</p>
+
+      <div class="process-steps">
+        <div class="process-step reveal">
+          <span class="step-number">01</span>
+          <h4>Consultation</h4>
+          <p>Meet an authorized dealer. Talk about the room you have, how you cook, and what the kitchen needs to do.</p>
+        </div>
+        <div class="process-step reveal">
+          <span class="step-number">02</span>
+          <h4>3D plan in Winner</h4>
+          <p>Your dealer draws the kitchen in Winner — millimeters, American depths, appliances, lighting, and organizers as one system.</p>
+        </div>
+        <div class="process-step reveal">
+          <span class="step-number">03</span>
+          <h4>Factory</h4>
+          <p>Vlotho cuts and finishes the run to the plan. This is a factory, not a warehouse of stock boxes.</p>
+        </div>
+        <div class="process-step reveal">
+          <span class="step-number">04</span>
+          <h4>Install through the dealer</h4>
+          <p>Your dealer installs. The US team helps specify, order, and stay with the showroom so the kitchen lands as planned.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-cream">
+    <div class="container">
+      <div class="content-split">
+        <div class="content-text reveal">
+          <span class="overline">Showrooms</span>
+          <h2 style="margin-top: 0.5rem;">Five states. Real showrooms.</h2>
+          <hr class="divider" style="margin: 1.5rem 0;" />
+          <p>Pronorm is in California, Arizona, Colorado, Nevada, and Washington. Eleven showrooms as of August 2026, including Santa Barbara, Walnut Creek, Beverly Hills, the Phoenix area, the Denver area, Las Vegas, and Bellevue.</p>
+          <p style="margin-top: 1rem;">If you do not see your city, say so — we will tell you honestly whether a dealer is in reach.</p>
+          <a href="/find-a-dealer" class="btn btn-primary" style="margin-top: 1.75rem;">
+            Find a dealer
+            <svg viewBox='0 0 24 24' fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="content-image reveal">
+          <img src="/images/about/kitchen-studio-banner.jpg" alt="Pronorm showroom" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">The US Team</span>
+        <h2 style="margin-top: 0.5rem;">People you can actually reach</h2>
+      </div>
+
+      <div class="people-grid">
+        {people.map((person) => (
+          <div class="person-card reveal">
+            <h4>{person.name}</h4>
+            <p>{person.role}</p>
+            <span class="person-place">{person.place}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-ivory">
+    <div class="container">
+      <div class="writing-block reveal">
+        <span class="overline">In Writing</span>
+        <h2 style="margin-top: 0.5rem;">What we will say in writing.</h2>
+        <hr class="divider" style="margin: 1.5rem 0;" />
+        <ul class="claim-list">
+          <li>5-year manufacturer guarantee</li>
+          <li>100+ door fronts</li>
+          <li>Soft-close standard — Blum, Hettich, and Grass</li>
+          <li>PEFC, E05, and climate-neutral manufacturing</li>
+        </ul>
+        <a href="/why-pronorm" class="btn btn-outline" style="margin-top: 1.75rem;">
+          Why Pronorm
+          <svg viewBox='0 0 24 24' fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <ConsultationCTA
+    heading="Come see a kitchen, not a rendering."
+    text="Walk into a showroom in California, Arizona, Colorado, Nevada, or Washington — and start with a dealer, not a catalog."
+  />
+</BaseLayout>
+
+<style>
+  .page-hero-full {
+    position: relative;
+    min-height: 70vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .page-hero-full .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .hero-overlay-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(to top, rgba(26,26,26,0.85) 0%, rgba(26,26,26,0.2) 60%, rgba(26,26,26,0.1) 100%);
+  }
+
+  .hero-text {
+    position: relative;
+    z-index: 3;
+    padding-bottom: var(--space-4xl);
+  }
+
+  .hero-sub {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--color-sand);
+    margin-top: 1rem;
+    max-width: 52ch;
+  }
+
+  .content-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4xl);
+    align-items: center;
+  }
+
+  .content-split.reverse .content-text { order: 2; }
+  .content-split.reverse .content-image { order: 1; }
+
+  .pull-quote {
+    margin: 1.75rem 0 0;
+    padding-left: 1.1rem;
+    border-left: 3px solid var(--color-copper);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--color-black);
+  }
+
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    margin-top: var(--space-3xl);
+  }
+
+  .cert-card {
+    padding: 1.5rem;
+    background: var(--color-ivory);
+    border-top: 3px solid var(--color-copper);
+  }
+
+  .cert-card h4 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .cert-card p { font-size: 0.82rem; color: var(--color-graphite); }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+    text-align: left;
+    margin-top: var(--space-2xl);
+  }
+
+  .step-number {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--color-copper);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .process-step h4 { margin-bottom: 0.5rem; }
+  .process-step p { font-size: 0.85rem; color: var(--color-graphite); }
+
+  .people-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+
+  .person-card {
+    padding: 1.6rem 0;
+    border-top: 1px solid var(--color-sand);
+  }
+
+  .person-card h4 { margin-bottom: 0.35rem; }
+  .person-card p { font-size: 0.9rem; color: var(--color-graphite); }
+  .person-place {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-copper);
+  }
+
+  .writing-block { max-width: 60ch; }
+
+  .claim-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--color-graphite);
+  }
+
+  .claim-list li { margin: 0.45rem 0; }
+
+  @media (max-width: 1024px) {
+    .cert-grid { grid-template-columns: repeat(2, 1fr); }
+    .process-steps { grid-template-columns: repeat(2, 1fr); }
+    .people-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .content-split { grid-template-columns: 1fr; }
+    .content-split.reverse .content-text { order: 1; }
+    .content-split.reverse .content-image { order: 2; }
+    .cert-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr; }
+    .people-grid { grid-template-columns: 1fr; }
+  }
+</style>

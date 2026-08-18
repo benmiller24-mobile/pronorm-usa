@@ -95,11 +95,12 @@ function isActive(href: string) {
         </li>
 
         <li class="has-mega">
-          <a href="/why-pronorm" class:list={[{ active: isActive('/why-pronorm') }]}>
+          <a href="/about" class:list={[{ active: isActive('/about') || isActive('/why-pronorm') }]}>
             About
             <svg class="chev" viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg>
           </a>
           <div class="nav-mega">
+            <a href="/about">About Pronorm USA</a>
             <a href="/why-pronorm">Why Pronorm</a>
             <a href="/why-pronorm#sustainability">Sustainability</a>
             <a href="/become-a-dealer">For Dealers</a>

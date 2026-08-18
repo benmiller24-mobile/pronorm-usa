@@ -7,6 +7,7 @@ interface Props {
   ogType?: string;
   schema?: object;
   noindex?: boolean;
+  exactTitle?: boolean;
 }
 
 const {
@@ -17,10 +18,15 @@ const {
   ogType = 'website',
   schema,
   noindex = false,
+  exactTitle = false,
 } = Astro.props;
 
 const siteName = 'Pronorm USA';
-const fullTitle = title === 'Home' ? `${siteName} — German Fitted Kitchens` : `${title} | ${siteName}`;
+const fullTitle = exactTitle
+  ? title
+  : title === 'Home'
+    ? `${siteName} — German Fitted Kitchens`
+    : `${title} | ${siteName}`;
 const fullOgImage = new URL(ogImage, Astro.site).href;
 
 const defaultSchema = {

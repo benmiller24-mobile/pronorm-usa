@@ -6,7 +6,7 @@ export default defineConfig({
   site: 'https://pronormusa.com',
   integrations: [
     sitemap({
-      filter: (page) => !['/dealer-portal', '/thank-you', '/404'].some((p) => page.includes(p)),    }),
+      filter: (page) => !['/dealer-portal', '/thank-you', '/404', '/become-a-dealer'].some((p) => page.includes(p)),    }),
     react(),
   ],
   build: {

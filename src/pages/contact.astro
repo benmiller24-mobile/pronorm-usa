@@ -3,10 +3,10 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
 const contactSchema = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": "Organization",
   "name": "Pronorm USA",
-  "description": "Exclusive US distributor of Pronorm German fitted kitchens, represented by Pinnacle Sales.",
-  "url": "https://pronormusa.com",
+  "description": "Pronorm German fitted kitchens for authorized dealers in California, Arizona, Colorado, Nevada, and Washington.",
+  "url": "https://pronormusa.com/",
   "telephone": "+1-239-404-4568",
   "email": "info@pronormusa.com",
   "logo": "https://pronormusa.com/images/pronorm-logo.svg",
@@ -16,19 +16,25 @@ const contactSchema = {
     "https://www.pinterest.com/pronormusa",
     "https://www.houzz.com/pro/pronormusa"
   ],
-  "areaServed": { "@type": "Country", "name": "United States" },
+  "areaServed": [
+    { "@type": "State", "name": "California" },
+    { "@type": "State", "name": "Arizona" },
+    { "@type": "State", "name": "Colorado" },
+    { "@type": "State", "name": "Nevada" },
+    { "@type": "State", "name": "Washington" }
+  ],
   "brand": { "@type": "Brand", "name": "Pronorm" }
 };
 ---
 
-<BaseLayout title="Contact" description="Contact Pronorm USA — questions about German fitted kitchens, dealer partnerships, or design consultations. Exclusive US distribution by Pinnacle Sales." schema={contactSchema}>
+<BaseLayout title="Contact" description="Contact Pronorm USA — questions about German fitted kitchens, existing dealer support, or design consultations." schema={contactSchema}>
 
   <section class="page-hero" style="position:relative; overflow:hidden;">
     <div style="position:absolute;inset:0;background-image:url('/images/about/kitchen-studio-banner.jpg');background-size:cover;background-position:center;opacity:0.1;"></div>
     <div class="container" style="position:relative;z-index:1;">
       <span class="overline animate-in">Contact</span>
       <h1 class="animate-in animate-in-delay-1" style="font-size: clamp(2rem, 4vw, 3rem);">Get in Touch</h1>
-      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">Whether you're a homeowner exploring German kitchen design, a designer, or a dealer — we'd love to hear from you.</p>
+      <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">Whether you're a homeowner exploring German kitchen design, a designer, or an existing dealer — we'd love to hear from you.</p>
     </div>
   </section>
 
@@ -43,7 +49,7 @@ const contactSchema = {
           <div class="contact-info" style="margin-top: 2.5rem;">
             <div class="contact-item">
               <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Pronorm USA</h4>
-              <p style="margin-top: 0.3rem;">Exclusive US distribution by<br/><a href="https://pinnaclesales.biz" target="_blank" rel="noopener" style="color: var(--color-copper);">Pinnacle Sales</a></p>
+              <p style="margin-top: 0.3rem;">German fitted kitchens for California, Arizona, Colorado, Nevada, and Washington.</p>
             </div>
             <div class="contact-item">
               <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Phone</h4>
@@ -55,7 +61,7 @@ const contactSchema = {
             </div>
             <div class="contact-item">
               <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Territory</h4>
-              <p style="margin-top: 0.3rem;">Serving dealers and homeowners<br/>across the United States</p>
+              <p style="margin-top: 0.3rem;">Showrooms in California, Arizona,<br/>Colorado, Nevada, and Washington</p>
             </div>
             <div class="contact-item">
               <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Follow</h4>
@@ -74,7 +80,7 @@ const contactSchema = {
           <div class="form-row"><div class="form-group"><label>Name *</label><input type="text" name="name" required /></div><div class="form-group"><label>Email *</label><input type="email" name="email" required /></div></div>
           <div class="form-group"><label>Subject</label>
             <select name="subject">
-              <option>General Inquiry</option><option>Design Consultation</option><option>Dealer Partnership</option><option>Interior Designer Inquiry</option><option>Press / Media</option><option>Other</option>
+              <option>General Inquiry</option><option>Design Consultation</option><option>Existing Dealer Support</option><option>Interior Designer Inquiry</option><option>Press / Media</option><option>Other</option>
             </select>
           </div>
           <div class="form-group"><label>Message *</label><textarea name="message" rows="6" required placeholder="How can we help?"></textarea></div>

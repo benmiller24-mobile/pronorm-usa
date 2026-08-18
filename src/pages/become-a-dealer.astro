@@ -1,17 +1,57 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 
+const faqs = [
+  {
+    q: "Who can become a Pronorm dealer?",
+    a: "We partner with kitchen dealers who operate a professional showroom, employ trained kitchen designers, and serve homeowners and builders who value design over price. Whether you are a multi-line dealer adding a German brand or a design studio looking for a premium anchor line, apply — partnerships are open nationwide.",
+  },
+  {
+    q: "Are territories protected?",
+    a: "Yes. Territories are protected nationwide. Exclusive geographic territories mean you are not competing against another Pronorm dealer in your market.",
+  },
+  {
+    q: "What does a typical Pronorm kitchen cost to install?",
+    a: "Typical US installations are $40,000–$150,000+ depending on size, complexity, and finish. That is the range your designers can sell — premium German engineering without treating six figures as the starting line.",
+  },
+  {
+    q: "What does American depths mean?",
+    a: "Pronorm plans US kitchens for American rooms, American appliances, and the way people stand at a sink. The factory still works in millimeters. The depth is for how Americans live, not a conversion on a spec sheet.",
+  },
+  {
+    q: "Do I have to carry WW Wood lines?",
+    a: "No. You do not have to carry WW Wood lines to become a Pronorm dealer.",
+  },
+  {
+    q: "How do I start?",
+    a: "Apply on this page. A dedicated US team will contact you within 2 business days to discuss partnership, territory, and next steps.",
+  },
+];
+
 const schema = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Become a Pronorm Dealer",
-  "description": "Partner with Pronorm USA. Protected territories, German engineering, dedicated US support from Pinnacle Sales."
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "Become a Pronorm Dealer",
+      "url": "https://pronormusa.com/become-a-dealer/",
+      "description": "Partner with Pronorm USA. Protected territories nationwide, German engineering, and a dedicated US team.",
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": faqs.map((f) => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": { "@type": "Answer", "text": f.a },
+      })),
+    },
+  ],
 };
 ---
 
 <BaseLayout
     title="Become a Dealer"
-    description="Become an authorized Pronorm German kitchen dealer. Protected territories, strong margins, design exclusivity, and dedicated US support from Pinnacle Sales."
+    description="Become an authorized Pronorm German kitchen dealer. Protected territories nationwide, strong margins, design exclusivity, and dedicated US support."
     schema={schema}
 >
 
@@ -61,7 +101,7 @@ const schema = {
         <div class="benefit-card reveal">
           <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
           <h4>Dedicated US Support</h4>
-          <p>Pinnacle Sales manages product specification, order management, logistics from Germany, and after-sale service. You focus on selling.</p>
+          <p>A dedicated US team handles product specification, order management, logistics from Germany, and after-sale service. You focus on selling.</p>
         </div>
         <div class="benefit-card reveal">
           <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
@@ -101,6 +141,33 @@ const schema = {
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
+        <span class="overline">Dealer FAQ</span>
+        <h2 style="margin-top: 0.5rem;">Questions from dealers</h2>
+      </div>
+      <div class="faq-list">
+        {faqs.map((faq) => (
+          <details class="faq-item reveal">
+            <summary>
+              <h3>{faq.q}</h3>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <p>{faq.a}</p>
+          </details>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top: 2.5rem;">
+        <a href="#apply" class="btn btn-primary">
+          Apply Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Application Form -->
   <section class="section-lg" id="apply">
     <div class="container">
@@ -108,7 +175,7 @@ const schema = {
         <div class="reveal">
           <span class="overline">Apply</span>
           <h2 style="margin-top: 0.5rem;">Start the Conversation</h2>
-          <p style="margin-top: 1rem;">Submit your application and a Pinnacle Sales representative will contact you within 2 business days to discuss partnership opportunities.</p>
+          <p style="margin-top: 1rem;">Submit your application and a member of the US team will contact you within 2 business days to discuss partnership opportunities.</p>
         </div>
         <form class="apply-form" name="dealer-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you">
           <input type="hidden" name="form-name" value="dealer-application" />
@@ -191,6 +258,29 @@ const schema = {
     font-size: 0.82rem;
     color: var(--color-warm-gray);
   }
+
+  .faq-list { display: flex; flex-direction: column; max-width: 48rem; margin: 0 auto; }
+
+  .faq-item { border-bottom: var(--border-light); padding: 1.5rem 0; }
+
+  .faq-item summary {
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+
+  .faq-item summary h3 {
+    font-size: 1.15rem; font-weight: 400; padding-right: 1rem;
+  }
+
+  .faq-item summary svg {
+    flex-shrink: 0; transition: transform var(--duration-normal) var(--ease-out);
+    color: var(--color-copper);
+  }
+
+  .faq-item[open] summary svg { transform: rotate(180deg); }
+
+  .faq-item p { margin-top: 1rem; color: var(--color-graphite); line-height: 1.7; padding-right: 2rem; }
 
   .apply-grid {
     display: grid;

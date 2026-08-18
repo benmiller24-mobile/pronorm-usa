@@ -28,7 +28,7 @@ Premium website for Pronorm German fitted kitchens in the United States. Built w
 ### B2B / Dealer
 | Page | URL | Purpose |
 |------|-----|---------|
-| Become a Dealer | `/become-a-dealer` | Dealer partnership application |
+| Pronorm dealer support | `/become-a-dealer` | Existing partners only (noindex) |
 
 ### Utility
 | Page | URL |
@@ -39,7 +39,7 @@ Premium website for Pronorm German fitted kitchens in the United States. Built w
 
 ## Lead Generation Features
 
-- **5 Netlify Forms**: consultation, dealer-application, contact, newsletter, magazine-subscribe
+- **4 Netlify Forms**: consultation, contact, newsletter, magazine-subscribe
 - **Consultation CTA** on every major page
 - **Zip code dealer search** on homepage and Find a Dealer
 - **Newsletter signup** in footer (every page) and Magazine
@@ -130,7 +130,3 @@ npm run preview  # Preview production build
 - **Typography**: Cormorant Garamond (display) + DM Sans (body)
 - **Colors**: Warm neutrals with copper accent (#b87333)
 - **Animations**: Scroll-reveal, hover transitions, staggered load animations
-
----
-
-*Exclusive US distribution by [Pinnacle Sales](https://pinnaclesales.biz)*

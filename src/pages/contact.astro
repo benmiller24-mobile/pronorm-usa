@@ -3,10 +3,10 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
 const contactSchema = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": "Organization",
   "name": "Pronorm USA",
-  "description": "Exclusive US distributor of Pronorm German fitted kitchens, represented by Pinnacle Sales.",
-  "url": "https://pronormusa.com",
+  "description": "Pronorm USA — German fitted kitchens, American depths. Questions about kitchens, dealer partnerships, or design consultations.",
+  "url": "https://pronormusa.com/",
   "telephone": "+1-239-404-4568",
   "email": "info@pronormusa.com",
   "logo": "https://pronormusa.com/images/pronorm-logo.svg",
@@ -21,7 +21,7 @@ const contactSchema = {
 };
 ---
 
-<BaseLayout title="Contact" description="Contact Pronorm USA — questions about German fitted kitchens, dealer partnerships, or design consultations. Exclusive US distribution by Pinnacle Sales." schema={contactSchema}>
+<BaseLayout title="Contact" description="Contact Pronorm USA — questions about German fitted kitchens, dealer partnerships, or design consultations." schema={contactSchema}>
 
   <section class="page-hero" style="position:relative; overflow:hidden;">
     <div style="position:absolute;inset:0;background-image:url('/images/about/kitchen-studio-banner.jpg');background-size:cover;background-position:center;opacity:0.1;"></div>
@@ -43,7 +43,7 @@ const contactSchema = {
           <div class="contact-info" style="margin-top: 2.5rem;">
             <div class="contact-item">
               <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Pronorm USA</h4>
-              <p style="margin-top: 0.3rem;">Exclusive US distribution by<br/><a href="https://pinnaclesales.biz" target="_blank" rel="noopener" style="color: var(--color-copper);">Pinnacle Sales</a></p>
+              <p style="margin-top: 0.3rem;">German fitted kitchens.<br/>American depths.</p>
             </div>
             <div class="contact-item">
               <h4 style="font-family: var(--font-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;">Phone</h4>

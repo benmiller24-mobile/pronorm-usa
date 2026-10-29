@@ -9,11 +9,12 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/react": "^4.4.2",
-    "@astrojs/sitemap": "^3.2.0",
+    "@astrojs/react": "^7.1.2",
+    "@astrojs/sitemap": "^3.7.4",
     "@supabase/supabase-js": "^2.97.0",
-    "astro": "^5.0.0",
+    "astro": "^7.4.4",
     "jspdf": "^4.2.0",
+    "oxc-transform-react": "^0.145.0",
     "pg": "^8.13.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

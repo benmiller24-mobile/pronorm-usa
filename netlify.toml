@@ -3,6 +3,10 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# Astro 7 requires Node >= 22.23.4 — pin it so Netlify never builds with an older default.
+[build.environment]
+  NODE_VERSION = "22.23.4"
+
 [functions]
   node_bundler = "esbuild"
 

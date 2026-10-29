@@ -15,5 +15,15 @@ export default defineConfig({
   ],
   build: {
     inlineStylesheets: 'auto'
+  },
+  vite: {
+    build: {
+      // Vite 8 minifies CSS with Lightning CSS, which drops vendor prefixes it
+      // thinks the targets don't need. Without explicit targets it removed
+      // -webkit-backdrop-filter (still required by Safari < 18 / iOS 17) from
+      // the scrolled header. Same browsers as Vite's "baseline widely
+      // available" default, with Safari/iOS widened to 15.
+      cssTarget: ['chrome111', 'edge111', 'firefox114', 'safari15', 'ios15'],
+    },
   }
 });

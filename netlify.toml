@@ -10,12 +10,6 @@
 [functions]
   node_bundler = "esbuild"
 
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-  force = true
-
 # --- 301 Redirects for broken links (audit fix) ---
 
 [[redirects]]

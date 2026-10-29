@@ -148,8 +148,8 @@ function isActive(href: string) {
   }
   .site-header.scrolled {
     background:rgba(26,26,26,.98);
-    backdrop-filter:blur(20px) saturate(1.2);
     -webkit-backdrop-filter:blur(20px) saturate(1.2);
+    backdrop-filter:blur(20px) saturate(1.2);
     box-shadow:0 2px 30px rgba(0,0,0,.2);
   }
   .nav-spacer { height:64px; }
@@ -195,7 +195,7 @@ function isActive(href: string) {
     position:absolute; top:100%; left:50%;
     transform:translateX(-50%) translateY(6px);
     min-width:260px; background:rgba(24,24,24,.98);
-    backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px);
     border:1px solid rgba(255,255,255,.06);
     border-top:1.5px solid var(--color-copper);
     border-radius:0 0 6px 6px; padding:.6rem 0;
@@ -285,7 +285,7 @@ function isActive(href: string) {
 
   .mobile-shade {
     position:fixed; inset:0; z-index:998; background:rgba(0,0,0,.55);
-    backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);
     opacity:0; visibility:hidden; transition:opacity .35s, visibility .35s;
   }
   .mobile-shade.open { opacity:1; visibility:visible; }
@@ -321,7 +321,7 @@ function isActive(href: string) {
     .nav-mega, .nav-mega.mega-wide {
       position:static; transform:none; opacity:1; visibility:visible; pointer-events:auto;
       background:transparent; border:none; border-radius:0;
-      box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none;
+      box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none;
       min-width:0; display:none; padding:0 0 .5rem .8rem; grid-template-columns:1fr;
     }
     .mega-col + .mega-col { border:none; }

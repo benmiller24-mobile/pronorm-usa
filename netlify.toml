@@ -3,14 +3,12 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# Astro 7 requires Node >= 22.23.4 — pin it so Netlify never builds with an older default.
+[build.environment]
+  NODE_VERSION = "22.23.4"
+
 [functions]
   node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-  force = true
 
 # --- 301 Redirects for broken links (audit fix) ---
 
@@ -38,19 +36,29 @@
   from = "/why-pronorm/german-vs-american"
   to = "/magazine/german-vs-american-kitchens"
   status = 301
-# AUDIT FIX (#1): /sitemap.xml -> /sitemap-index.xml
+# Sitemaps: /sitemap.xml is a real file (copied from sitemap-index.xml at
+# build time — see astro.config.mjs). Never 301 a sitemap; 200-rewrite the
+# legacy underscore spelling instead.
 [[redirects]]
-  from = "/sitemap.xml"
-    to = "/sitemap-index.xml"
-      status = 301
-        force = true
+  from = "/sitemap_index.xml"
+  to = "/sitemap-index.xml"
+  status = 200
+  force = true
 
-        [[redirects]]
-          from = "/sitemap_index.xml"
-            to = "/sitemap-index.xml"
-              status = 301
-                force = true
-                
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=UTF-8"
+
+[[headers]]
+  for = "/sitemap-index.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=UTF-8"
+
+[[headers]]
+  for = "/sitemap-0.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=UTF-8"
 
 # --- Catch-all 404 (must be last) ---
 
@@ -66,7 +74,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-        Content-Security-Policy-Report-Only = "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://*.netlify.app; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://*.supabase.co; frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com; object-src 'none'; upgrade-insecure-requests"
+    Content-Security-Policy-Report-Only = "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://*.netlify.app; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://*.supabase.co; frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com; object-src 'none'; upgrade-insecure-requests"
 
 # HTML pages - don't cache, always serve fresh
 [[headers]]

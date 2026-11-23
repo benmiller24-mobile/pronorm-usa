@@ -1,0 +1,199 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+import { comparisons, LAST_REVIEWED, type Comparison } from '@/data/comparisons';
+
+export function getStaticPaths() {
+  return comparisons.map((c) => ({ params: { slug: c.slug }, props: { comparison: c } }));
+}
+
+interface Props {
+  comparison: Comparison;
+}
+
+const { comparison: c } = Astro.props;
+const url = `https://pronormusa.com/compare/${c.slug}/`;
+const others = comparisons.filter((o) => o.slug !== c.slug);
+const reviewedLabel = new Date(`${LAST_REVIEWED}T12:00:00Z`).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: c.title,
+    description: c.description,
+    mainEntityOfPage: url,
+    author: { '@type': 'Organization', name: 'Pronorm USA', url: 'https://pronormusa.com/' },
+    publisher: { '@id': 'https://pronormusa.com/#organization' },
+    datePublished: LAST_REVIEWED,
+    dateModified: LAST_REVIEWED,
+    about: [
+      { '@type': 'Brand', name: 'Pronorm' },
+      { '@type': 'Brand', name: c.brand },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: c.faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://pronormusa.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Compare', item: 'https://pronormusa.com/compare/' },
+      { '@type': 'ListItem', position: 3, name: `Pronorm vs ${c.brand}`, item: url },
+    ],
+  },
+];
+---
+
+<BaseLayout title={c.title} description={c.description} schema={schema} ogType="article">
+  <article class="compare-page">
+    <header class="compare-header section">
+      <div class="container-narrow">
+        <a href="/compare" class="back-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All comparisons
+        </a>
+        <span class="overline" style="margin-top: 1.5rem; display: block;">Brand comparison</span>
+        <h1>Pronorm vs {c.brand}</h1>
+        <p class="subtitle">German fitted kitchens compared for US homeowners, designers, and dealers.</p>
+        <p class="compare-summary">{c.summary}</p>
+        <p class="compare-meta">By Pronorm USA · Last reviewed <time datetime={LAST_REVIEWED}>{reviewedLabel}</time> · We sell Pronorm, so read this as one side’s honest account and check the sources below.</p>
+      </div>
+    </header>
+
+    <section class="compare-body">
+      <div class="container-narrow">
+        <h2>Pronorm and {c.brand} at a glance</h2>
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th scope="col"><span class="visually-hidden">Attribute</span></th>
+                <th scope="col">Pronorm</th>
+                <th scope="col">{c.brand}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.rows.map((r) => (
+                <tr>
+                  <th scope="row">{r.label}</th>
+                  <td data-brand="Pronorm">{r.pronorm}</td>
+                  <td data-brand={c.brand}>{r.other}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2>When Pronorm is the better fit</h2>
+        <ul>
+          {c.choosePronorm.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <h2>When {c.brand} is the better fit</h2>
+        <ul>
+          {c.chooseOther.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <h2>How to compare quotes fairly</h2>
+        <p>Neither brand publishes a US price list. Give both showrooms the same floor plan, the same appliance list, and the same front type, then ask each for a written quote that separates cabinetry, freight, tariff, and installation. Ask which base and tall cabinet depths are being ordered and whether any fillers or custom-depth charges are included.</p>
+
+        <h2>Pronorm vs {c.brand}: common questions</h2>
+        <div class="compare-faqs">
+          {c.faqs.map((f) => (
+            <div class="compare-faq">
+              <h3>{f.q}</h3>
+              <p>{f.a}</p>
+            </div>
+          ))}
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="compare-sources">
+          {c.sources.map((s) => (
+            <li><a href={s.url} rel="noopener nofollow" target="_blank">{s.label}</a></li>
+          ))}
+          <li>Pronorm facts: <a href="/faq">Pronorm USA FAQ</a> and <a href="/about">About Pronorm USA</a></li>
+        </ul>
+
+        <h2>More comparisons</h2>
+        <ul>
+          {others.map((o) => (
+            <li><a href={`/compare/${o.slug}`}>Pronorm vs {o.brand}</a></li>
+          ))}
+          <li><a href="/magazine/german-vs-american-kitchens">German fitted kitchens vs American cabinetry</a></li>
+        </ul>
+
+        <div class="compare-cta">
+          <a class="btn btn-primary" href="/find-a-dealer">Find a Pronorm dealer</a>
+          <a class="btn btn-outline" href="/become-a-dealer">Become a dealer</a>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <ConsultationCTA />
+</BaseLayout>
+
+<style>
+  .compare-header { padding-bottom: var(--space-xl); }
+  .compare-header h1 { margin-top: 0.5rem; font-size: clamp(2rem, 4vw, 3.2rem); }
+  .compare-header .subtitle { margin-top: 0.75rem; }
+  .compare-summary { margin-top: 1.75rem; font-size: 1.1rem; line-height: 1.75; color: var(--color-charcoal); }
+  .compare-meta { margin-top: 1.5rem; padding-top: 1.25rem; border-top: var(--border-light); font-size: 0.82rem; color: var(--color-graphite); line-height: 1.6; }
+  .back-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 500; color: var(--color-graphite); text-transform: uppercase; letter-spacing: 0.08em; }
+  .back-link:hover { color: var(--color-copper); }
+
+  .compare-body { padding-bottom: var(--space-4xl); }
+  .compare-body h2 { margin-top: 2.75rem; margin-bottom: 1rem; font-size: 1.7rem; }
+  .compare-body p, .compare-body li { line-height: 1.8; }
+  .compare-body ul { padding-left: 1.25rem; }
+  .compare-body li { margin-bottom: 0.5rem; }
+  .compare-body a:not(.btn) { text-decoration: underline; text-underline-offset: 3px; }
+
+  .compare-table-wrap { overflow-x: auto; border: var(--border-medium); border-radius: 4px; background: var(--color-pure-white); }
+  .compare-table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 0.95rem; }
+  .compare-table th, .compare-table td { padding: 0.9rem 1rem; text-align: left; vertical-align: top; border-bottom: var(--border-light); line-height: 1.55; }
+  .compare-table thead th { background: var(--color-ivory); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-charcoal); }
+  .compare-table tbody th { width: 24%; font-weight: 600; color: var(--color-charcoal); }
+  .compare-table tbody td { width: 38%; color: var(--color-graphite); }
+  .compare-table tbody tr:last-child th, .compare-table tbody tr:last-child td { border-bottom: none; }
+
+  /* Phones: stack each row so both brands are readable without sideways scrolling. */
+  @media (max-width: 640px) {
+    .compare-table-wrap { overflow-x: visible; }
+    .compare-table { min-width: 0; }
+    .compare-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); }
+    .compare-table, .compare-table tbody, .compare-table tr, .compare-table tbody th, .compare-table tbody td { display: block; width: 100%; }
+    .compare-table tbody tr { padding: 1rem; border-bottom: var(--border-light); }
+    .compare-table tbody tr:last-child { border-bottom: none; }
+    .compare-table tbody th, .compare-table tbody td { padding: 0; border-bottom: none; }
+    .compare-table tbody th { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.6rem; }
+    .compare-table tbody td { margin-bottom: 0.6rem; }
+    .compare-table tbody td:last-child { margin-bottom: 0; }
+    .compare-table tbody td::before { content: attr(data-brand); display: block; font-size: 0.8rem; font-weight: 600; color: var(--color-charcoal); }
+  }
+
+  .compare-faq { padding: 1.25rem 0; border-bottom: var(--border-light); }
+  .compare-faq:last-child { border-bottom: none; }
+  .compare-faq h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+  .compare-faq p { margin: 0; color: var(--color-graphite); }
+
+  .compare-sources { font-size: 0.9rem; }
+  .compare-cta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 3rem; }
+
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+</style>

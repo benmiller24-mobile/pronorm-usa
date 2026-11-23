@@ -1,11 +1,13 @@
 ---
+import OrganizationSchema from './OrganizationSchema.astro';
+
 interface Props {
   title: string;
   description: string;
   canonical?: string;
   ogImage?: string;
   ogType?: string;
-  schema?: object;
+  schema?: object | object[];
   noindex?: boolean;
   exactTitle?: boolean;
 }
@@ -29,17 +31,9 @@ const fullTitle = exactTitle
     : `${title} | ${siteName}`;
 const fullOgImage = new URL(ogImage, Astro.site).href;
 
-const defaultSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Pronorm USA",
-  "url": "https://pronormusa.com",
-  "logo": "https://pronormusa.com/images/pronorm-logo.svg",
-  "description": "German fitted kitchens by Pronorm — precision-engineered cabinetry brought to American homes.",
-  "sameAs": [
-    "https://www.instagram.com/pronormusa"
-  ]
-};
+// The full Organization entity (OrganizationSchema.astro) is emitted on every page so
+// answer engines always get the same company facts. Page-level schema is added after it.
+const pageSchemas = Array.isArray(schema) ? schema : schema ? [schema] : [];
 ---
 <head>
   <meta charset="UTF-8" />
@@ -105,5 +99,8 @@ const defaultSchema = {
   </noscript>
 
   <!-- Schema.org -->
-  <script type="application/ld+json" set:html={JSON.stringify(schema || defaultSchema)} />
+  <OrganizationSchema />
+  {pageSchemas.map((s) => (
+    <script type="application/ld+json" set:html={JSON.stringify(s)} />
+  ))}
 </head>

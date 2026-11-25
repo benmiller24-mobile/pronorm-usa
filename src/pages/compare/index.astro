@@ -1,0 +1,100 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ConsultationCTA from '@/components/ConsultationCTA.astro';
+import { comparisons, pronormFacts, LAST_REVIEWED } from '@/data/comparisons';
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Pronorm vs Other German Kitchen Brands',
+    url: 'https://pronormusa.com/compare/',
+    dateModified: LAST_REVIEWED,
+    hasPart: comparisons.map((c) => ({
+      '@type': 'Article',
+      headline: c.title,
+      url: `https://pronormusa.com/compare/${c.slug}/`,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://pronormusa.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Compare', item: 'https://pronormusa.com/compare/' },
+    ],
+  },
+];
+
+const facts = [
+  { label: 'Made in', value: pronormFacts.madeIn },
+  { label: 'Since', value: pronormFacts.founded },
+  { label: 'Lines', value: pronormFacts.lines },
+  { label: 'US cabinet depth', value: pronormFacts.depth },
+  { label: 'US showrooms', value: pronormFacts.usPresence },
+  { label: 'Typical price', value: pronormFacts.price },
+  { label: 'Lead time', value: pronormFacts.leadTime },
+  { label: 'Hardware', value: pronormFacts.hardware },
+];
+---
+
+<BaseLayout
+  title="Pronorm vs Other German Kitchen Brands"
+  description="How Pronorm compares with Leicht, Bauformat, Nobilia, SieMatic, Häcker, Poggenpohl, Bulthaup, and Eggersmann for a US kitchen: factories, US showrooms, price position, American depths, and lead times."
+  schema={schema}
+>
+  <section class="compare-index-header section">
+    <div class="container-narrow">
+      <span class="overline">Brand comparisons</span>
+      <h1>How Pronorm Compares with Other German Kitchen Brands</h1>
+      <p class="subtitle">Side-by-side facts for US homeowners, designers, and dealers shortlisting a German fitted kitchen.</p>
+      <p class="compare-index-lead">Pronorm sits in the premium mid-range of German kitchens: above the volume brands on customization and fit, below the luxury names on price. Its clearest difference in the US is that base and tall cabinets ship at an American depth of 625 mm as standard. Each page below says where Pronorm is the better fit and where the other brand is.</p>
+    </div>
+  </section>
+
+  <section class="compare-index-body">
+    <div class="container-narrow">
+      <ul class="compare-list">
+        {comparisons.map((c) => (
+          <li>
+            <h2><a href={`/compare/${c.slug}`}>Pronorm vs {c.brand}</a></h2>
+            <p>{c.summary}</p>
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="facts-heading">Pronorm USA facts used in every comparison</h2>
+      <dl class="compare-facts">
+        {facts.map((f) => (
+          <div>
+            <dt>{f.label}</dt>
+            <dd>{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <p class="compare-index-note">Comparing German with American-made cabinetry instead? Read <a href="/magazine/german-vs-american-kitchens">German fitted kitchens vs American cabinetry</a>.</p>
+    </div>
+  </section>
+
+  <ConsultationCTA />
+</BaseLayout>
+
+<style>
+  .compare-index-header { padding-bottom: var(--space-xl); }
+  .compare-index-header h1 { margin-top: 0.5rem; font-size: clamp(2rem, 4vw, 3.2rem); }
+  .compare-index-header .subtitle { margin-top: 0.75rem; }
+  .compare-index-lead { margin-top: 1.75rem; font-size: 1.1rem; line-height: 1.75; color: var(--color-charcoal); }
+  .compare-index-body { padding-bottom: var(--space-4xl); }
+  .compare-index-body a { text-decoration: underline; text-underline-offset: 3px; }
+  .compare-list { list-style: none; padding: 0; margin: 0; }
+  .compare-list li { padding: 1.75rem 0; border-top: var(--border-light); }
+  .compare-list h2 { font-size: 1.6rem; margin-bottom: 0.6rem; }
+  .compare-list p { margin: 0; line-height: 1.75; color: var(--color-graphite); }
+  .facts-heading { margin-top: 3rem; font-size: 1.6rem; }
+  .compare-facts { margin: 1.25rem 0 0; border-top: var(--border-light); }
+  .compare-facts > div { display: grid; grid-template-columns: minmax(8rem, 28%) 1fr; gap: 1rem; padding: 0.9rem 0; border-bottom: var(--border-light); }
+  .compare-facts dt { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-charcoal); }
+  .compare-facts dd { margin: 0; color: var(--color-graphite); line-height: 1.6; }
+  .compare-index-note { margin-top: 2rem; }
+  @media (max-width: 560px) { .compare-facts > div { grid-template-columns: 1fr; gap: 0.25rem; } }
+</style>

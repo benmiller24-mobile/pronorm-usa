@@ -2,17 +2,97 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ConsultationCTA from '@/components/ConsultationCTA.astro';
 
+/*
+  Colour lists follow Pronorm's programme overview for the 2027 collection
+  (Y-line / X-line, 09/2026). Names only: screen colours cannot represent a
+  real front, so the page sends people to a dealer for samples.
+*/
+const surfaceTypes = [
+  {
+    name: 'Ultra-Matt Lacquer',
+    badge: 'Anti-Fingerprint',
+    text: 'A special UV lacquer applied to a melamine resin layer gives outstanding surface smoothness and an impression of depth. Pronorm calls the finish "Sense of Touch". Anti-fingerprint properties cut down on cleaning, and the door back is finished in the front colour. PP thick edging is applied all round in the front colour.',
+    features: ['Soft tactile feel', 'Anti-fingerprint', 'UV-stable', 'Colour-matched back'],
+    colours: ['Wool White', 'Arctic White', 'Sahara Beige', 'Caramel Beige', 'Pebble Grey', 'Angora Grey', 'Light Grey', 'Stone Grey', 'Stratus Grey Pearl', 'Quartz Grey', 'Agate Grey', 'Carbon Grey', 'Lava', 'Midnight Blue', 'Dark Green', 'Black'],
+  },
+  {
+    name: 'Matt Lacquer',
+    badge: 'Any RAL or NCS Colour',
+    text: 'MDF base with melamine coating on both sides, the front multilayered with UV lacquer and finished with all-round colour-matching thick edging. Beyond the standard palette, matt lacquer can be ordered in 192 RAL Classic and 1,950 NCS colours.',
+    features: ['Rich colour depth', 'Special colours', 'Colour-matched edge', 'Durable finish'],
+    colours: ['Wool White', 'Arctic White', 'Sand', 'Caramel Beige', 'Pebble Grey', 'Angora Grey', 'Light Grey', 'Stratus Grey', 'Quartz Grey', 'Old Rose', 'Velvet', 'Carmine Red', 'Mahogany', 'Sepia Green', 'Dark Green'],
+  },
+  {
+    name: 'High-Gloss Lacquer',
+    badge: 'Real Lacquer',
+    text: 'Real UV lacquer in high gloss, not a lacquer laminate. The MDF substrate gives a perfectly smooth surface and the multilayer lacquer structure is built for durability.',
+    features: ['Mirror-like finish', 'Real lacquer', 'MDF substrate', 'Multilayer durability'],
+    colours: ['Arctic White', 'Light Grey', 'Stratus Grey', 'Stone Grey', 'Black'],
+  },
+  {
+    name: 'Organic Glass',
+    badge: 'Scratch-Resistant',
+    text: 'High-quality wooden panels coated on both sides with 2mm thick PMMA panels (Rauvisio Crystal). Seamless fronts in matt or gloss with high scratch and shock resistance. UV-stable and non-warping thanks to the symmetrical construction.',
+    features: ['2mm PMMA', 'Matt or gloss', 'Non-warping', 'UV-stable'],
+    colours: ['Arctic White', 'Desert Beige', 'Champagne', 'Blushgold', 'Pearl Matt', 'Light Grey', 'Angora Grey', 'Stratus Grey', 'Quartz Grey', 'Silver', 'Titanium', 'Black'],
+  },
+  {
+    name: 'Wood Decor',
+    badge: 'Natural Character',
+    text: 'Textured wood-reproduction surfaces on high-quality substrates, in oak, walnut, ash, and specialty designs, plus natural-toned colours with a wood texture. The warmth of wood with a hard-wearing, easy-care surface. Three decors are also available with horizontal grain.',
+    features: ['Authentic wood look', 'Textured surface', 'Easy to clean', 'Hard-wearing'],
+    colours: ['Wool White Natural', 'Ash Light', 'Cashmere Oak', 'Linear Oak', 'Urban Oak', 'Vicenza Oak', 'Oak Marcato', 'Oak Sepia', 'Oak Barrique', 'Alba Oak Brown', 'Alba Oak Black', 'Lirio Almond', 'Lirio Chestnut', 'Walnut Light', 'Linear Walnut', 'Urban Walnut', 'Sherwood Dark Brown', 'Eucalipto Dark', 'Nero Chalet', 'Eucalyptus Green Natural', 'Indigo Blue Natural'],
+  },
+  {
+    name: 'Textured & Material Decors',
+    badge: 'Tactile',
+    text: 'Fronts that borrow from leather, linen, steel, stone, and cement. Use them across a whole kitchen or as an accent on an island, a tall run, or a display niche.',
+    features: ['Leather looks', 'Linen look', 'Stone and cement looks', 'Metal looks'],
+    colours: ['Natural Linen', 'Soft Teak', 'Silk Steel', 'Brown Steel', 'Buffalo Ruby', 'Buffalo Mocha', 'Blackwood', 'Bronze', 'Dark Cement', 'Galvano Portland', 'Artstone', 'Sandstone', 'Shellstone'],
+  },
+  {
+    name: 'Real Wood Veneer',
+    badge: 'Genuine Wood',
+    text: 'Genuine oak and walnut veneers applied to precision-engineered substrates and sealed with a protective surface treatment. Natural grain variation gives every kitchen its own character.',
+    features: ['Natural grain', 'Oak and walnut', 'Sealed surface', 'Hard-wearing'],
+    colours: ['Oak Honey Blonde', 'Oak Espresso Brown', 'Oak White', 'Oak Sepia', 'Trend Oak', 'Oak Angora Grey', 'Oak Agate Grey', 'Oak Truffle Grey', 'Oak Basalt Grey Brushed', 'Open Grain Oak Black', 'Walnut Natural', 'Walnut Mondial'],
+  },
+  {
+    name: 'Framed & Shaker Doors',
+    badge: 'Matt Lacquer',
+    text: 'Framed doors in matt lacquer, including a narrow-frame version, and shaker-style doors with vertical grooves. Both can be ordered in RAL and NCS special colours.',
+    features: ['Narrow or classic frame', 'Vertical grooves', 'Special colours', 'Matt lacquer'],
+    colours: ['Wool White', 'Arctic White', 'Magnolia', 'Sand', 'Pebble Grey', 'Angora Grey', 'Stone Grey', 'Stratus Grey', 'Quartz Grey', 'Agate Grey', 'Blue Grey', 'Mahogany'],
+  },
+  {
+    name: 'Statement Finishes',
+    badge: 'Accent',
+    text: 'Effect lacquers, a mineral compound with the look of cast concrete, and metallic multilayer lacquers for the pieces that should stand out.',
+    features: ['Effect lacquer', 'Concrete look', 'Metallic lacquer'],
+    colours: ['Effect Lacquer Gold', 'Effect Lacquer Copper', 'Effect Lacquer Bronze', 'Concrete Brown', 'Concrete Blonde', 'Metallic Ferro', 'Metallic Graphit'],
+  },
+  {
+    name: 'Melamine',
+    badge: 'Value Range',
+    text: 'Three-layer chipboard or MDF substrate with a melamine surface in solid colours. The widest choice at the entry price group, built to the same standard as every other Pronorm front.',
+    features: ['Wide colour range', 'Entry price group', 'Three-layer board', 'Easy care'],
+    colours: ['Wool White', 'Arctic White', 'Magnolia', 'Sahara Beige', 'Caramel Beige', 'Pebble Grey', 'Light Grey', 'Stone Grey', 'Angora Grey', 'Stratus Grey Pearl', 'Quartz Grey', 'Agate Grey', 'Cubanit', 'Lava', 'Jade Green', 'Polar Blue', 'Graphite Blue', 'Havana Black', 'Catania Oak'],
+  },
+];
+
+const newWorktops = ['Wool White Granite', 'Nizza Sand', 'Elba Beige', 'Serafina Greige', 'Ceramic Beige', 'Santo Brown', 'Oak Barrique', 'Stone Grey'];
+
 const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Surfaces & Materials Ã¢ÂÂ Pronorm USA",
-  "description": "Explore Pronorm's extensive range of front surfaces and materials: ultra-matte lacquer, high-gloss, real wood veneer, organic glass, textured laminates, and the 2026 collection.",
+  "name": "Surfaces & Materials | Pronorm USA",
+  "description": "Pronorm's 2027 fronts and materials: more than 260 front variants across ultra-matt, matt and gloss lacquer, organic glass, wood decors, real wood veneer, and framed doors.",
 };
 ---
 
 <BaseLayout
   title="Surfaces & Materials"
-  description="Pronorm surfaces and materials Ã¢ÂÂ ultra-matte lacquer, high-gloss, real wood veneer, organic glass, textured laminates, and the 2026 collection. Over 100 door options."
+  description="Pronorm 2027 surfaces: more than 260 front variants in ultra-matt, matt and gloss lacquer, organic glass, wood decor, veneer, and framed doors, plus 35 worktop decors."
   schema={schema}
 >
 
@@ -23,7 +103,7 @@ const schema = {
       <span class="overline animate-in">Surfaces &amp; Materials</span>
       <h1 class="animate-in animate-in-delay-1">Touch, See,<br/>Feel the Difference</h1>
       <p class="subtitle animate-in animate-in-delay-2" style="max-width: 55ch;">
-        Over 100 door front options spanning lacquers, veneers, laminates, and organic glass Ã¢ÂÂ all manufactured to identical quality standards and rigorously tested for daily use.
+        More than 260 front variants across lacquers, veneers, wood decors, and organic glass. Every one is made to the same quality standard and tested for daily use.
       </p>
     </div>
   </section>
@@ -32,200 +112,91 @@ const schema = {
   <section class="section-lg">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
-        <span class="overline">Front Types</span>
+        <span class="overline">Front Types — 2027 Collection</span>
         <h2 style="margin-top: 0.5rem;">Every Surface, One Standard</h2>
+        <p class="subtitle" style="margin: 1rem auto 0; max-width: 60ch;">More than 50 basic colours carry across fronts, visible sides, and plinths at no surcharge. A screen cannot show a real front, so ask your dealer for samples.</p>
       </div>
 
       <div class="surface-types">
-
-        <div class="surface-type reveal">
-          <div class="surface-type-header">
-            <h3>Ultra-Matte Lacquer</h3>
-            <span class="surface-badge">Anti-Fingerprint</span>
+        {surfaceTypes.map((type) => (
+          <div class="surface-type reveal">
+            <div class="surface-type-header">
+              <h3>{type.name}</h3>
+              <span class="surface-badge">{type.badge}</span>
+            </div>
+            <p>{type.text}</p>
+            <div class="surface-features">
+              {type.features.map((feature) => <span>{feature}</span>)}
+            </div>
+            <div class="colour-block">
+              <span class="colour-count">{type.colours.length} colours</span>
+              <ul class="colour-list">
+                {type.colours.map((colour) => <li>{colour}</li>)}
+              </ul>
+            </div>
           </div>
-          <p>A special UV lacquer applied to a melamine resin layer creates outstanding surface smoothness and an impression of depth. Anti-fingerprint properties reduce cleaning frequency and provide a warm, soft feel. PP thick edging applied all-round in the front colour.</p>
-          <div class="surface-features">
-            <span>Soft tactile feel</span>
-            <span>Anti-fingerprint</span>
-            <span>UV-stable</span>
-            <span>Scratch-resistant</span>
-          </div>
-          <div class="swatch-row">
-            <div class="swatch"><div style="background:#f5f3ef;" class="swatch-circle"></div><span>Arctic White</span></div>
-            <div class="swatch"><div style="background:#c4a882;" class="swatch-circle"></div><span>Caramel Beige</span></div>
-            <div class="swatch"><div style="background:#c8bfb0;" class="swatch-circle"></div><span>Sahara Beige</span></div>
-            <div class="swatch"><div style="background:#b5aca0;" class="swatch-circle"></div><span>Angora Grey</span></div>
-            <div class="swatch"><div style="background:#a09890;" class="swatch-circle"></div><span>Quartz Grey</span></div>
-            <div class="swatch"><div style="background:#6b6862;" class="swatch-circle"></div><span>Steel Grey</span></div>
-            <div class="swatch"><div style="background:#5a5550;" class="swatch-circle"></div><span>Carbon Grey</span></div>
-            <div class="swatch"><div style="background:#2a2826;" class="swatch-circle"></div><span>Black</span></div>
-          </div>
-        </div>
-
-        <div class="surface-type reveal">
-          <div class="surface-type-header">
-            <h3>High-Gloss Lacquer</h3>
-            <span class="surface-badge">Seamless Edges</span>
-          </div>
-          <p>MDF substrate guarantees a perfectly smooth surface. Edges are lacquered in-process for a seamless transition Ã¢ÂÂ no visible edge banding. The multilayer lacquer structure is particularly characterized by exceptional durability.</p>
-          <div class="surface-features">
-            <span>Mirror-like finish</span>
-            <span>Lacquered edges</span>
-            <span>MDF substrate</span>
-            <span>Multilayer durability</span>
-          </div>
-          <div class="swatch-row">
-            <div class="swatch"><div style="background:#ffffff;border:1px solid #ddd;" class="swatch-circle"></div><span>Arctic White</span></div>
-            <div class="swatch"><div style="background:#8e8a85;" class="swatch-circle"></div><span>Stratus Grey</span></div>
-            <div class="swatch"><div style="background:#a8a29e;" class="swatch-circle"></div><span>Stone Grey</span></div>
-            <div class="swatch"><div style="background:#706b66;" class="swatch-circle"></div><span>Cubanit Brilliant</span></div>
-            <div class="swatch"><div style="background:#2e2b28;" class="swatch-circle"></div><span>Black</span></div>
-          </div>
-        </div>
-
-        <div class="surface-type reveal">
-          <div class="surface-type-header">
-            <h3>Matt Lacquer</h3>
-            <span class="surface-badge">SOFT-TOUCH FINISH</span>
-          </div>
-          <p>MDF base with melamine coating on both sides, the front side multilayered with UV lacquer and finished with all-round colour-matching thick edging. UV-lacquered fronts attain their final colour once the protective foil is removed and after exposure to natural light.</p>
-          <div class="surface-features">
-            <span>Rich colour depth</span>
-            <span>Light-reactive</span>
-            <span>Colour-matched</span>
-            <span>Durable finish</span>
-          </div>
-          <div class="swatch-row">
-            <div class="swatch"><div style="background:#f5f3ef;" class="swatch-circle"></div><span>Arctic White</span></div>
-            <div class="swatch"><div style="background:#d6cbba;" class="swatch-circle"></div><span>Sand</span></div>
-            <div class="swatch"><div style="background:#8e2a2a;" class="swatch-circle"></div><span>Carmine Red</span></div>
-            <div class="swatch"><div style="background:#5e6b4e;" class="swatch-circle"></div><span>Sepia Green</span></div>
-            <div class="swatch"><div style="background:#5c3a4a;" class="swatch-circle"></div><span>Velvet</span></div>
-            <div class="swatch"><div style="background:#8e8a85;" class="swatch-circle"></div><span>Stratus Grey</span></div>
-          </div>
-        </div>
-
-        <div class="surface-type reveal">
-          <div class="surface-type-header">
-            <h3>Wood Decor</h3>
-            <span class="surface-badge">Natural Character</span>
-          </div>
-          <p>Premium wood-reproduction surfaces using advanced decor printing technology on high-quality substrates. Available in oak, walnut, and specialty wood designs. Each finish faithfully captures natural grain patterns and textures Ã¢ÂÂ offering the warmth of real wood with superior durability.</p>
-          <div class="surface-features">
-            <span>Authentic wood look</span>
-            <span>Durable surface</span>
-            <span>Easy to clean</span>
-            <span>Hard-wearing</span>
-          </div>
-          <div class="swatch-row">
-            <div class="swatch"><div style="background:linear-gradient(135deg,#c8a87c,#d4b88a);" class="swatch-circle"></div><span>Oak Marcato</span></div>
-            <div class="swatch"><div style="background:linear-gradient(135deg,#d1c4a8,#c5b898);" class="swatch-circle"></div><span>Cashmere Oak</span></div>
-            <div class="swatch"><div style="background:linear-gradient(135deg,#6b5040,#5e4535);" class="swatch-circle"></div><span>Alba Oak Brown</span></div>
-            <div class="swatch"><div style="background:linear-gradient(135deg,#6b5b4a,#5e503e);" class="swatch-circle"></div><span>Oak Sepia</span></div>
-            <div class="swatch"><div style="background:linear-gradient(135deg,#3e3530,#302a25);" class="swatch-circle"></div><span>Eucalipto Dark</span></div>
-            <div class="swatch"><div style="background:linear-gradient(135deg,#5a4535,#4d3a2c);" class="swatch-circle"></div><span>Walnut Light</span></div>
-          </div>
-        </div>
-
-        
-
-<div class="surface-type reveal">
-          <div class="surface-type-header">
-            <h3>Real Wood Veneer</h3>
-            <span class="surface-badge">Scratch-Resistant</span>
-          </div>
-          <p>Genuine wood veneers applied to precision-engineered substrates, sealed internally and externally with a protective surface treatment. Available in oak species with natural grain variation Ã¢ÂÂ lending individual character to every kitchen.</p>
-          <div class="surface-features">
-            <span>Natural grain</span>
-            <span>Sealed both sides</span>
-            <span>Easy to clean</span>
-            <span>Hard-wearing</span>
-          </div>
-          <div class="swatch-row"><div class="swatch"><div class="swatch-circle" style="background: linear-gradient(135deg, #c8a870, #b89860);"></div><span>Oak Honey Blonde</span></div><div class="swatch"><div class="swatch-circle" style="background: linear-gradient(135deg, #5a3e2e, #4a3020);"></div><span>Oak Espresso Brown</span></div>
-<div class="swatch"><div class="swatch-circle" style="background: linear-gradient(135deg, #6b4c3b, #5a3d2d);"></div><span>Walnut Natural</span></div>
-<div class="swatch"><div class="swatch-circle" style="background: linear-gradient(135deg, #c4a67a, #b09568);"></div><span>Oak Trend</span></div>
-<div class="swatch"><div class="swatch-circle" style="background: linear-gradient(135deg, #5e3f2a, #4d3322);"></div><span>Walnut Mondial</span></div>
-</div>
-        </div>
-
-        
-
-<div class="surface-type reveal">
-          <div class="surface-type-header">
-            <h3>Organic Glass</h3>
-            <span class="surface-badge">Scratch-Resistant</span>
-          </div>
-          <p>High-quality wooden panels coated on both sides with 2mm thick PMMA panels (Rauvisio Crystal). Completely seamless fronts with high scratch resistance and an anti-fingerprint lacquer surface. UV-stable and non-warping due to symmetrical construction.</p>
-          <div class="surface-features">
-            <span>2mm PMMA</span>
-            <span>Seamless</span>
-            <span>Non-warping</span>
-            <span>UV-stable</span>
-          </div>
-          <div class="swatch-row">
-            <div class="swatch"><div style="background:#f5f3ef;" class="swatch-circle"></div><span>Arctic White</span></div>
-            <div class="swatch"><div style="background:#b8b2ab;" class="swatch-circle"></div><span>Stratus Grey</span></div>
-            <div class="swatch"><div style="background:#c0bab5;" class="swatch-circle"></div><span>Silver</span></div>
-            <div class="swatch"><div style="background:#4a5055;" class="swatch-circle"></div><span>Titanium</span></div>
-            <div class="swatch"><div style="background:#2a2826;" class="swatch-circle"></div><span>Black</span></div>
-          </div>
-        </div>
-
-        <div class="surface-type reveal">
-          <div class="surface-type-header">
-            <h3>Synthetic Layered</h3>
-            <span class="surface-badge">Value Range</span>
-          </div>
-          <p>High-quality three-layer chipboard or MDF substrate with premium synthetic layer surfaces. Extensive colour and texture range from smooth solids to wood-effect decors. An excellent balance of design choice, durability, and value.</p>
-          <div class="surface-features">
-            <span>Wide colour range</span>
-            <span>Texture options</span>
-            <span>Three-layer board</span>
-            <span>Cost-effective</span>
-          </div>
-          <div class="swatch-row">
-            <div class="swatch"><div style="background:#f5f3ef;border:1px solid #ddd;" class="swatch-circle"></div><span>Arctic White</span></div>
-            <div class="swatch"><div style="background:#f2ece0;" class="swatch-circle"></div><span>Magnolia</span></div>
-            <div class="swatch"><div style="background:#a8a29e;" class="swatch-circle"></div><span>Stone Grey</span></div>
-            <div class="swatch"><div style="background:linear-gradient(135deg,#c8a87c,#d4b88a);" class="swatch-circle"></div><span>Denver Oak</span></div>
-            <div class="swatch"><div style="background:linear-gradient(135deg,#8a8078,#7d746c);" class="swatch-circle"></div><span>Agate Grey</span></div>
-            <div class="swatch"><div style="background:#2e2b28;" class="swatch-circle"></div><span>Havana Black</span></div>
-          </div>
-        </div>
-
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- 2026 Collection -->
+  <!-- 2027 Collection -->
   <section class="section bg-ivory">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom: var(--space-3xl);">
-        <span class="overline">2026 Collection</span>
-        <h2 style="margin-top: 0.5rem;">New Surfaces, Textures &amp; Colours</h2>
-        <p class="subtitle" style="margin: 1rem auto 0; max-width: 55ch;">From finely textured Boho-style surfaces and woven linen-look designs to veneered fronts with intricate fan structures Ã¢ÂÂ the 2026 collection brings unprecedented tactile and visual depth.</p>
+        <span class="overline">2027 Collection</span>
+        <h2 style="margin-top: 0.5rem;">What the 2027 Collection Brings</h2>
+        <p class="subtitle" style="margin: 1rem auto 0; max-width: 60ch;">Shown at Küchenmeile in Vlotho in September 2026 under the motto "feels like you": calmer colour, more texture, and softer lines.</p>
       </div>
 
-      <div class="trend-grid">
-        <div class="trend-card reveal">
-          <img src="/images/surfaces/trends-2026-boho-natural.webp" alt="Boho Texture surface" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
-          <h4>Boho Texture</h4>
-          <p>Finely textured relief surface with natural, organic character.</p>
+      <div class="new-grid">
+        <div class="new-card reveal">
+          <h4>Calm beige and grey</h4>
+          <p>A neutral base of wool white, caramel beige, desert beige, pebble grey, and carbon grey, with the same colours now running through more front programmes and lines.</p>
         </div>
-        <div class="trend-card reveal">
-          <img src="/images/surfaces/trends-2026-ribbed-surface.webp" alt="Ribbed Painted Wood surface" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
-          <h4>Ribbed Painted Wood</h4>
-          <p>Fluted lacquered surface with elegant vertical ribbing that catches and plays with light.</p>
+        <div class="new-card reveal">
+          <h4>Natural colour and wood</h4>
+          <p>Wool white natural, ash light, indigo blue natural, and eucalyptus green natural sit alongside oak barrique, Lirio almond, and Sherwood dark brown.</p>
         </div>
-        <div class="trend-card reveal">
-          <img src="/images/surfaces/trends-2026-buffalo-mocha.webp" alt="Buffalo Leather surface" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
-          <h4>Buffalo Leather</h4>
-          <p>Rich natural leather-look front with warm, tactile character.</p>
+        <div class="new-card reveal">
+          <h4>Structure you can feel</h4>
+          <p>Soft teak, buffalo ruby, natural linen, and silk steel add texture next to ultra-matt lacquer.</p>
+        </div>
+        <div class="new-card reveal">
+          <h4>Softer lines</h4>
+          <p>Rounded end panels in lacquer, organic glass, or walnut veneer, and a new glass-frame door for display cabinets.</p>
+        </div>
+        <div class="new-card reveal">
+          <h4>Eight new worktop decors</h4>
+          <p>{newWorktops.join(', ')}. The worktop range now runs to 35 decors in thicknesses from 16 to 95 mm.</p>
+        </div>
+        <div class="new-card reveal">
+          <h4>Colour-matched handles</h4>
+          <p>The 82-handle collection adds handles in wool white, pebble grey, and quartz grey, plus a wood-look handle in Angora grey.</p>
         </div>
       </div>
 
-      <div class="text-center" style="margin-top: var(--space-2xl);">
+      <div class="trend-grid" style="margin-top: var(--space-3xl);">
+        <div class="trend-card reveal">
+          <img src="/images/surfaces/trends-2026-boho-natural.webp" alt="Boho natural textured front" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Boho</h4>
+          <p>Finely textured relief surface in Boho natural or Boho deep black.</p>
+        </div>
+        <div class="trend-card reveal">
+          <img src="/images/surfaces/trends-2026-ribbed-surface.webp" alt="Grooved lacquered front" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Grooved Lacquer</h4>
+          <p>Matt lacquer with vertical grooves that catch and play with light.</p>
+        </div>
+        <div class="trend-card reveal">
+          <img src="/images/surfaces/trends-2026-buffalo-mocha.webp" alt="Buffalo mocha leather-look front" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;" />
+          <h4>Buffalo</h4>
+          <p>Leather-look front in buffalo mocha or buffalo ruby.</p>
+        </div>
+      </div>
+
+      <div class="text-center" style="margin-top: var(--space-2xl); display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
         <a href="/request-consultation" class="btn btn-primary">Request Material Samples</a>
+        <a href="/downloads" class="btn btn-outline">2027 Brochures</a>
       </div>
     </div>
   </section>
@@ -238,8 +209,8 @@ const schema = {
           <span class="overline">Construction</span>
           <h2 style="margin-top: 0.5rem;">What's Behind<br/>Every Surface</h2>
           <hr class="divider" style="margin: 1.5rem 0;" />
-          <p>Regardless of the front finish you choose, every Pronorm surface shares the same construction principles: colour-matched edgebanding on doors in almost every colour, carcass interiors finished in white, gray, or colour-matched to the front, PUR-bonded adhesive edges for superior moisture and heat resistance, and E05-class formaldehyde emissions (0.05 ppm Ã¢ÂÂ well below regulatory limits).</p>
-          <p style="margin-top: 1rem;">Finished ends with white interiors are available across nearly the entire range, giving exposed cabinet sides a clean, integrated look. Every finish is rigorously tested for UV resistance, scratch hardness, impact resistance, and daily-use durability before it enters the collection.</p>
+          <p>Regardless of the front finish you choose, every Pronorm surface shares the same construction principles: colour-matched edgebanding on doors in almost every colour, carcass interiors in white or in stratus grey pearl inside and out, PUR-bonded edges for moisture and heat resistance, and E05-class formaldehyde emissions (0.05 ppm, well below regulatory limits).</p>
+          <p style="margin-top: 1rem;">Visible sides and plinth panels come in the basic front colours at no surcharge, giving exposed cabinet sides a clean, integrated look. Every finish is tested for UV resistance, scratch hardness, impact resistance, and daily-use durability before it enters the collection.</p>
         </div>
         <div class="content-image reveal">
           <img src="/images/equipment/carcase-interior-metal.jpg" alt="Carcase interior quality" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;" />
@@ -306,36 +277,41 @@ const schema = {
     color: var(--color-graphite);
   }
 
-  .swatch-row {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+  .colour-block {
     margin-top: 1.25rem;
     padding-top: 1.25rem;
     border-top: 1px solid var(--color-sand);
   }
 
-  .swatch {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .swatch-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
-  }
-
-  .swatch span {
-    font-size: 0.6rem;
+  .colour-count {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-warm-gray);
-    text-align: center;
-    max-width: 60px;
-    line-height: 1.2;
+    margin-bottom: 0.6rem;
   }
+
+  .colour-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+  }
+
+  .colour-list li {
+    font-size: 0.82rem;
+    color: var(--color-graphite);
+    line-height: 1.5;
+  }
+
+  .new-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
+  .new-card { padding: 1.5rem; background: var(--color-white); border-top: 3px solid var(--color-copper); }
+  .new-card h4 { margin: 0; }
+  .new-card p { font-size: 0.88rem; color: var(--color-graphite); margin-top: 0.5rem; }
 
   .trend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
   .trend-card h4 { margin-top: 0.75rem; }
@@ -344,6 +320,7 @@ const schema = {
   @media (max-width: 768px) {
     .content-split { grid-template-columns: 1fr; }
     .trend-grid { grid-template-columns: 1fr; }
+    .new-grid { grid-template-columns: 1fr; }
     .surface-type { padding: 1.5rem; }
   }
 </style>

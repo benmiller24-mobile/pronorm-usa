@@ -2,6 +2,33 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ConsultationCTA from '@/components/ConsultationCTA.astro';
 
+const brochures2027 = [
+  {
+    title: "Feels Like You — Kitchen Trends 2027",
+    description: "Pronorm's 2027 collection as shown at Küchenmeile, September 2026: calm beige and grey tones, structured fronts, rounded end panels, and new storage ideas.",
+    file: "https://www.pronorm.de/wp-content/uploads/2026/09/260902_26-PRON-003_Digital_Feels-like-you_Messe-Journal_2026-27_pronorm_D-GB-ES-p-1.pdf",
+    badge: "New"
+  },
+  {
+    title: "Product Range — Y-line / X-line 2027",
+    description: "Programme overview for the handleless Y-line and X-line: every front programme, colour, and price group for the 2027 collection.",
+    file: "https://www.pronorm.de/wp-content/uploads/2026/09/03.02-Programmuebersicht-Y-X-2026-09-15-EN-Druckhaus.pdf",
+    badge: "New"
+  },
+  {
+    title: "Product Range — Proline128 / Classicline 2027",
+    description: "Programme overview for the handled lines: every front programme, colour, and price group for the 2027 collection.",
+    file: "https://www.pronorm.de/wp-content/uploads/2026/09/03.02-Programmuebersicht-2026-09-14-EN-Druckhaus.pdf",
+    badge: "New"
+  },
+  {
+    title: "Handle Collection 2027",
+    description: "The 2027 handle catalog: 82 handles, including new colour-matched handles in wool white, pebble grey, and quartz grey.",
+    file: "https://www.pronorm.de/wp-content/uploads/2026/09/03.18-Griffkollektion-MAUNELL-BEARBEITET-2026-09-10-EN-Druckhaus.pdf",
+    badge: "New"
+  },
+];
+
 const brochures2026 = [
   {
     title: "Create Your World — 2026 Collection",
@@ -9,7 +36,7 @@ const brochures2026 = [
     file: "/downloads/Create-Your-World-Brochure-2026-EN.pdf",
     pages: 29,
     size: "9.7 MB",
-    badge: "New"
+    badge: null
   },
   {
     title: "New Era — Küchenmeile 2025 Collection Preview",
@@ -17,7 +44,7 @@ const brochures2026 = [
     file: "/downloads/New-Era-Collection-2026-EN.pdf",
     pages: 11,
     size: "9.5 MB",
-    badge: "New"
+    badge: null
   },
   {
     title: "Product Range — Y-line / X-line 2026",
@@ -95,12 +122,45 @@ const reference = [
     </div>
   </section>
 
-  <!-- 2026 Collection -->
+  <!-- 2027 Collection -->
   <section class="section">
     <div class="container-narrow">
       <span class="overline">Latest</span>
+      <h2>2027 Collection</h2>
+      <p class="section-intro">The 2027 range, straight from Pronorm in Vlotho. These open on pronorm.de.</p>
+
+      <div class="download-grid">
+        {brochures2027.map((item) => (
+          <a href={item.file} target="_blank" rel="noopener" class="download-card reveal">
+            <div class="download-card-top">
+              <div class="download-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <polyline points="9 15 12 18 15 15"/>
+                </svg>
+              </div>
+              {item.badge && <span class="download-badge">{item.badge}</span>}
+            </div>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+            <div class="download-meta">
+              <span>PDF · pronorm.de</span>
+              <span class="download-arrow">↓</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 2026 Collection -->
+  <section class="section section-alt">
+    <div class="container-narrow">
+      <span class="overline">Previous</span>
       <h2>2026 Collection</h2>
-      <p class="section-intro">The newest Pronorm brochures featuring the complete 2026 range — new surfaces, proTech X drawer system, and expanded living furniture.</p>
+      <p class="section-intro">Pronorm brochures for the 2026 range — new surfaces, proTech X drawer system, and expanded living furniture.</p>
 
       <div class="download-grid">
         {brochures2026.map((item) => (
@@ -129,7 +189,7 @@ const reference = [
   </section>
 
   <!-- 2025 Collection -->
-  <section class="section section-alt">
+  <section class="section">
     <div class="container-narrow">
       <span class="overline">Archive</span>
       <h2>2025 Collection</h2>
@@ -161,7 +221,7 @@ const reference = [
   </section>
 
   <!-- Reference -->
-  <section class="section">
+  <section class="section section-alt">
     <div class="container-narrow">
       <span class="overline">Reference</span>
       <h2>Care & Maintenance</h2>

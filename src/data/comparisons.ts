@@ -37,9 +37,9 @@ export interface Comparison {
   sources: ComparisonSource[];
 }
 
-export const LAST_REVIEWED = '2026-11-22';
+export const LAST_REVIEWED = '2026-11-25';
 
-/* Shared Pronorm facts, stated once so the four pages cannot drift apart. */
+/* Shared Pronorm facts, stated once so the comparison pages cannot drift apart. */
 export const pronormFacts = {
   founded: 'Building kitchens in Vlotho, Germany since 1972',
   madeIn: 'Vlotho, Eastern Westphalia, Germany',
@@ -111,7 +111,7 @@ export const comparisons: Comparison[] = [
     ],
     choosePronorm: [
       'You want American-depth base and tall cabinets from the standard catalog.',
-      'You want handleless and handled fronts on one platform, with over 100 front options.',
+      'You want handleless and handled fronts on one platform, with more than 260 front variants.',
       'You prefer a dealer who holds a protected territory and is not competing with a second showroom of the same brand down the road.',
     ],
     chooseOther: [
@@ -208,6 +208,169 @@ export const comparisons: Comparison[] = [
       { label: 'SieMatic company history', url: 'https://siematic.com/company/press-release/review-siematic-id-days-2020/' },
       { label: 'SieMatic at KBIS 2022', url: 'https://siematic.com/company/news/kbis-2022/' },
       { label: 'SieMatic, Wikipedia', url: 'https://en.wikipedia.org/wiki/SieMatic' },
+      { label: 'Pronorm manufacturing history, KBzine', url: 'https://thekbzine.com/pages/17049/pronorm_announces_new_managing_directors_as_heinz_hachmeiser_retires/' },
+    ],
+  },
+  {
+    slug: 'pronorm-vs-hacker',
+    brand: 'Häcker',
+    title: 'Pronorm vs Häcker: German Kitchens Compared',
+    description:
+      'Pronorm vs Häcker for a US kitchen: factories, North American presence, product lines, American cabinet depths, and how to compare quotes.',
+    summary:
+      'Häcker is one of Germany’s large family-owned kitchen makers, with five factories and its own North American headquarters in Miami. Pronorm is a smaller made-to-order maker from the same region, sold through dealers with protected territories. Häcker has the bigger organization and a line built for North America. Pronorm is the pick when you want one platform that mixes handleless and handled fronts and a dealer who is not sharing the territory.',
+    rows: [
+      { label: 'Company', pronorm: pronormFacts.founded, other: 'Founded 1898 by Hermann Häcker as a joinery; owner-managed family business' },
+      { label: 'Made in', pronorm: pronormFacts.madeIn, other: 'Five factories in Rödinghausen and Venne, Germany' },
+      { label: 'US presence', pronorm: pronormFacts.usPresence, other: 'Häcker Kitchens North America, headquartered in Miami since November 2023, selling through dealers and designers' },
+      { label: 'Product structure', pronorm: pronormFacts.lines, other: 'Two lines: systemat (premium) and concept130; systemat 3.0 was developed for the North American market' },
+      { label: 'Cabinet depth for US rooms', pronorm: pronormFacts.depth, other: 'Ask the dealer which base and tall depths it orders for US appliances' },
+      { label: 'Price position', pronorm: pronormFacts.price, other: 'The company describes its range as value-driven to premium; no published US price list' },
+      { label: 'Lead time', pronorm: pronormFacts.leadTime, other: 'Quoted by the dealer per order' },
+    ],
+    choosePronorm: [
+      'You want handleless Y-line or X-line and handled Proline128 fronts combined on one platform.',
+      'You want American-depth base and tall cabinets as standard.',
+      'You prefer a dealer who holds a protected territory.',
+    ],
+    chooseOther: [
+      'You want a manufacturer with its own North American headquarters and staff.',
+      'A Häcker dealer is local to you and a Pronorm showroom is not.',
+      'A specific systemat front or colour is what you have fallen for.',
+    ],
+    faqs: [
+      { q: 'Is Pronorm cheaper than Häcker?', a: 'Neither brand publishes a US price list. Häcker spans a value-driven line and a premium line, so the answer depends on which line you are quoted. Typical installed Pronorm kitchens run $40,000 to $150,000+. Have the same floor plan quoted in writing by both.' },
+      { q: 'Are Pronorm and Häcker made near each other?', a: 'Yes. Pronorm builds in Vlotho and Häcker in Rödinghausen and Venne. Both are in the kitchen-making region of north-west Germany.' },
+      { q: 'Which is bigger, Pronorm or Häcker?', a: 'Häcker. It runs five factories and exports to more than 60 countries. Pronorm is a smaller made-to-order manufacturer with one site in Vlotho.' },
+      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships 625 mm deep base and tall cabinets as standard for US orders. The factory builds in millimeters; the depth is planned for American rooms and appliances.' },
+    ],
+    sources: [
+      { label: 'Häcker company history', url: 'https://www.haecker-kuechen.com/en/quality' },
+      { label: 'Häcker 2023 review (Miami headquarters, factories)', url: 'https://www.haecker-kuechen.com/en/media/review-of-the-year-haecker-takes-stock-of-its-activities-in-2023' },
+      { label: 'NKBA Global Connect on Häcker systemat 3.0', url: 'https://kb.nkba.org/globalconnect/blog/haecker-kitchens-joins-nkba-global-connect-subscription-program' },
+      { label: 'Häcker at KBB Birmingham 2026 (line positioning)', url: 'https://www.haecker-kuechen.com/en/media/kbb-premiere-haecker-praesentiert-in-birmingham-ein-breites-designspektrum' },
+      { label: 'Pronorm manufacturing history, KBzine', url: 'https://thekbzine.com/pages/17049/pronorm_announces_new_managing_directors_as_heinz_hachmeiser_retires/' },
+    ],
+  },
+  {
+    slug: 'pronorm-vs-poggenpohl',
+    brand: 'Poggenpohl',
+    title: 'Pronorm vs Poggenpohl: German Kitchens Compared',
+    description:
+      'Pronorm vs Poggenpohl for a US kitchen: heritage, ownership, product lines, US showrooms, American cabinet depths, and how to compare quotes.',
+    summary:
+      'Poggenpohl is the oldest of the German kitchen names, founded in 1892 and sold as luxury kitchen architecture. Pronorm sits in the premium mid-range below it, built in the same region with major-brand hardware. Choose Poggenpohl for the heritage, the signature design lines, and a flagship showroom. Choose Pronorm when you want a German fitted kitchen at a lower ticket and at American cabinet depths.',
+    rows: [
+      { label: 'Company', pronorm: pronormFacts.founded, other: 'Founded 1892 by Friedemir Poggenpohl; part of the Jomoo Group since 2020' },
+      { label: 'Made in', pronorm: pronormFacts.madeIn, other: 'Herford, Eastern Westphalia, Germany' },
+      { label: 'US presence', pronorm: pronormFacts.usPresence, other: 'Brand showrooms in major US cities, including a flagship in SoHo, New York' },
+      { label: 'Design structure', pronorm: pronormFacts.lines, other: 'Named design lines including +SEGMENTO, +MODO, +VENOVO, and +STAGE' },
+      { label: 'Cabinet depth for US rooms', pronorm: pronormFacts.depth, other: 'Ask the showroom which base and tall depths it orders for US appliances' },
+      { label: 'Price position', pronorm: `${pronormFacts.price}; premium mid-range`, other: 'Positioned as luxury kitchen architecture; no published US price list' },
+      { label: 'Lead time', pronorm: pronormFacts.leadTime, other: 'Quoted by the showroom per order' },
+    ],
+    choosePronorm: [
+      'You want German system engineering without a luxury-brand premium.',
+      'You want American-depth base and tall cabinets as standard.',
+      'A Pronorm dealer serves your area and you want to put more of the budget into appliances and stone.',
+    ],
+    chooseOther: [
+      'The Poggenpohl name and its 130-year history are part of what you are buying.',
+      'You want a signature design such as +MODO or +SEGMENTO.',
+      'A Poggenpohl showroom is local to you and a Pronorm showroom is not.',
+    ],
+    faqs: [
+      { q: 'Is Pronorm cheaper than Poggenpohl?', a: 'Generally yes. Pronorm is positioned in the premium mid-range, with typical installed kitchens at $40,000 to $150,000+. Poggenpohl sells as a luxury brand. Neither publishes a US price list, so compare written quotes on the same plan.' },
+      { q: 'Are Pronorm and Poggenpohl made near each other?', a: 'Yes. Pronorm builds in Vlotho and Poggenpohl in Herford, neighboring towns in the Eastern Westphalia kitchen region.' },
+      { q: 'Who owns Poggenpohl?', a: 'Poggenpohl has been part of the Jomoo Group since 2020. Its kitchens are still manufactured in Herford, Germany. Pronorm manufactures in Vlotho, Germany.' },
+      { q: 'Does Pronorm make handleless kitchens like Poggenpohl +SEGMENTO?', a: 'Yes. Pronorm Y-line uses an integrated grip profile and X-line a curved C-shaped profile. Both can be combined with handled Proline128 fronts in one kitchen.' },
+    ],
+    sources: [
+      { label: 'Poggenpohl 125th anniversary release', url: 'https://prnewswire.com/news-releases/modern-kitchen-pioneer-poggenpohl-celebrates-125th-anniversary-300620588.html' },
+      { label: 'Poggenpohl, Wikipedia (ownership)', url: 'https://en.wikipedia.org/wiki/Poggenpohl' },
+      { label: 'Poggenpohl product brochure (design lines)', url: 'https://download.architonic.com/pdf1/3100569/poggenpohl-thestandard-en.pdf' },
+      { label: 'Poggenpohl SoHo showroom, Aspire Design and Home', url: 'https://aspiremetro.com/poggenpohl-anniversary-new-showroom/' },
+      { label: 'Pronorm manufacturing history, KBzine', url: 'https://thekbzine.com/pages/17049/pronorm_announces_new_managing_directors_as_heinz_hachmeiser_retires/' },
+    ],
+  },
+  {
+    slug: 'pronorm-vs-bulthaup',
+    brand: 'Bulthaup',
+    title: 'Pronorm vs Bulthaup: German Kitchens Compared',
+    description:
+      'Pronorm vs Bulthaup for a US kitchen: Bavaria versus Westphalia, single-brand showrooms versus independent dealers, product systems, American cabinet depths, and quotes.',
+    summary:
+      'Bulthaup is the architect’s minimalist benchmark, made in Bavaria and sold only through bulthaup showrooms and authorized partners. Pronorm is a premium mid-range fitted kitchen from Eastern Westphalia sold through independent dealers. Choose Bulthaup when its design language is the brief. Choose Pronorm when you want a wide choice of fronts and lines, American cabinet depths, and a lower ticket.',
+    rows: [
+      { label: 'Company', pronorm: pronormFacts.founded, other: 'Founded 1949 by Martin Bulthaup; still family-owned' },
+      { label: 'Made in', pronorm: pronormFacts.madeIn, other: 'Aich, Bodenkirchen, Lower Bavaria, Germany' },
+      { label: 'US presence', pronorm: pronormFacts.usPresence, other: 'Single-brand bulthaup showrooms in major US markets' },
+      { label: 'Product structure', pronorm: pronormFacts.lines, other: 'Three systems: b3, b2, and b Solitaire' },
+      { label: 'Cabinet depth for US rooms', pronorm: pronormFacts.depth, other: 'Ask the showroom which base and tall depths it orders for US appliances' },
+      { label: 'Price position', pronorm: `${pronormFacts.price}; premium mid-range`, other: 'No published US price list; compare written quotes on the same plan' },
+      { label: 'Lead time', pronorm: pronormFacts.leadTime, other: 'Quoted by the showroom per order' },
+    ],
+    choosePronorm: [
+      'You want more than 260 front variants across lacquer, wood, glass, and stone looks.',
+      'You want American-depth base and tall cabinets as standard.',
+      'You want an independent kitchen dealer who can plan Pronorm alongside your appliances and stone.',
+    ],
+    chooseOther: [
+      'Bulthaup’s minimalist design language is exactly what your architect has drawn.',
+      'You want the b2 workbench concept or b Solitaire furniture.',
+      'A bulthaup showroom is local to you and a Pronorm showroom is not.',
+    ],
+    faqs: [
+      { q: 'Is Pronorm cheaper than Bulthaup?', a: 'Neither brand publishes a US price list. Typical installed Pronorm kitchens run $40,000 to $150,000+. The reliable comparison is the same floor plan quoted in writing by a Pronorm dealer and a bulthaup showroom.' },
+      { q: 'Where are Pronorm and Bulthaup made?', a: 'Pronorm builds in Vlotho, Eastern Westphalia. Bulthaup builds in Aich, a district of Bodenkirchen in Lower Bavaria. Both are made in Germany.' },
+      { q: 'Can I buy Bulthaup or Pronorm from any kitchen dealer?', a: 'No. Bulthaup is sold only in bulthaup showrooms and by authorized retailers. Pronorm is sold through authorized independent dealers with protected territories.' },
+      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships 625 mm deep base and tall cabinets as standard for US orders. The factory builds in millimeters.' },
+    ],
+    sources: [
+      { label: 'bulthaup company history', url: 'https://bulthaup.com/en/company/history/' },
+      { label: 'Bulthaup, Wikipedia (location, distribution)', url: 'https://en.wikipedia.org/wiki/Bulthaup' },
+      { label: 'Bulthaup brand profile, Archello (US showrooms)', url: 'https://archello.com/brand/bulthaup' },
+      { label: 'Pronorm manufacturing history, KBzine', url: 'https://thekbzine.com/pages/17049/pronorm_announces_new_managing_directors_as_heinz_hachmeiser_retires/' },
+    ],
+  },
+  {
+    slug: 'pronorm-vs-eggersmann',
+    brand: 'Eggersmann',
+    title: 'Pronorm vs Eggersmann: German Kitchens Compared',
+    description:
+      'Pronorm vs Eggersmann for a US kitchen: bespoke luxury versus premium mid-range, US showrooms, product structure, American cabinet depths, and how to compare quotes.',
+    summary:
+      'Eggersmann is the oldest family-owned German kitchen brand and builds bespoke luxury cabinetry, sold in the US through eggersmann USA showrooms. Pronorm is a premium mid-range fitted kitchen from the same region, sold through independent dealers in the West. Choose Eggersmann for bespoke stone and metal work and a brand showroom. Choose Pronorm for a German system kitchen at a lower ticket and at American cabinet depths.',
+    rows: [
+      { label: 'Company', pronorm: pronormFacts.founded, other: 'Founded 1908 by Wilhelm Eggersmann; describes itself as the oldest family-owned German kitchen brand' },
+      { label: 'Made in', pronorm: pronormFacts.madeIn, other: 'Hiddenhausen, Eastern Westphalia, Germany' },
+      { label: 'US presence', pronorm: pronormFacts.usPresence, other: 'eggersmann USA, the exclusive US distributor; trade press counted over a dozen North American showrooms in 2023' },
+      { label: 'Product structure', pronorm: pronormFacts.lines, other: 'Bespoke kitchens plus home-living, wardrobe, and outdoor ranges through eggersmann USA' },
+      { label: 'Cabinet depth for US rooms', pronorm: pronormFacts.depth, other: 'Ask the showroom which base and tall depths it orders for US appliances' },
+      { label: 'Price position', pronorm: `${pronormFacts.price}; premium mid-range`, other: 'Sold as a luxury collection; no published US price list' },
+      { label: 'Lead time', pronorm: pronormFacts.leadTime, other: 'Quoted by the showroom per order' },
+    ],
+    choosePronorm: [
+      'You want German system engineering without a bespoke-luxury premium.',
+      'You want American-depth base and tall cabinets as standard.',
+      'A Pronorm dealer serves your area in California, Arizona, Colorado, Nevada, or Washington.',
+    ],
+    chooseOther: [
+      'You want bespoke fronts in stone, marble, or steel.',
+      'You want one brand showroom to handle kitchen, wardrobes, and outdoor kitchen together.',
+      'An eggersmann showroom is local to you and a Pronorm showroom is not.',
+    ],
+    faqs: [
+      { q: 'Is Pronorm cheaper than Eggersmann?', a: 'Generally yes. Pronorm is positioned in the premium mid-range, with typical installed kitchens at $40,000 to $150,000+. Eggersmann sells bespoke luxury cabinetry. Neither publishes a US price list, so compare written quotes on the same plan.' },
+      { q: 'Are Pronorm and Eggersmann made near each other?', a: 'Yes. Pronorm builds in Vlotho and Eggersmann in Hiddenhausen. Both towns are in the Eastern Westphalia kitchen region.' },
+      { q: 'Which has more US showrooms, Pronorm or Eggersmann?', a: 'Eggersmann. Trade press counted over a dozen eggersmann showrooms in North America in 2023. Pronorm had eleven authorized US showrooms as of August 2026, all in the West.' },
+      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships 625 mm deep base and tall cabinets as standard for US orders. The factory builds in millimeters.' },
+    ],
+    sources: [
+      { label: 'eggersmann company history', url: 'https://www.eggersmann.com/en/history.html' },
+      { label: 'eggersmann company profile, Archilovers', url: 'https://www.archilovers.com/teams/724299/eggersmann-kuchen.html' },
+      { label: 'eggersmann Orange County showroom, Aspire Design and Home', url: 'https://aspiremetro.com/?p=82960' },
+      { label: 'eggersmann USA profile, Luxe Interiors + Design', url: 'https://luxesource.com/resources/eggersmann-weho/' },
       { label: 'Pronorm manufacturing history, KBzine', url: 'https://thekbzine.com/pages/17049/pronorm_announces_new_managing_directors_as_heinz_hachmeiser_retires/' },
     ],
   },

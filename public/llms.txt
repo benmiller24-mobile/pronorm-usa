@@ -1,6 +1,6 @@
 # Pronorm USA
 
-> Pronorm USA is the United States home of Pronorm, a German manufacturer of fitted kitchens. Kitchens are built to order in Vlotho, Germany and sold, designed, and installed in the US by authorized independent dealers. Pronorm's main US difference is that base and tall cabinets ship at an American depth of 625 mm as standard.
+> Pronorm USA is the United States home of Pronorm, a German manufacturer of fitted kitchens. Kitchens are built to order in Vlotho, Germany and sold, designed, and installed in the US by authorized independent dealers. Pronorm's main US difference is that base and tall cabinets ship at American depths as standard.
 
 Pronorm USA is operated by European Kitchen Distributors (EKD), the exclusive US distributor of Pronorm. It is not a retailer: homeowners buy through an authorized dealer.
 
@@ -8,7 +8,7 @@ Pronorm USA is operated by European Kitchen Distributors (EKD), the exclusive US
 
 - Manufacturer: pronorm Einbauküchen GmbH, Vlotho, Eastern Westphalia, Germany. Building kitchens since 1972.
 - Product lines: Y-line (handleless, integrated grip profile), X-line (handleless, C-shaped profile), Proline128 (handled, 128 mm grid). All three combine in one kitchen.
-- US cabinet depth: 625 mm base and tall cabinets as standard. The factory builds in millimeters, not inches.
+- US cabinet depth: 625 mm carcase depth on the handleless Y-line and X-line, 615 mm on handled Proline128. The factory builds in millimeters, not inches.
 - Manufacturing tolerance: 0.1 mm. Hardware: Blum, Hettich, Grass. Soft-close is standard.
 - Fronts: more than 260 front variants in the 2027 collection, across ultra-matt, matt and gloss lacquer, organic glass, wood decors, real wood veneer, and framed and shaker doors. More than 50 basic colours carry across fronts, visible sides, and plinths at no surcharge.
 - Guarantee: 5-year manufacturer guarantee on kitchen furniture.

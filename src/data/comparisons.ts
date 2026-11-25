@@ -44,7 +44,7 @@ export const pronormFacts = {
   founded: 'Building kitchens in Vlotho, Germany since 1972',
   madeIn: 'Vlotho, Eastern Westphalia, Germany',
   lines: 'Y-line and X-line (handleless) and Proline128 (handled), combinable in one kitchen',
-  depth: '625 mm base and tall cabinet depth as standard for US orders',
+  depth: '625 mm cabinet depth on Y-line and X-line, 615 mm on Proline128, as standard for US orders',
   usPresence:
     'Eleven authorized showrooms as of August 2026, in California, Arizona, Colorado, Nevada, and Washington, with protected dealer territories',
   price: 'Typical installed kitchens run $40,000 to $150,000+',
@@ -60,7 +60,7 @@ export const comparisons: Comparison[] = [
     description:
       'Pronorm vs Leicht for a US kitchen: where each is made, US showroom coverage, cabinet depths, handleless lines, lead times, and how to compare quotes.',
     summary:
-      'Both are German-made fitted kitchens sold through independent US showrooms. Leicht has the larger and longer-established US showroom network. Pronorm has a smaller network with protected territories, ships a 625 mm deep cabinet as standard for US rooms, and is generally quoted in the premium mid-range. If a Leicht showroom is near you and a Pronorm showroom is not, that alone may decide it. If both are in reach, get the same plan quoted by each.',
+      'Both are German-made fitted kitchens sold through independent US showrooms. Leicht has the larger and longer-established US showroom network. Pronorm has a smaller network with protected territories, ships cabinets up to 625 mm deep as standard for US rooms, and is generally quoted in the premium mid-range. If a Leicht showroom is near you and a Pronorm showroom is not, that alone may decide it. If both are in reach, get the same plan quoted by each.',
     rows: [
       { label: 'Company', pronorm: pronormFacts.founded, other: 'Founded 1928 by brothers Alois and Josef Leicht' },
       { label: 'Made in', pronorm: pronormFacts.madeIn, other: 'Waldstetten, Swabia, Germany' },
@@ -84,7 +84,7 @@ export const comparisons: Comparison[] = [
       { q: 'Is Pronorm cheaper than Leicht?', a: 'Neither brand publishes a US price list, and the final number depends on the plan, fronts, and appliances. Typical installed Pronorm kitchens run $40,000 to $150,000+. The only reliable comparison is to have the same floor plan quoted in writing by a Pronorm showroom and a Leicht showroom.' },
       { q: 'Are Pronorm and Leicht both made in Germany?', a: 'Yes. Pronorm builds in Vlotho, Eastern Westphalia. Leicht builds in Waldstetten, Swabia. Both ship finished kitchens to US dealers.' },
       { q: 'Which has more US showrooms, Pronorm or Leicht?', a: 'Leicht. Pronorm had eleven authorized US showrooms as of August 2026, in California, Arizona, Colorado, Nevada, and Washington. Leicht sells through a larger national network of independent showrooms.' },
-      { q: 'Do Pronorm kitchens fit American appliances?', a: 'Pronorm ships 625 mm deep base and tall cabinets as standard for US orders, a depth planned around American rooms and appliances. The factory still builds in millimeters, and your dealer checks each appliance against the plan.' },
+      { q: 'Do Pronorm kitchens fit American appliances?', a: 'Pronorm ships base and tall cabinets 625 mm deep on Y-line and X-line, and 615 mm deep on Proline128, as standard for US orders, a depth planned around American rooms and appliances. The factory still builds in millimeters, and your dealer checks each appliance against the plan.' },
     ],
     sources: [
       { label: 'Leicht company profile, Archilovers', url: 'https://www.archilovers.com/teams/616576/leicht-kuchen.html' },
@@ -99,7 +99,7 @@ export const comparisons: Comparison[] = [
     description:
       'Pronorm vs Bauformat for a US kitchen: factories, US dealer coverage, price ladder, American cabinet depths, handleless lines, and how to compare quotes.',
     summary:
-      'Both are German-made frameless kitchens sold through US dealers. Bauformat runs a US subsidiary and a wide price ladder that reaches lower entry points. Pronorm sells one platform across three combinable lines, ships a 625 mm deep cabinet as standard for US rooms, and gives its dealers protected territories. Budget-led projects often start with Bauformat. Projects led by fit and finish at American depths should get a Pronorm quote alongside.',
+      'Both are German-made frameless kitchens sold through US dealers. Bauformat runs a US subsidiary and a wide price ladder that reaches lower entry points. Pronorm sells one platform across three combinable lines, ships cabinets up to 625 mm deep as standard for US rooms, and gives its dealers protected territories. Budget-led projects often start with Bauformat. Projects led by fit and finish at American depths should get a Pronorm quote alongside.',
     rows: [
       { label: 'Company', pronorm: pronormFacts.founded, other: 'Family group founded 1917, now in its third generation; sister brand burger' },
       { label: 'Made in', pronorm: pronormFacts.madeIn, other: 'Löhne (Eastern Westphalia) and Burg near Magdeburg, Germany' },
@@ -123,7 +123,7 @@ export const comparisons: Comparison[] = [
       { q: 'Is Bauformat cheaper than Pronorm?', a: 'It can be. Bauformat spans roughly ten price groups, including entry-level groups below where Pronorm starts. At comparable fronts and hardware the two are close enough that only written quotes on the same plan will tell you. Typical installed Pronorm kitchens run $40,000 to $150,000+.' },
       { q: 'Are Pronorm and Bauformat made in the same place?', a: 'Nearly. Pronorm builds in Vlotho and Bauformat in Löhne, a few miles apart in the Eastern Westphalia kitchen region. Bauformat has a second factory in Burg near Magdeburg.' },
       { q: 'Which is better quality, Pronorm or Bauformat?', a: 'Both are German-engineered frameless systems using major-brand hardware. Pronorm manufactures to a 0.1 mm tolerance and uses Blum, Hettich, and Grass with soft-close as standard. Compare the specific price group you are quoted in each brand rather than the brand names.' },
-      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships 625 mm deep base and tall cabinets as standard for US orders. The factory builds in millimeters; the depth is planned for American rooms and appliances.' },
+      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships base and tall cabinets 625 mm deep on Y-line and X-line, and 615 mm deep on Proline128, as standard for US orders. The factory builds in millimeters; the depth is planned for American rooms and appliances.' },
     ],
     sources: [
       { label: 'Bauformat company portrait', url: 'https://www.bauformat.de/en/company/company-portrait' },
@@ -242,7 +242,7 @@ export const comparisons: Comparison[] = [
       { q: 'Is Pronorm cheaper than Häcker?', a: 'Neither brand publishes a US price list. Häcker spans a value-driven line and a premium line, so the answer depends on which line you are quoted. Typical installed Pronorm kitchens run $40,000 to $150,000+. Have the same floor plan quoted in writing by both.' },
       { q: 'Are Pronorm and Häcker made near each other?', a: 'Yes. Pronorm builds in Vlotho and Häcker in Rödinghausen and Venne. Both are in the kitchen-making region of north-west Germany.' },
       { q: 'Which is bigger, Pronorm or Häcker?', a: 'Häcker. It runs five factories and exports to more than 60 countries. Pronorm is a smaller made-to-order manufacturer with one site in Vlotho.' },
-      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships 625 mm deep base and tall cabinets as standard for US orders. The factory builds in millimeters; the depth is planned for American rooms and appliances.' },
+      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships base and tall cabinets 625 mm deep on Y-line and X-line, and 615 mm deep on Proline128, as standard for US orders. The factory builds in millimeters; the depth is planned for American rooms and appliances.' },
     ],
     sources: [
       { label: 'Häcker company history', url: 'https://www.haecker-kuechen.com/en/quality' },
@@ -324,7 +324,7 @@ export const comparisons: Comparison[] = [
       { q: 'Is Pronorm cheaper than Bulthaup?', a: 'Neither brand publishes a US price list. Typical installed Pronorm kitchens run $40,000 to $150,000+. The reliable comparison is the same floor plan quoted in writing by a Pronorm dealer and a bulthaup showroom.' },
       { q: 'Where are Pronorm and Bulthaup made?', a: 'Pronorm builds in Vlotho, Eastern Westphalia. Bulthaup builds in Aich, a district of Bodenkirchen in Lower Bavaria. Both are made in Germany.' },
       { q: 'Can I buy Bulthaup or Pronorm from any kitchen dealer?', a: 'No. Bulthaup is sold only in bulthaup showrooms and by authorized retailers. Pronorm is sold through authorized independent dealers with protected territories.' },
-      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships 625 mm deep base and tall cabinets as standard for US orders. The factory builds in millimeters.' },
+      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships base and tall cabinets 625 mm deep on Y-line and X-line, and 615 mm deep on Proline128, as standard for US orders. The factory builds in millimeters.' },
     ],
     sources: [
       { label: 'bulthaup company history', url: 'https://bulthaup.com/en/company/history/' },
@@ -364,7 +364,7 @@ export const comparisons: Comparison[] = [
       { q: 'Is Pronorm cheaper than Eggersmann?', a: 'Generally yes. Pronorm is positioned in the premium mid-range, with typical installed kitchens at $40,000 to $150,000+. Eggersmann sells bespoke luxury cabinetry. Neither publishes a US price list, so compare written quotes on the same plan.' },
       { q: 'Are Pronorm and Eggersmann made near each other?', a: 'Yes. Pronorm builds in Vlotho and Eggersmann in Hiddenhausen. Both towns are in the Eastern Westphalia kitchen region.' },
       { q: 'Which has more US showrooms, Pronorm or Eggersmann?', a: 'Eggersmann. Trade press counted over a dozen eggersmann showrooms in North America in 2023. Pronorm had eleven authorized US showrooms as of August 2026, all in the West.' },
-      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships 625 mm deep base and tall cabinets as standard for US orders. The factory builds in millimeters.' },
+      { q: 'Does Pronorm offer American cabinet depths?', a: 'Yes. Pronorm ships base and tall cabinets 625 mm deep on Y-line and X-line, and 615 mm deep on Proline128, as standard for US orders. The factory builds in millimeters.' },
     ],
     sources: [
       { label: 'eggersmann company history', url: 'https://www.eggersmann.com/en/history.html' },
